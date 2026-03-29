@@ -2,24 +2,24 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8">
-<title>Latmetica Materialliste</title>
+<title>Latmetica Materialliste mit Bildern</title>
 <style>
 body {
-  font-family: Arial;
+  font-family: Arial, sans-serif;
   background: #1e1e1e;
   color: #fff;
   padding: 20px;
 }
 #container {
-  max-width: 1100px;
   margin: auto;
+  max-width: 1200px;
   background: #2a2a2a;
   padding: 20px;
-  border-radius: 10px;
+  border-radius: 8px;
 }
 textarea {
   width: 100%;
-  height: 150px;
+  height: 160px;
   background: #111;
   color: #0f0;
   padding: 10px;
@@ -28,15 +28,15 @@ textarea {
 button {
   margin-top: 10px;
   padding: 10px;
-  background: #00aa55;
+  background: #00aaff;
   border: none;
   color: white;
   cursor: pointer;
 }
 table {
   width: 100%;
-  margin-top: 20px;
   border-collapse: collapse;
+  margin-top: 20px;
 }
 th, td {
   padding: 8px;
@@ -53,56 +53,131 @@ img {
 </style>
 </head>
 <body>
+
 <div id="container">
-<h1>Materialliste</h1>
+  <h1>Latmetica Materialliste 📋</h1>
+  <textarea id="materialInput" placeholder="Materialliste hier einfügen..."></textarea><br>
+  <input type="file" id="fileInput"><br>
+  <button onclick="convertList()">Umwandeln</button>
 
-<textarea id="materialInput" placeholder="Materialliste hier einfügen..."></textarea><br>
-<input type="file" id="fileInput"><br>
-<button onclick="convertList()">Umwandeln</button>
-
-<table>
-<thead>
-<tr>
-<th>Bild</th>
-<th>Item</th>
-<th>Total</th>
-<th>Stacks</th>
-</tr>
-</thead>
-<tbody id="output"></tbody>
-</table>
+  <table>
+    <thead>
+      <tr>
+        <th>Bild</th>
+        <th>Item</th>
+        <th>Total</th>
+        <th>Stacks</th>
+      </tr>
+    </thead>
+    <tbody id="output"></tbody>
+  </table>
 </div>
 
 <script>
-// Mapping deutsch → Minecraft-ID (Block-Texturen von mcasset.cloud)
+
+// ------------- MAPPING ------------------
+// Alle deutschen Namen ➝ Minecraft Textur‑Dateien
 const itemMap = {
 "Fichtenholzbretter":"spruce_planks",
-"Stein":"stone",
 "Steinziegel":"stone_bricks",
+"Stein":"stone",
 "Fichtenholztreppe":"spruce_stairs",
 "Andesit":"andesite",
+"Fichtenholzfalltür":"spruce_trapdoor",
+"Fichtenholzstufe":"spruce_slab",
 "Eichenholzbretter":"oak_planks",
-"Bruchstein":"cobblestone",
-"Ofen":"furnace",
-"Truhe":"chest",
-"Leiter":"ladder",
-"Laterne":"lantern",
+"Schwarzeichenholztreppe":"dark_oak_stairs",
+"Akazienlaub":"acacia_leaves",
+"Entrindetes Eichenholz":"stripped_oak_log",
+"Grobe Erde":"coarse_dirt",
+"Eichenstamm":"oak_log",
+"Schwarzeichenholzstufe":"dark_oak_slab",
+"Entrindeter Fichtenstamm":"stripped_spruce_log",
+"Polierte Andesitstufe":"polished_andesite_slab",
+"Eichenlaub":"oak_leaves",
+"Polierter Andesit":"polished_andesite",
+"Polierte Andesittreppe":"polished_andesite_stairs",
+"Fichtenholzzaun":"spruce_fence",
+"Bruchsteinmauer":"cobblestone_wall",
+"Eichenholzfalltür":"oak_trapdoor",
+"Lagerfeuer":"campfire",
+"Graue Glasscheibe":"gray_stained_glass_pane",
+"Schwarzeichenholzbretter":"dark_oak_planks",
+"Moosblock":"moss_block",
+"Fichtenholzzauntor":"spruce_fence_gate",
 "Bücherregal":"bookshelf",
 "Ziegelsteine":"brick",
-"Ziegelstufe":"brick_stairs"
+"Eisengitter":"iron_bars",
+"Bruchstein":"cobblestone",
+"Graues Glas":"gray_stained_glass",
+"Steinziegeltreppe":"stone_brick_stairs",
+"Ofen":"furnace",
+"Steintreppe":"stone_stairs",
+"Leiter":"ladder",
+"Fichtenholztür":"spruce_door",
+"Laterne":"lantern",
+"Eisenkette":"chain",
+"Brauner Trockenbeton":"brown_concrete_powder",
+"Bruchsteinstufe":"cobblestone_slab",
+"Eichenholztreppe":"oak_stairs",
+"Glatter Stein":"smooth_stone",
+"Andesittreppe":"andesite_stairs",
+"Ziegeltreppe":"brick_stairs",
+"Strohballen":"hay_block",
+"Tuffstein":"tuff",
+"Roter Teppich":"red_carpet",
+"Eichenholz":"oak_wood",
+"Andesitmauer":"andesite_wall",
+"Bemooste Steinziegel":"mossy_stone_bricks",
+"Blumentopf":"flower_pot",
+"Granit":"granite",
+"Steinziegelmauer":"stone_brick_wall",
+"Türkise Wolle":"cyan_wool",
+"Weiße Wolle":"white_wool",
+"Leuchtstein":"glowstone",
+"Rote Wolle":"red_wool",
+"Steinstufe":"stone_slab",
+"Weiße Glasscheibe":"white_stained_glass_pane",
+"Ziegelstufe":"brick_slab",
+"Fass":"barrel",
+"Hellblaue Wolle":"light_blue_wool",
+"Andesitstufe":"andesite_slab",
+"Birkenlaub":"birch_leaves",
+"Brauner Beton":"brown_concrete",
+"Granittreppe":"granite_stairs",
+"Schwarzstein":"blackstone",
+"Steinziegelstufe":"stone_brick_slab",
+"Hellblaue Glasscheibe":"light_blue_stained_glass_pane",
+"Polierter Schwarzsteinknopf":"polished_blackstone_button",
+"Schwarzeichenholzzauntor":"dark_oak_fence_gate",
+"Bruchsteintreppe":"cobblestone_stairs",
+"Fichtenholzknopf":"spruce_button",
+"Fichtenholzschild":"spruce_sign",
+"Komposter":"composter",
+"Schleifstein":"grindstone",
+"Schwarzeichenholztür":"dark_oak_door",
+"Truhe":"chest",
+"Violette Wolle":"purple_wool",
+"Granitmauer":"granite_wall",
+"Leitstein":"lodestone",
+"Steinknopf":"stone_button",
+"Tiefenschieferfliesen":"deepslate_tiles",
+"Zaubertisch":"enchanting_table",
+"Ziegelsteinmauer":"brick_wall"
 };
 
-// Set für bereits fehlgeschlagene Bilder, um Spam zu verhindern
+// Speichert IDs die bereits fehlgeschlagen sind
 const failedImages = new Set();
 
-// Funktion für Bild-URL
+// Bild‑URL
 function getImage(name){
     const id = itemMap[name];
-    if(!id || failedImages.has(id)) return "https://via.placeholder.com/32?text=?";
+    if(!id) return "https://via.placeholder.com/32?text=?";
+    if(failedImages.has(id)) return "https://via.placeholder.com/32?text=?";
     return `https://mcasset.cloud/26.1/assets/minecraft/textures/block/${id}.png`;
 }
 
-// Berechnung von Stacks
+// Stacks berechnen
 function getStacks(total){
     const stacks = Math.floor(total/64);
     const rest = total % 64;
@@ -111,7 +186,7 @@ function getStacks(total){
     return stacks + " Stacks + " + rest;
 }
 
-// Zeilenparser
+// Parst eine Zeile deiner Liste
 function parseLine(line){
     if(!line.includes("|")) return null;
     const parts = line.split("|").map(p => p.trim()).filter(p => p);
@@ -128,13 +203,10 @@ function convertList(){
         const lines = text.split("\n");
         const output = document.getElementById("output");
         output.innerHTML = "";
-
         lines.forEach(line=>{
             const item = parseLine(line);
             if(!item) return;
-
             const id = itemMap[item.name];
-
             const row = document.createElement("tr");
             row.innerHTML = `
                 <td>
@@ -152,7 +224,6 @@ function convertList(){
             output.appendChild(row);
         });
     }
-
     const file = document.getElementById("fileInput").files[0];
     if(file){
         const reader = new FileReader();
@@ -162,6 +233,7 @@ function convertList(){
         process(document.getElementById("materialInput").value);
     }
 }
+
 </script>
 </body>
 </html>
