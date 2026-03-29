@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>Latmetica Materialliste Converter</title>
+<style>
+  body { font-family: Arial, sans-serif; padding: 20px; background: #f4f4f4; }
+  textarea { width: 100%; height: 150px; }
+  table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+  th, td { border: 1px solid #ccc; padding: 8px; text-align: center; }
+  th { background: #eee; }
+  img { width: 32px; height: 32px; }
+</style>
+</head>
+<body>
+
+<h1>Latmetica Materialliste Converter</h1>
+
+<p>Materialliste einfügen oder Datei hochladen:</p>
+<textarea id="materialInput" placeholder="Hier Materialliste einfügen..."></textarea>
+<br><br>
+<input type="file" id="fileInput">
+<button onclick="convertList()">Umwandeln</button>
+
+<table id="resultTable">
+  <thead>
+    <tr>
+      <th>Bild</th>
+      <th>Item</th>
+      <th>Anzahl</th>
+      <th>Stacks</th>
+    </tr>
+  </thead>
+  <tbody></tbody>
+</table>
+
+<script>
+function parseLine(line) {
+  // Annahme: Zeilenformat "65 Stein"
+  const parts = line.trim().split(/\s+/);
+  if(parts.length < 2) return null;
+  const count = parseInt(parts[0], 10);
+  const name = parts.slice(1).join(' ');
+  return { count, name };
+}
+
+function getStack(count) {
+  const fullStacks = Math.floor(count / 64);
+  const remainder = count % 64;
+  return fullStacks + (remainder > 0 ? 1 : 0);
+}
+
+function getImageURL(itemName) {
+  // Platzhalter, hier müsste man echte URLs setzen
+  return `https://via.placeholder.com/32?text=${encodeURIComponent(itemName)}`;
+}
+
+function convertList() {
+  const textArea = document.getElementById('materialInput');
+  const fileInput = document.getElementById('fileInput');
+  
+  function processText(text) {
+    const lines = text.split('\n');
+    const tbody = document.querySelector('#resultTable tbody');
+    tbody.innerHTML = '';
+    
+    lines.forEach(line => {
+      const parsed = parseLine(line);
+      if(parsed) {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td><img src="${getImageURL(parsed.name)}" alt="${parsed.name}"></td>
+          <td>${parsed.name}</td>
+          <td>${parsed.count}</td>
+          <td>${getStack(parsed.count)}</td>
+        `;
+        tbody.appendChild(tr);
+      }
+    });
+  }
+
+  if(fileInput.files.length > 0) {
+    const file = fileInput.files[0];
+    const reader = new FileReader();
+    reader.onload = e => processText(e.target.result);
+    reader.readAsText(file);
+  } else {
+    processText(textArea.value);
+  }
+}
+</script>
+
+</body>
+</html>
