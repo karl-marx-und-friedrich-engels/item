@@ -4,23 +4,22 @@
 <meta charset="UTF-8">
 <title>Latmetica Materialliste</title>
 <style>
-  body { font-family: Arial, sans-serif; background: #f0f0f0; margin: 0; padding: 20px; }
-  h1 { text-align: center; }
-  #container { max-width: 1000px; margin: auto; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1);}
-  textarea { width: 100%; height: 150px; padding: 10px; font-family: monospace; margin-bottom: 10px; }
-  table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-  th, td { border: 1px solid #ccc; padding: 8px; text-align: center; }
-  th { background: #eee; position: sticky; top: 0; z-index: 1; }
-  tbody tr:nth-child(even) { background: #fafafa; }
-  img { width: 32px; height: 32px; }
-  input[type=file] { margin-top: 10px; }
-  button { padding: 8px 16px; margin-top: 10px; cursor: pointer; }
+body { font-family: Arial, sans-serif; background: #f5f5f5; margin: 0; padding: 20px; }
+#container { max-width: 1000px; margin: auto; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1);}
+h1 { text-align: center; }
+textarea { width: 100%; height: 150px; padding: 10px; font-family: monospace; margin-bottom: 10px; }
+input[type=file] { margin-top: 10px; }
+button { padding: 8px 16px; margin-top: 10px; cursor: pointer; }
+table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+th, td { border: 1px solid #ccc; padding: 8px; text-align: center; }
+th { background: #eee; position: sticky; top: 0; }
+tbody tr:nth-child(even) { background: #fafafa; }
+img { width: 32px; height: 32px; }
 </style>
 </head>
 <body>
 <div id="container">
 <h1>Latmetica Materialliste</h1>
-
 <textarea id="materialInput" placeholder="Materialliste hier einfügen..."></textarea>
 <br>
 <input type="file" id="fileInput">
@@ -32,8 +31,6 @@
       <th>Bild</th>
       <th>Item</th>
       <th>Total</th>
-      <th>Missing</th>
-      <th>Available</th>
       <th>Stacks</th>
     </tr>
   </thead>
@@ -42,31 +39,28 @@
 </div>
 
 <script>
-// Hilfsfunktion: Zeile parsen
 function parseLine(line) {
-    // Regex: | Item | Total | Missing | Available |
-    const regex = /^\|\s*(.+?)\s*\|\s*(\d+)\s*\|\s*(\d+)\s*\|\s*(\d+)\s*\|$/;
+    // Zeilenformat: | Item | Total | ... |
+    const regex = /^\|\s*(.+?)\s*\|\s*(\d+)/;
     const match = line.match(regex);
     if(!match) return null;
     return {
         name: match[1].trim(),
-        total: parseInt(match[2],10),
-        missing: parseInt(match[3],10),
-        available: parseInt(match[4],10)
+        total: parseInt(match[2],10)
     };
 }
 
-// Stacks berechnen
-function getStacks(total) {
-    return Math.floor(total / 64) + (total % 64 > 0 ? 1 : 0);
+function calculateStacks(total) {
+    const stacks = Math.floor(total / 64);
+    const blocks = total % 64;
+    return stacks + (blocks > 0 ? ` + ${blocks} Block${blocks>1?'e':''}` : '');
 }
 
-// Bildpfad: Lokale GitHub-Bilder
+// Lokale Bilder im Ordner /images/
 function getImageURL(itemName) {
-    // Beispiel-Pfad: /images/itemname.png
-    // Datei auf GitHub hochladen -> Pfad anpassen
-    const fileName = itemName.toLowerCase().replace(/ä/g,'ae').replace(/ö/g,'oe').replace(/ü/g,'ue')
-                     .replace(/ß/g,'ss').replace(/\s+/g,'_') + '.png';
+    const fileName = itemName.toLowerCase()
+        .replace(/ä/g,'ae').replace(/ö/g,'oe').replace(/ü/g,'ue')
+        .replace(/ß/g,'ss').replace(/\s+/g,'_') + '.png';
     return `images/${fileName}`;
 }
 
@@ -87,9 +81,7 @@ function convertList() {
                     <td><img src="${getImageURL(parsed.name)}" alt="${parsed.name}"></td>
                     <td>${parsed.name}</td>
                     <td>${parsed.total}</td>
-                    <td>${parsed.missing}</td>
-                    <td>${parsed.available}</td>
-                    <td>${getStacks(parsed.total)}</td>
+                    <td>${calculateStacks(parsed.total)}</td>
                 `;
                 tbody.appendChild(tr);
             }
