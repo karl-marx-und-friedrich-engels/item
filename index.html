@@ -106,8 +106,28 @@ function normalize(name){
 
 // Bild holen (ONLINE)
 function getImage(name){
-    const id = itemMap[name] || normalize(name);
-    return `https://mcasset.cloud/1.20/assets/minecraft/textures/block/${id}.png`;
+
+    const map = {
+        "Fichtenholzbretter":"spruce_planks",
+        "Stein":"stone",
+        "Steinziegel":"stone_bricks",
+        "Fichtenholztreppe":"spruce_stairs",
+        "Andesit":"andesite",
+        "Eichenholzbretter":"oak_planks",
+        "Bruchstein":"cobblestone",
+        "Ofen":"furnace",
+        "Truhe":"chest",
+        "Leiter":"ladder"
+    };
+
+    const id = map[name];
+
+    if(id){
+        return `https://minecraftitemids.com/item/32/${id}.png`;
+    }
+
+    // fallback
+    return "https://via.placeholder.com/32?text=?";
 }
 
 // Stacks rechnen
