@@ -3,99 +3,249 @@
 <head>
 <meta charset="UTF-8">
 <title>Latmetica Materialliste</title>
+
 <style>
-body { font-family: Arial, sans-serif; background: #f5f5f5; margin: 0; padding: 20px; }
-#container { max-width: 1000px; margin: auto; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1);}
-h1 { text-align: center; }
-textarea { width: 100%; height: 150px; padding: 10px; font-family: monospace; margin-bottom: 10px; }
-input[type=file] { margin-top: 10px; }
-button { padding: 8px 16px; margin-top: 10px; cursor: pointer; }
-table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-th, td { border: 1px solid #ccc; padding: 8px; text-align: center; }
-th { background: #eee; position: sticky; top: 0; }
-tbody tr:nth-child(even) { background: #fafafa; }
-img { width: 32px; height: 32px; }
+body {
+  font-family: Arial, sans-serif;
+  background: #1e1e1e;
+  color: #fff;
+  margin: 0;
+  padding: 20px;
+}
+
+#container {
+  max-width: 1100px;
+  margin: auto;
+  background: #2a2a2a;
+  padding: 20px;
+  border-radius: 10px;
+}
+
+h1 {
+  text-align: center;
+}
+
+textarea {
+  width: 100%;
+  height: 150px;
+  background: #111;
+  color: #0f0;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  font-family: monospace;
+}
+
+button {
+  margin-top: 10px;
+  padding: 10px 20px;
+  background: #00aa55;
+  border: none;
+  color: white;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+button:hover {
+  background: #00cc66;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+th, td {
+  padding: 8px;
+  border-bottom: 1px solid #444;
+  text-align: center;
+}
+
+th {
+  background: #333;
+  position: sticky;
+  top: 0;
+}
+
+tr:hover {
+  background: #333;
+}
+
+img {
+  width: 32px;
+  height: 32px;
+}
 </style>
 </head>
+
 <body>
+
 <div id="container">
 <h1>Latmetica Materialliste</h1>
+
 <textarea id="materialInput" placeholder="Materialliste hier einfügen..."></textarea>
 <br>
 <input type="file" id="fileInput">
+<br>
 <button onclick="convertList()">Umwandeln</button>
 
-<table id="resultTable">
-  <thead>
-    <tr>
-      <th>Bild</th>
-      <th>Item</th>
-      <th>Total</th>
-      <th>Stacks</th>
-    </tr>
-  </thead>
-  <tbody></tbody>
+<table>
+<thead>
+<tr>
+<th>Bild</th>
+<th>Item</th>
+<th>Total</th>
+<th>Stacks</th>
+</tr>
+</thead>
+<tbody id="output"></tbody>
 </table>
 </div>
 
 <script>
-function parseLine(line) {
-    // Zeilenformat: | Item | Total | ... |
+
+// 🔥 Mapping Deutsch → Minecraft IDs
+const itemMap = {
+"Fichtenholzbretter":"spruce_planks",
+"Steinziegel":"stone_bricks",
+"Stein":"stone",
+"Fichtenholztreppe":"spruce_stairs",
+"Andesit":"andesite",
+"Fichtenholzfalltür":"spruce_trapdoor",
+"Fichtenholzstufe":"spruce_slab",
+"Eichenholzbretter":"oak_planks",
+"Schwarzeichenholztreppe":"dark_oak_stairs",
+"Akazienlaub":"acacia_leaves",
+"Entrindetes Eichenholz":"stripped_oak_log",
+"Grobe Erde":"coarse_dirt",
+"Eichenstamm":"oak_log",
+"Schwarzeichenholzstufe":"dark_oak_slab",
+"Entrindeter Fichtenstamm":"stripped_spruce_log",
+"Polierte Andesitstufe":"polished_andesite_slab",
+"Eichenlaub":"oak_leaves",
+"Polierter Andesit":"polished_andesite",
+"Polierte Andesittreppe":"polished_andesite_stairs",
+"Fichtenholzzaun":"spruce_fence",
+"Bruchsteinmauer":"cobblestone_wall",
+"Eichenholzfalltür":"oak_trapdoor",
+"Lagerfeuer":"campfire",
+"Graue Glasscheibe":"gray_stained_glass_pane",
+"Schwarzeichenholzbretter":"dark_oak_planks",
+"Moosblock":"moss_block",
+"Fichtenholzzauntor":"spruce_fence_gate",
+"Bücherregal":"bookshelf",
+"Ziegelsteine":"bricks",
+"Eisengitter":"iron_bars",
+"Bruchstein":"cobblestone",
+"Graues Glas":"gray_stained_glass",
+"Steinziegeltreppe":"stone_brick_stairs",
+"Ofen":"furnace",
+"Steintreppe":"stone_stairs",
+"Leiter":"ladder",
+"Fichtenholztür":"spruce_door",
+"Laterne":"lantern",
+"Eisenkette":"chain",
+"Brauner Trockenbeton":"brown_concrete_powder",
+"Bruchsteinstufe":"cobblestone_slab",
+"Eichenholztreppe":"oak_stairs",
+"Glatter Stein":"smooth_stone",
+"Andesittreppe":"andesite_stairs",
+"Ziegeltreppe":"brick_stairs",
+"Strohballen":"hay_block",
+"Schwarzeichenholzfalltür":"dark_oak_trapdoor",
+"Tuffstein":"tuff",
+"Roter Teppich":"red_carpet",
+"Eichenholz":"oak_wood",
+"Andesitmauer":"andesite_wall",
+"Bemooste Steinziegel":"mossy_stone_bricks",
+"Blumentopf":"flower_pot",
+"Granit":"granite",
+"Steinziegelmauer":"stone_brick_wall",
+"Türkise Wolle":"cyan_wool",
+"Weiße Wolle":"white_wool",
+"Leuchtstein":"glowstone",
+"Rote Wolle":"red_wool",
+"Steinstufe":"stone_slab",
+"Weiße Glasscheibe":"white_stained_glass_pane",
+"Ziegelstufe":"brick_slab",
+"Fass":"barrel",
+"Hellblaue Wolle":"light_blue_wool",
+"Andesitstufe":"andesite_slab",
+"Birkenlaub":"birch_leaves",
+"Brauner Beton":"brown_concrete",
+"Granittreppe":"granite_stairs",
+"Schwarzstein":"blackstone",
+"Steinziegelstufe":"stone_brick_slab",
+"Hellblaue Glasscheibe":"light_blue_stained_glass_pane",
+"Polierter Schwarzsteinknopf":"polished_blackstone_button",
+"Schwarzeichenholzzauntor":"dark_oak_fence_gate",
+"Bruchsteintreppe":"cobblestone_stairs",
+"Fichtenholzknopf":"spruce_button",
+"Fichtenholzschild":"spruce_sign",
+"Komposter":"composter",
+"Schleifstein":"grindstone",
+"Schwarzeichenholztür":"dark_oak_door",
+"Truhe":"chest",
+"Violette Wolle":"purple_wool",
+"Granitmauer":"granite_wall",
+"Leitstein":"lodestone",
+"Steinknopf":"stone_button",
+"Tiefenschieferfliesen":"deepslate_tiles",
+"Zaubertisch":"enchanting_table",
+"Ziegelsteinmauer":"brick_wall"
+};
+
+// Bild URL
+function getImage(name){
+    const id = itemMap[name];
+    if(!id) return "https://via.placeholder.com/32?text=?";
+    return `https://mcasset.cloud/1.20/assets/minecraft/textures/block/${id}.png`;
+}
+
+// Stacks berechnen
+function getStacks(total){
+    const stacks = Math.floor(total/64);
+    const rest = total%64;
+    if(rest === 0) return stacks + " Stacks";
+    return `${stacks} Stacks + ${rest}`;
+}
+
+// Parsen
+function parseLine(line){
     const regex = /^\|\s*(.+?)\s*\|\s*(\d+)/;
     const match = line.match(regex);
     if(!match) return null;
+
     return {
         name: match[1].trim(),
-        total: parseInt(match[2],10)
+        total: parseInt(match[2])
     };
 }
 
-function calculateStacks(total) {
-    const stacks = Math.floor(total / 64);
-    const blocks = total % 64;
-    return stacks + (blocks > 0 ? ` + ${blocks} Block${blocks>1?'e':''}` : '');
+// Hauptfunktion
+function convertList(){
+    const text = document.getElementById("materialInput").value;
+    const lines = text.split("\n");
+    const output = document.getElementById("output");
+    output.innerHTML = "";
+
+    lines.forEach(line=>{
+        const item = parseLine(line);
+        if(!item) return;
+
+        const row = document.createElement("tr");
+        row.innerHTML = `
+            <td><img src="${getImage(item.name)}"></td>
+            <td>${item.name}</td>
+            <td>${item.total}</td>
+            <td>${getStacks(item.total)}</td>
+        `;
+        output.appendChild(row);
+    });
 }
 
-// Lokale Bilder im Ordner /images/
-function getImageURL(itemName) {
-    const fileName = itemName.toLowerCase()
-        .replace(/ä/g,'ae').replace(/ö/g,'oe').replace(/ü/g,'ue')
-        .replace(/ß/g,'ss').replace(/\s+/g,'_') + '.png';
-    return `images/${fileName}`;
-}
-
-function convertList() {
-    const textArea = document.getElementById('materialInput');
-    const fileInput = document.getElementById('fileInput');
-
-    function processText(text) {
-        const lines = text.split('\n');
-        const tbody = document.querySelector('#resultTable tbody');
-        tbody.innerHTML = '';
-
-        lines.forEach(line => {
-            const parsed = parseLine(line);
-            if(parsed) {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td><img src="${getImageURL(parsed.name)}" alt="${parsed.name}"></td>
-                    <td>${parsed.name}</td>
-                    <td>${parsed.total}</td>
-                    <td>${calculateStacks(parsed.total)}</td>
-                `;
-                tbody.appendChild(tr);
-            }
-        });
-    }
-
-    if(fileInput.files.length > 0) {
-        const reader = new FileReader();
-        reader.onload = e => processText(e.target.result);
-        reader.readAsText(fileInput.files[0]);
-    } else {
-        processText(textArea.value);
-    }
-}
 </script>
+
 </body>
 </html>
