@@ -6,10 +6,9 @@
 
 <style>
 body {
-  font-family: Arial, sans-serif;
+  font-family: Arial;
   background: #1e1e1e;
   color: #fff;
-  margin: 0;
   padding: 20px;
 }
 
@@ -21,32 +20,28 @@ body {
   border-radius: 10px;
 }
 
-h1 { text-align: center; }
-
 textarea {
   width: 100%;
   height: 150px;
   background: #111;
   color: #0f0;
   padding: 10px;
-  border-radius: 5px;
   font-family: monospace;
 }
 
 button {
   margin-top: 10px;
-  padding: 10px 20px;
+  padding: 10px;
   background: #00aa55;
   border: none;
   color: white;
   cursor: pointer;
-  border-radius: 5px;
 }
 
 table {
   width: 100%;
-  border-collapse: collapse;
   margin-top: 20px;
+  border-collapse: collapse;
 }
 
 th, td {
@@ -57,15 +52,10 @@ th, td {
 
 th {
   background: #333;
-  position: sticky;
-  top: 0;
 }
-
-tr:hover { background: #333; }
 
 img {
   width: 32px;
-  height: 32px;
 }
 </style>
 </head>
@@ -73,12 +63,10 @@ img {
 <body>
 
 <div id="container">
-<h1>Latmetica Materialliste</h1>
+<h1>Materialliste</h1>
 
-<textarea id="materialInput" placeholder="Materialliste hier einfügen..."></textarea>
-<br>
-<input type="file" id="fileInput">
-<br>
+<textarea id="materialInput"></textarea><br>
+<input type="file" id="fileInput"><br>
 <button onclick="convertList()">Umwandeln</button>
 
 <table>
@@ -96,28 +84,33 @@ img {
 
 <script>
 
-// Mapping (kannst du erweitern)
+// Mapping für wichtige Items (der Rest läuft automatisch)
 const itemMap = {
 "Fichtenholzbretter":"spruce_planks",
 "Stein":"stone",
 "Steinziegel":"stone_bricks",
-"Fichtenholztreppe":"spruce_stairs",
-"Andesit":"andesite",
 "Eichenholzbretter":"oak_planks",
 "Bruchstein":"cobblestone",
-"Ofen":"furnace",
-"Truhe":"chest",
-"Leiter":"ladder"
+"Andesit":"andesite"
 };
 
-// Bild laden
+// Name normalisieren
+function normalize(name){
+    return name.toLowerCase()
+        .replace(/ä/g,'ae')
+        .replace(/ö/g,'oe')
+        .replace(/ü/g,'ue')
+        .replace(/ß/g,'ss')
+        .replace(/\s+/g,'_');
+}
+
+// Bild holen (ONLINE)
 function getImage(name){
-    const id = itemMap[name];
-    if(!id) return "https://via.placeholder.com/32?text=?";
+    const id = itemMap[name] || normalize(name);
     return `https://mcasset.cloud/1.20/assets/minecraft/textures/block/${id}.png`;
 }
 
-// Stacks + Rest
+// Stacks rechnen
 function getStacks(total){
     const stacks = Math.floor(total/64);
     const rest = total % 64;
@@ -128,13 +121,13 @@ function getStacks(total){
     return stacks + " Stacks + " + rest;
 }
 
-// ROBUSTER Parser (fix)
+// Parser (funktioniert mit deinem Format)
 function parseLine(line){
     if(!line.includes("|")) return null;
 
     const parts = line.split("|")
         .map(p => p.trim())
-        .filter(p => p.length > 0);
+        .filter(p => p);
 
     if(parts.length < 2) return null;
 
@@ -146,10 +139,8 @@ function parseLine(line){
     return { name, total };
 }
 
-// MAIN FIX
+// Hauptfunktion
 function convertList(){
-    const textArea = document.getElementById("materialInput");
-    const fileInput = document.getElementById("fileInput");
 
     function process(text){
         const lines = text.split("\n");
@@ -161,24 +152,29 @@ function convertList(){
             if(!item) return;
 
             const row = document.createElement("tr");
+
             row.innerHTML = `
-                <td><img src="${getImage(item.name)}"></td>
+                <td>
+                  <img src="${getImage(item.name)}"
+                       onerror="this.src='https://via.placeholder.com/32?text=?'">
+                </td>
                 <td>${item.name}</td>
                 <td>${item.total}</td>
                 <td>${getStacks(item.total)}</td>
             `;
+
             output.appendChild(row);
         });
     }
 
-    if(fileInput.files.length > 0){
+    const file = document.getElementById("fileInput").files[0];
+
+    if(file){
         const reader = new FileReader();
-        reader.onload = function(e){
-            process(e.target.result);
-        };
-        reader.readAsText(fileInput.files[0]);
+        reader.onload = e => process(e.target.result);
+        reader.readAsText(file);
     } else {
-        process(textArea.value);
+        process(document.getElementById("materialInput").value);
     }
 }
 
