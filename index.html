@@ -74,10 +74,7 @@ img {
 </div>
 
 <script>
-// Verhindert Spam von kaputten Bildern
-const failedImages = new Set();
-
-// Mapping für bekannte Items (deutsch → Minecraft-ID)
+// Mapping deutsch → Minecraft-ID (Block-Texturen von mcasset.cloud)
 const itemMap = {
 "Fichtenholzbretter":"spruce_planks",
 "Stein":"stone",
@@ -95,15 +92,17 @@ const itemMap = {
 "Ziegelstufe":"brick_stairs"
 };
 
-// Bild-URL holen, nur einmal pro fehlendem Item versuchen
+// Set für bereits fehlgeschlagene Bilder, um Spam zu verhindern
+const failedImages = new Set();
+
+// Funktion für Bild-URL
 function getImage(name){
     const id = itemMap[name];
-    if(!id) return "https://via.placeholder.com/32?text=?";
-    if(failedImages.has(id)) return "https://via.placeholder.com/32?text=?";
-    return `https://mcasset.cloud/1.20/assets/minecraft/textures/item/${id}.png`;
+    if(!id || failedImages.has(id)) return "https://via.placeholder.com/32?text=?";
+    return `https://mcasset.cloud/26.1/assets/minecraft/textures/block/${id}.png`;
 }
 
-// Stacks + Restblöcke berechnen
+// Berechnung von Stacks
 function getStacks(total){
     const stacks = Math.floor(total/64);
     const rest = total % 64;
@@ -112,7 +111,7 @@ function getStacks(total){
     return stacks + " Stacks + " + rest;
 }
 
-// Zeile parsen
+// Zeilenparser
 function parseLine(line){
     if(!line.includes("|")) return null;
     const parts = line.split("|").map(p => p.trim()).filter(p => p);
