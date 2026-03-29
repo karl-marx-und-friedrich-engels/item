@@ -2,23 +2,27 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8">
-<title>Latmetica Materialliste Converter</title>
+<title>Latmetica Materialliste</title>
 <style>
-  body { font-family: Arial, sans-serif; padding: 20px; background: #f4f4f4; }
-  textarea { width: 100%; height: 150px; }
+  body { font-family: Arial, sans-serif; background: #f0f0f0; margin: 0; padding: 20px; }
+  h1 { text-align: center; }
+  #container { max-width: 1000px; margin: auto; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1);}
+  textarea { width: 100%; height: 150px; padding: 10px; font-family: monospace; margin-bottom: 10px; }
   table { width: 100%; border-collapse: collapse; margin-top: 20px; }
   th, td { border: 1px solid #ccc; padding: 8px; text-align: center; }
-  th { background: #eee; }
+  th { background: #eee; position: sticky; top: 0; z-index: 1; }
+  tbody tr:nth-child(even) { background: #fafafa; }
   img { width: 32px; height: 32px; }
+  input[type=file] { margin-top: 10px; }
+  button { padding: 8px 16px; margin-top: 10px; cursor: pointer; }
 </style>
 </head>
 <body>
+<div id="container">
+<h1>Latmetica Materialliste</h1>
 
-<h1>Latmetica Materialliste Converter</h1>
-
-<p>Materialliste einfügen oder Datei hochladen:</p>
-<textarea id="materialInput" placeholder="Hier Materialliste einfügen..."></textarea>
-<br><br>
+<textarea id="materialInput" placeholder="Materialliste hier einfügen..."></textarea>
+<br>
 <input type="file" id="fileInput">
 <button onclick="convertList()">Umwandeln</button>
 
@@ -27,68 +31,79 @@
     <tr>
       <th>Bild</th>
       <th>Item</th>
-      <th>Anzahl</th>
+      <th>Total</th>
+      <th>Missing</th>
+      <th>Available</th>
       <th>Stacks</th>
     </tr>
   </thead>
   <tbody></tbody>
 </table>
+</div>
 
 <script>
+// Hilfsfunktion: Zeile parsen
 function parseLine(line) {
-  // Annahme: Zeilenformat "65 Stein"
-  const parts = line.trim().split(/\s+/);
-  if(parts.length < 2) return null;
-  const count = parseInt(parts[0], 10);
-  const name = parts.slice(1).join(' ');
-  return { count, name };
+    // Regex: | Item | Total | Missing | Available |
+    const regex = /^\|\s*(.+?)\s*\|\s*(\d+)\s*\|\s*(\d+)\s*\|\s*(\d+)\s*\|$/;
+    const match = line.match(regex);
+    if(!match) return null;
+    return {
+        name: match[1].trim(),
+        total: parseInt(match[2],10),
+        missing: parseInt(match[3],10),
+        available: parseInt(match[4],10)
+    };
 }
 
-function getStack(count) {
-  const fullStacks = Math.floor(count / 64);
-  const remainder = count % 64;
-  return fullStacks + (remainder > 0 ? 1 : 0);
+// Stacks berechnen
+function getStacks(total) {
+    return Math.floor(total / 64) + (total % 64 > 0 ? 1 : 0);
 }
 
+// Bildpfad: Lokale GitHub-Bilder
 function getImageURL(itemName) {
-  // Platzhalter, hier müsste man echte URLs setzen
-  return `https://via.placeholder.com/32?text=${encodeURIComponent(itemName)}`;
+    // Beispiel-Pfad: /images/itemname.png
+    // Datei auf GitHub hochladen -> Pfad anpassen
+    const fileName = itemName.toLowerCase().replace(/ä/g,'ae').replace(/ö/g,'oe').replace(/ü/g,'ue')
+                     .replace(/ß/g,'ss').replace(/\s+/g,'_') + '.png';
+    return `images/${fileName}`;
 }
 
 function convertList() {
-  const textArea = document.getElementById('materialInput');
-  const fileInput = document.getElementById('fileInput');
-  
-  function processText(text) {
-    const lines = text.split('\n');
-    const tbody = document.querySelector('#resultTable tbody');
-    tbody.innerHTML = '';
-    
-    lines.forEach(line => {
-      const parsed = parseLine(line);
-      if(parsed) {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td><img src="${getImageURL(parsed.name)}" alt="${parsed.name}"></td>
-          <td>${parsed.name}</td>
-          <td>${parsed.count}</td>
-          <td>${getStack(parsed.count)}</td>
-        `;
-        tbody.appendChild(tr);
-      }
-    });
-  }
+    const textArea = document.getElementById('materialInput');
+    const fileInput = document.getElementById('fileInput');
 
-  if(fileInput.files.length > 0) {
-    const file = fileInput.files[0];
-    const reader = new FileReader();
-    reader.onload = e => processText(e.target.result);
-    reader.readAsText(file);
-  } else {
-    processText(textArea.value);
-  }
+    function processText(text) {
+        const lines = text.split('\n');
+        const tbody = document.querySelector('#resultTable tbody');
+        tbody.innerHTML = '';
+
+        lines.forEach(line => {
+            const parsed = parseLine(line);
+            if(parsed) {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><img src="${getImageURL(parsed.name)}" alt="${parsed.name}"></td>
+                    <td>${parsed.name}</td>
+                    <td>${parsed.total}</td>
+                    <td>${parsed.missing}</td>
+                    <td>${parsed.available}</td>
+                    <td>${getStacks(parsed.total)}</td>
+                `;
+                tbody.appendChild(tr);
+            }
+        });
+    }
+
+    if(fileInput.files.length > 0) {
+        const reader = new FileReader();
+        reader.onload = e => processText(e.target.result);
+        reader.readAsText(fileInput.files[0]);
+    } else {
+        processText(textArea.value);
+    }
 }
 </script>
-
 </body>
 </html>
