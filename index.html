@@ -35,7 +35,7 @@ tbody tr:nth-child(even) {
     background-color: #3a3a3a; /* helleres Grau */
 }
 
-/* Hover */
+/* Hover-Effekt */
 tr:hover {
     background-color: #505050;
 }
@@ -45,7 +45,7 @@ td.checkbox-cell {
     width: 40px;
 }
 
-/* Abgehakt: unterschiedliche Grüntöne je nach originaler Farbe */
+/* Abgehakt: unterschiedliche Grüntöne je nach ursprünglicher Farbe */
 tr.selected:nth-child(odd) {
     background-color: #006600; /* dunkleres Grün für dunkle Grauzellen */
 }
@@ -67,11 +67,35 @@ tr.selected:nth-child(even) {
 <th>Stacks</th>
 <th></th>
 </tr>
+
+<!-- Animiertes Logo direkt über den Spalten -->
+<tr>
+    <th colspan="4" style="text-align:center; background-color:#1f1f1f; border:none;">
+        <img id="logo" src="images/glock_00.png" alt="Logo" style="width:80px; height:80px;">
+    </th>
+</tr>
 </thead>
 <tbody id="output"></tbody>
 </table>
 
 <script>
+// ------------------
+// Animiertes Logo
+// ------------------
+const logo = document.getElementById("logo");
+const frames = 10; // Anzahl der PNG-Dateien (00 bis 09)
+let currentFrame = 0;
+
+setInterval(() => {
+    currentFrame = (currentFrame + 1) % frames;
+    const frameNumber = String(currentFrame).padStart(2, '0'); // 00, 01, 02…
+    logo.src = `images/glock_${frameNumber}.png`;
+}, 100); // 100ms pro Frame = 10 FPS
+
+// ------------------
+// Materialliste
+// ------------------
+
 // Berechnung der Stacks
 function getStacks(total){
     const stacks = Math.floor(total/64);
