@@ -15,7 +15,6 @@
 | Eichenlaub                  |   170 |     170 |         0 |
 | Polierter Andesit           |   168 |     168 |         0 |
 | Polierte Andesittreppe      |   152 |     152 |         0 |
-| Fichtenholzzaun             |   148 |     148 |         0 |
 | Bruchsteinmauer             |   138 |     138 |         0 |
 | Eichenholzfalltür           |   110 |     110 |         0 |
 | Lagerfeuer                  |   108 |     108 |         0 |
