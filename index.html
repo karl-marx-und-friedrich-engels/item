@@ -3,20 +3,23 @@
 <head>
 <meta charset="UTF-8">
 <title>Materialliste</title>
-<link rel="icon" href="Knowledge_Book_JE2.png"> <!-- Statisches Favicon -->
+
+<!-- Favicon -->
+<link rel="icon" href="Knowledge_Book_JE2.png">
+
 <style>
 body {
     font-family: Arial, sans-serif;
     background-color: #1a1a1a;
     color: #fff;
     padding: 20px;
-    text-align: center; /* Überschrift und Logo zentrieren */
+    text-align: center;
 }
 
-#header-container {
+#header {
     display: flex;
-    align-items: center;
     justify-content: center;
+    align-items: center;
     gap: 15px;
     margin-bottom: 20px;
 }
@@ -26,14 +29,9 @@ body {
     height: 80px;
 }
 
-h1 {
-    margin: 0;
-}
-
 table {
     width: 100%;
     border-collapse: collapse;
-    margin: 0 auto;
 }
 
 th, td {
@@ -46,37 +44,39 @@ th {
     background-color: #222;
 }
 
+/* Grautöne */
 tbody tr:nth-child(odd) {
     background-color: #2b2b2b;
 }
-
 tbody tr:nth-child(even) {
     background-color: #3a3a3a;
 }
 
+/* Hover */
 tr:hover {
     background-color: #505050;
 }
 
+/* Checkbox */
 td.checkbox-cell {
     width: 40px;
 }
 
+/* Grün beim Abhaken */
 tr.selected:nth-child(odd) {
     background-color: #006600;
 }
-
 tr.selected:nth-child(even) {
     background-color: #00aa00;
 }
 </style>
 </head>
+
 <body>
 
-<!-- Header mit Überschrift und Logo -->
-<div id="header-container">
+<div id="header">
     <h1>Materialliste</h1>
-    <img id="logo" src="resized_1024_clock_00.png" alt="Logo">
+    <img id="logo" src="resized_1024_clock_00.png">
 </div>
 
 <table>
@@ -92,46 +92,52 @@ tr.selected:nth-child(even) {
 </table>
 
 <script>
-// -------------------
-// Clock-Animation
-// -------------------
+// ==========================
+// CLOCK ANIMATION
+// ==========================
 const logo = document.getElementById("logo");
 const frames = 64;
-const preloadedImages = [];
+const images = [];
 
-// Bilder preloaden
+// preload aller Frames
 for (let i = 0; i < frames; i++) {
     const img = new Image();
-    img.src = `Clock_${String(i).padStart(2,'0')}.png`;
-    preloadedImages.push(img);
+    img.src = `resized_1024_clock_${String(i).padStart(2,'0')}.png`;
+    images.push(img);
 }
 
-// Smooth Animation: 20 FPS
-let currentFrame = 0;
+// Animation (smooth ~20 FPS)
+let current = 0;
 setInterval(() => {
-    logo.src = preloadedImages[currentFrame].src;
-    currentFrame = (currentFrame + 1) % frames;
-}, 50); // 50ms pro Frame → 20 FPS
+    logo.src = images[current].src;
+    current = (current + 1) % frames;
+}, 50);
 
-// -------------------
-// Materialliste laden
-// -------------------
+
+// ==========================
+// MATERIAL LISTE
+// ==========================
+
 function getStacks(total){
     const stacks = Math.floor(total/64);
     const rest = total % 64;
-    if(stacks===0) return rest + " Blöcke";
-    if(rest===0) return stacks + " Stacks";
+    if(stacks === 0) return rest + " Blöcke";
+    if(rest === 0) return stacks + " Stacks";
     return stacks + " Stacks + " + rest;
 }
 
 function parseLine(line){
     line = line.trim();
     if(!line || line.startsWith('+') || line.startsWith('| Item') || line.startsWith('| Material List')) return null;
+
     const parts = line.split('|').map(p => p.trim()).filter(p => p);
     if(parts.length < 2) return null;
+
     const name = parts[0];
     const total = parseInt(parts[1].replace(/\s+/g, ''));
+
     if(isNaN(total)) return null;
+
     return {name, total};
 }
 
@@ -140,6 +146,7 @@ fetch('material_list_2026-03-29_16.54.28.txt')
 .then(text => {
     const lines = text.split("\n");
     const out = document.getElementById("output");
+
     lines.forEach(line => {
         const item = parseLine(line);
         if(!item) return;
@@ -148,8 +155,10 @@ fetch('material_list_2026-03-29_16.54.28.txt')
 
         const nameCell = document.createElement("td");
         nameCell.textContent = item.name;
+
         const totalCell = document.createElement("td");
         totalCell.textContent = item.total;
+
         const stacksCell = document.createElement("td");
         stacksCell.textContent = getStacks(item.total);
 
@@ -157,9 +166,11 @@ fetch('material_list_2026-03-29_16.54.28.txt')
         checkbox.type = "checkbox";
         checkbox.style.width = "24px";
         checkbox.style.height = "24px";
+
         checkbox.addEventListener('change', () => {
             row.classList.toggle('selected', checkbox.checked);
         });
+
         const checkboxCell = document.createElement("td");
         checkboxCell.className = "checkbox-cell";
         checkboxCell.appendChild(checkbox);
@@ -172,7 +183,8 @@ fetch('material_list_2026-03-29_16.54.28.txt')
         out.appendChild(row);
     });
 })
-.catch(err => console.error("Fehler beim Laden:", err));
+.catch(err => console.error("Fehler:", err));
+
 </script>
 
 </body>
