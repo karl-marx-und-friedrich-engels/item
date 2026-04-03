@@ -3,17 +3,37 @@
 <head>
 <meta charset="UTF-8">
 <title>Materialliste</title>
+<link rel="icon" href="Clock_00.png"> <!-- Statisches Favicon -->
 <style>
 body {
     font-family: Arial, sans-serif;
     background-color: #1a1a1a;
     color: #fff;
     padding: 20px;
+    text-align: center; /* Überschrift und Logo zentrieren */
+}
+
+#header-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+#logo {
+    width: 80px;
+    height: 80px;
+}
+
+h1 {
+    margin: 0;
 }
 
 table {
     width: 100%;
     border-collapse: collapse;
+    margin: 0 auto;
 }
 
 th, td {
@@ -26,38 +46,38 @@ th {
     background-color: #222;
 }
 
-/* Grautöne für Zeilen */
 tbody tr:nth-child(odd) {
-    background-color: #2b2b2b; /* dunkleres Grau */
+    background-color: #2b2b2b;
 }
 
 tbody tr:nth-child(even) {
-    background-color: #3a3a3a; /* helleres Grau */
+    background-color: #3a3a3a;
 }
 
-/* Hover-Effekt */
 tr:hover {
     background-color: #505050;
 }
 
-/* Checkbox-Zelle rechts, größer */
 td.checkbox-cell {
     width: 40px;
 }
 
-/* Abgehakt: unterschiedliche Grüntöne je nach ursprünglicher Farbe */
 tr.selected:nth-child(odd) {
-    background-color: #006600; /* dunkleres Grün */
+    background-color: #006600;
 }
 
 tr.selected:nth-child(even) {
-    background-color: #00aa00; /* helleres Grün */
+    background-color: #00aa00;
 }
 </style>
 </head>
 <body>
 
-<h1>Materialliste</h1>
+<!-- Header mit Überschrift und Logo -->
+<div id="header-container">
+    <h1>Materialliste</h1>
+    <img id="logo" src="Clock_00.png" alt="Logo">
+</div>
 
 <table>
 <thead>
@@ -67,45 +87,43 @@ tr.selected:nth-child(even) {
 <th>Stacks</th>
 <th></th>
 </tr>
-
-<!-- Animiertes Clock-Logo direkt über den Spalten -->
-<tr>
-    <th colspan="4" style="text-align:center; background-color:#1f1f1f; border:none;">
-        <img id="logo" src="Clock_00.png" alt="Logo" style="width:80px; height:80px;">
-    </th>
-</tr>
 </thead>
 <tbody id="output"></tbody>
 </table>
 
 <script>
-// ------------------
-// Animiertes Clock-Logo
-// ------------------
+// -------------------
+// Clock-Animation
+// -------------------
 const logo = document.getElementById("logo");
-const frames = 64; // Clock_00 bis Clock_63
+const frames = 64;
+const preloadedImages = [];
+
+// Bilder preloaden
+for (let i = 0; i < frames; i++) {
+    const img = new Image();
+    img.src = `Clock_${String(i).padStart(2,'0')}.png`;
+    preloadedImages.push(img);
+}
+
+// Smooth Animation: 20 FPS
 let currentFrame = 0;
-
 setInterval(() => {
+    logo.src = preloadedImages[currentFrame].src;
     currentFrame = (currentFrame + 1) % frames;
-    const frameNumber = String(currentFrame).padStart(2, '0'); // 00, 01, … 63
-    logo.src = `Clock_${frameNumber}.png`; // direkt im Repository
-}, 100); // 100ms pro Frame = 10 FPS
+}, 50); // 50ms pro Frame → 20 FPS
 
-// ------------------
-// Materialliste
-// ------------------
-
-// Berechnung der Stacks
+// -------------------
+// Materialliste laden
+// -------------------
 function getStacks(total){
     const stacks = Math.floor(total/64);
     const rest = total % 64;
-    if(stacks === 0) return rest + " Blöcke";
-    if(rest === 0) return stacks + " Stacks";
+    if(stacks===0) return rest + " Blöcke";
+    if(rest===0) return stacks + " Stacks";
     return stacks + " Stacks + " + rest;
 }
 
-// Parsen der Zeilen
 function parseLine(line){
     line = line.trim();
     if(!line || line.startsWith('+') || line.startsWith('| Item') || line.startsWith('| Material List')) return null;
@@ -117,49 +135,44 @@ function parseLine(line){
     return {name, total};
 }
 
-// Materialliste laden
 fetch('material_list_2026-03-29_16.54.28.txt')
-    .then(res => res.text())
-    .then(text => {
-        const lines = text.split("\n");
-        const out = document.getElementById("output");
-        lines.forEach(line => {
-            const item = parseLine(line);
-            if(!item) return;
+.then(res => res.text())
+.then(text => {
+    const lines = text.split("\n");
+    const out = document.getElementById("output");
+    lines.forEach(line => {
+        const item = parseLine(line);
+        if(!item) return;
 
-            const row = document.createElement("tr");
+        const row = document.createElement("tr");
 
-            // Zellen
-            const nameCell = document.createElement("td");
-            nameCell.textContent = item.name;
-            const totalCell = document.createElement("td");
-            totalCell.textContent = item.total;
-            const stacksCell = document.createElement("td");
-            stacksCell.textContent = getStacks(item.total);
+        const nameCell = document.createElement("td");
+        nameCell.textContent = item.name;
+        const totalCell = document.createElement("td");
+        totalCell.textContent = item.total;
+        const stacksCell = document.createElement("td");
+        stacksCell.textContent = getStacks(item.total);
 
-            // Checkbox
-            const checkbox = document.createElement("input");
-            checkbox.type = "checkbox";
-            checkbox.style.width = "24px";
-            checkbox.style.height = "24px";
-            checkbox.addEventListener('change', () => {
-                row.classList.toggle('selected', checkbox.checked);
-            });
-            const checkboxCell = document.createElement("td");
-            checkboxCell.className = "checkbox-cell";
-            checkboxCell.appendChild(checkbox);
-
-            row.appendChild(nameCell);
-            row.appendChild(totalCell);
-            row.appendChild(stacksCell);
-            row.appendChild(checkboxCell);
-
-            out.appendChild(row);
+        const checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.style.width = "24px";
+        checkbox.style.height = "24px";
+        checkbox.addEventListener('change', () => {
+            row.classList.toggle('selected', checkbox.checked);
         });
-    })
-    .catch(err => {
-        console.error("Fehler beim Laden der Materialliste:", err);
+        const checkboxCell = document.createElement("td");
+        checkboxCell.className = "checkbox-cell";
+        checkboxCell.appendChild(checkbox);
+
+        row.appendChild(nameCell);
+        row.appendChild(totalCell);
+        row.appendChild(stacksCell);
+        row.appendChild(checkboxCell);
+
+        out.appendChild(row);
     });
+})
+.catch(err => console.error("Fehler beim Laden:", err));
 </script>
 
 </body>
