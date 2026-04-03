@@ -11,8 +11,8 @@ body {
     background-color: #1a1a1a;
     color: #fff;
     padding: 20px;
-    text-align: center;
     margin: 0;
+    text-align: center;
 }
 
 /* HEADER + LOGO */
@@ -103,6 +103,20 @@ tr.selected:nth-child(odd) {
 tr.selected:nth-child(even) {
     background-color: #00aa00;
 }
+
+button.copy-btn {
+    padding: 4px 8px;
+    margin-left: 5px;
+    cursor: pointer;
+    border: none;
+    border-radius: 4px;
+    background-color: #007700;
+    color: white;
+}
+
+button.copy-btn:hover {
+    background-color: #00aa00;
+}
 </style>
 </head>
 
@@ -111,17 +125,18 @@ tr.selected:nth-child(even) {
 <!-- MENU -->
 <div id="menuButton" onclick="toggleMenu()">☰</div>
 <div id="menu">
-    <a href="#material">Materialliste</a>
-    <a href="#waypoints">Waypoints</a>
+    <a href="#" onclick="showSection('material')">Materialliste</a>
+    <a href="#" onclick="showSection('waypoints')">Waypoints</a>
 </div>
 
 <!-- HEADER -->
 <div id="header">
-    <h1 id="material">Materialliste</h1>
+    <h1>Materialliste</h1>
     <img id="logo" src="resized_1024_clock_00.png">
 </div>
 
-<!-- Materialliste Tabelle -->
+<!-- MATERIALLISTE -->
+<div id="material" style="display:block;">
 <table>
 <thead>
 <tr>
@@ -133,9 +148,11 @@ tr.selected:nth-child(even) {
 </thead>
 <tbody id="output"></tbody>
 </table>
+</div>
 
-<!-- Waypoints Tabelle -->
-<h2 id="waypoints">Waypoints</h2>
+<!-- WAYPOINTS -->
+<div id="waypoints" style="display:none;">
+<h2>Waypoints</h2>
 <table>
 <thead>
 <tr>
@@ -143,10 +160,12 @@ tr.selected:nth-child(even) {
 <th>X</th>
 <th>Y</th>
 <th>Z</th>
+<th>Aktion</th>
 </tr>
 </thead>
 <tbody id="waypointsTable"></tbody>
 </table>
+</div>
 
 <script>
 // ==========================
@@ -155,6 +174,11 @@ tr.selected:nth-child(even) {
 function toggleMenu(){
     const menu = document.getElementById("menu");
     menu.style.display = menu.style.display === "flex" ? "none" : "flex";
+}
+
+function showSection(section){
+    document.getElementById('material').style.display = section === 'material' ? 'block' : 'none';
+    document.getElementById('waypoints').style.display = section === 'waypoints' ? 'block' : 'none';
 }
 
 // ==========================
@@ -174,7 +198,7 @@ let current = 0;
 setInterval(() => {
     logo.src = images[current].src;
     current = (current + 1) % frames;
-}, 50); // 50ms = 20 FPS
+}, 50); // 20 FPS
 
 // ==========================
 // MATERIAL LISTE
@@ -263,16 +287,30 @@ fetch('waypoints.txt')
 
         const row = document.createElement("tr");
 
-        parts.forEach(value => {
+        parts.forEach((value, index) => {
             const td = document.createElement("td");
             td.textContent = value;
             row.appendChild(td);
         });
 
+        const actionTd = document.createElement("td");
+        const copyBtn = document.createElement("button");
+        copyBtn.textContent = "Kopieren";
+        copyBtn.className = "copy-btn";
+        copyBtn.addEventListener('click', () => {
+            const coords = parts[1] + ", " + parts[2] + ", " + parts[3];
+            navigator.clipboard.writeText(coords);
+            copyBtn.textContent = "✔";
+            setTimeout(() => copyBtn.textContent = "Kopieren", 1000);
+        });
+        actionTd.appendChild(copyBtn);
+        row.appendChild(actionTd);
+
         out.appendChild(row);
     });
 })
 .catch(err => console.error("Waypoint Fehler:", err));
+
 </script>
 
 </body>
