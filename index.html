@@ -26,24 +26,32 @@ th {
     background-color: #222;
 }
 
+/* Grautöne für Zeilen */
 tbody tr:nth-child(odd) {
-    background-color: #2b2b2b;
+    background-color: #2b2b2b; /* dunkleres Grau */
 }
 
 tbody tr:nth-child(even) {
-    background-color: #3a3a3a;
+    background-color: #3a3a3a; /* helleres Grau */
 }
 
+/* Hover */
 tr:hover {
     background-color: #505050;
 }
 
-tr.selected {
-    background-color: #008000;
+/* Checkbox-Zelle rechts, größer */
+td.checkbox-cell {
+    width: 40px;
 }
 
-td.checkbox-cell {
-    width: 24px;
+/* Abgehakt: unterschiedliche Grüntöne je nach originaler Farbe */
+tr.selected:nth-child(odd) {
+    background-color: #006600; /* dunkleres Grün für dunkle Grauzellen */
+}
+
+tr.selected:nth-child(even) {
+    background-color: #00aa00; /* helleres Grün für helle Grauzellen */
 }
 </style>
 </head>
@@ -54,10 +62,10 @@ td.checkbox-cell {
 <table>
 <thead>
 <tr>
-<th></th>
 <th>Item</th>
 <th>Total</th>
 <th>Stacks</th>
+<th></th>
 </tr>
 </thead>
 <tbody id="output"></tbody>
@@ -97,18 +105,7 @@ fetch('material_list_2026-03-29_16.54.28.txt')
 
             const row = document.createElement("tr");
 
-            // Checkbox
-            const checkbox = document.createElement("input");
-            checkbox.type = "checkbox";
-            checkbox.addEventListener('change', () => {
-                row.classList.toggle('selected', checkbox.checked);
-            });
-
-            const checkboxCell = document.createElement("td");
-            checkboxCell.className = "checkbox-cell";
-            checkboxCell.appendChild(checkbox);
-
-            // Restliche Zellen
+            // Zellen
             const nameCell = document.createElement("td");
             nameCell.textContent = item.name;
             const totalCell = document.createElement("td");
@@ -116,10 +113,22 @@ fetch('material_list_2026-03-29_16.54.28.txt')
             const stacksCell = document.createElement("td");
             stacksCell.textContent = getStacks(item.total);
 
-            row.appendChild(checkboxCell);
+            // Checkbox
+            const checkbox = document.createElement("input");
+            checkbox.type = "checkbox";
+            checkbox.style.width = "24px";
+            checkbox.style.height = "24px";
+            checkbox.addEventListener('change', () => {
+                row.classList.toggle('selected', checkbox.checked);
+            });
+            const checkboxCell = document.createElement("td");
+            checkboxCell.className = "checkbox-cell";
+            checkboxCell.appendChild(checkbox);
+
             row.appendChild(nameCell);
             row.appendChild(totalCell);
             row.appendChild(stacksCell);
+            row.appendChild(checkboxCell);
 
             out.appendChild(row);
         });
