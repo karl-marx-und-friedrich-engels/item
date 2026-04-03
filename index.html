@@ -47,11 +47,11 @@ td.checkbox-cell {
 
 /* Abgehakt: unterschiedliche Grüntöne je nach ursprünglicher Farbe */
 tr.selected:nth-child(odd) {
-    background-color: #006600; /* dunkleres Grün für dunkle Grauzellen */
+    background-color: #006600; /* dunkleres Grün */
 }
 
 tr.selected:nth-child(even) {
-    background-color: #00aa00; /* helleres Grün für helle Grauzellen */
+    background-color: #00aa00; /* helleres Grün */
 }
 </style>
 </head>
@@ -68,10 +68,10 @@ tr.selected:nth-child(even) {
 <th></th>
 </tr>
 
-<!-- Animiertes Logo direkt über den Spalten -->
+<!-- Animiertes Clock-Logo direkt über den Spalten -->
 <tr>
     <th colspan="4" style="text-align:center; background-color:#1f1f1f; border:none;">
-        <img id="logo" src="images/glock_00.png" alt="Logo" style="width:80px; height:80px;">
+        <img id="logo" src="Clock_00.png" alt="Logo" style="width:80px; height:80px;">
     </th>
 </tr>
 </thead>
@@ -80,16 +80,16 @@ tr.selected:nth-child(even) {
 
 <script>
 // ------------------
-// Animiertes Logo
+// Animiertes Clock-Logo
 // ------------------
 const logo = document.getElementById("logo");
-const frames = 10; // Anzahl der PNG-Dateien (00 bis 09)
+const frames = 64; // Clock_00 bis Clock_63
 let currentFrame = 0;
 
 setInterval(() => {
     currentFrame = (currentFrame + 1) % frames;
-    const frameNumber = String(currentFrame).padStart(2, '0'); // 00, 01, 02…
-    logo.src = `images/glock_${frameNumber}.png`;
+    const frameNumber = String(currentFrame).padStart(2, '0'); // 00, 01, … 63
+    logo.src = `Clock_${frameNumber}.png`; // direkt im Repository
 }, 100); // 100ms pro Frame = 10 FPS
 
 // ------------------
