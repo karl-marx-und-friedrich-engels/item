@@ -11,7 +11,6 @@
 | Schwarzeichenholzstufe      |   241 |     241 |         0 |
 | Entrindeter Fichtenstamm    |   217 |     217 |         0 |
 | Polierte Andesitstufe       |   172 |     172 |         0 |
-| Eichenlaub                  |   170 |     170 |         0 |
 | Polierter Andesit           |   168 |     168 |         0 |
 | Polierte Andesittreppe      |   152 |     152 |         0 |
 | Bruchsteinmauer             |   138 |     138 |         0 |
