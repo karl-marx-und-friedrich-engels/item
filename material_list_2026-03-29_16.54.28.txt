@@ -10,7 +10,6 @@
 | Ziegelsteine                |    58 |      58 |         0 |
 | Eisengitter                 |    51 |      51 |         0 |
 | Graues Glas                 |    46 |      46 |         0 |
-| Leiter                      |    40 |      40 |         0 |
 | Fichtenholztür              |    37 |      37 |         0 |
 | Laterne                     |    37 |      37 |         0 |
 | Eisenkette                  |    35 |      35 |         0 |
