@@ -1,4 +1,4 @@
-Name: Name des Projekts
+Name: Haus Bau
 Active: 1      <-- 1=An, 0=Aus
 Materialliste:
 
