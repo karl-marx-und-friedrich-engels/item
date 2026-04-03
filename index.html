@@ -22,6 +22,15 @@ th, td {
 th {
     background-color: #333;
 }
+tr:hover {
+    background-color: #2a2a2a;
+}
+tr.selected {
+    background-color: #006600;
+}
+td.checkbox-cell {
+    width: 24px;
+}
 </style>
 </head>
 <body>
@@ -31,6 +40,7 @@ th {
 <table>
 <thead>
 <tr>
+<th></th>
 <th>Item</th>
 <th>Total</th>
 <th>Stacks</th>
@@ -49,7 +59,7 @@ function getStacks(total){
     return stacks + " Stacks + " + rest;
 }
 
-// Parsen einer Zeile im aktuellen Format
+// Parsen der Zeilen
 function parseLine(line){
     line = line.trim();
     if(!line || line.startsWith('+') || line.startsWith('| Item') || line.startsWith('| Material List')) return null;
@@ -61,7 +71,7 @@ function parseLine(line){
     return {name, total};
 }
 
-// Materialliste automatisch laden (gleicher Ordner)
+// Materialliste laden
 fetch('material_list_2026-03-29_16.54.28.txt')
     .then(res => res.text())
     .then(text => {
@@ -70,12 +80,33 @@ fetch('material_list_2026-03-29_16.54.28.txt')
         lines.forEach(line => {
             const item = parseLine(line);
             if(!item) return;
+
             const row = document.createElement("tr");
-            row.innerHTML = `
-                <td>${item.name}</td>
-                <td>${item.total}</td>
-                <td>${getStacks(item.total)}</td>
-            `;
+
+            // Checkbox
+            const checkbox = document.createElement("input");
+            checkbox.type = "checkbox";
+            checkbox.addEventListener('change', () => {
+                row.classList.toggle('selected', checkbox.checked);
+            });
+
+            const checkboxCell = document.createElement("td");
+            checkboxCell.className = "checkbox-cell";
+            checkboxCell.appendChild(checkbox);
+
+            // Restliche Zellen
+            const nameCell = document.createElement("td");
+            nameCell.textContent = item.name;
+            const totalCell = document.createElement("td");
+            totalCell.textContent = item.total;
+            const stacksCell = document.createElement("td");
+            stacksCell.textContent = getStacks(item.total);
+
+            row.appendChild(checkboxCell);
+            row.appendChild(nameCell);
+            row.appendChild(totalCell);
+            row.appendChild(stacksCell);
+
             out.appendChild(row);
         });
     })
