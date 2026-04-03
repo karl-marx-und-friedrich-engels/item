@@ -3,7 +3,6 @@
 +-----------------------------+-------+---------+-----------+
 | Item                        | Total | Missing | Available |
 +-----------------------------+-------+---------+-----------+
-| Andesit                     |   718 |     718 |         0 |
 | Schwarzeichenholztreppe     |   322 |     322 |         0 |
 | Entrindetes Eichenholz      |   288 |     288 |         0 |
 | Grobe Erde                  |   274 |     274 |         0 |
