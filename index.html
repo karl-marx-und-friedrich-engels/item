@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8">
-<title>Materialliste mit Bildern</title>
+<title>Materialliste</title>
 <style>
 body {
     font-family: Arial, sans-serif;
@@ -17,24 +17,6 @@ body {
     background: #2a2a2a;
     padding: 20px;
     border-radius: 8px;
-}
-
-textarea {
-    width: 100%;
-    height: 150px;
-    background: #111;
-    color: #0f0;
-    padding: 10px;
-    font-family: monospace;
-}
-
-button {
-    margin-top: 10px;
-    padding: 10px;
-    background: #00aa55;
-    border: none;
-    color: white;
-    cursor: pointer;
 }
 
 table {
@@ -52,11 +34,6 @@ th, td {
 th {
     background: #333;
 }
-
-img {
-    width: 32px;
-    height: 32px;
-}
 </style>
 </head>
 <body>
@@ -64,14 +41,9 @@ img {
 <div id="container">
 <h1>Materialliste</h1>
 
-<textarea id="input" placeholder="Hier Materialliste einfügen"></textarea><br>
-<input type="file" id="fileInput"><br>
-<button onclick="convert()">Umwandeln</button>
-
 <table>
 <thead>
 <tr>
-<th>Bild</th>
 <th>Item</th>
 <th>Total</th>
 <th>Stacks</th>
@@ -83,68 +55,6 @@ img {
 </div>
 
 <script>
-// ---------------------------
-// BILDER ARRAY
-// ---------------------------
-// Hier alle Dateinamen deiner Bilder einfügen (vom images-Ordner)
-const images = [
-"yellow_wool.png",
-"redstone_block.png",
-"redstone_torch.png",
-"stone.png",
-"oak_planks.png",
-"spruce_planks.png",
-"furnace.png",
-"chest.png",
-"ladder.png",
-"lantern.png"
-];
-
-// ---------------------------
-// HILFSFUNKTIONEN
-// ---------------------------
-function normalize(text) {
-    return text.toLowerCase()
-               .replace(/ä/g, "ae")
-               .replace(/ö/g, "oe")
-               .replace(/ü/g, "ue")
-               .replace(/ß/g, "ss")
-               .replace(/[^a-z0-9]/g, "");
-}
-
-// Suche bestes Bild für einen Itemnamen
-function findBestImage(itemName) {
-    const nItem = normalize(itemName);
-    let best = null;
-    let bestScore = 0;
-
-    images.forEach(img => {
-        const name = img.replace(".png", "");
-        const nImg = normalize(name);
-        let score = 0;
-
-        if(nItem.includes(nImg)) score += 2;
-        if(nImg.includes(nItem)) score += 2;
-
-        for(let i=0; i<nImg.length; i++){
-            if(nItem.includes(nImg[i])) score++;
-        }
-
-        if(score > bestScore){
-            bestScore = score;
-            best = img;
-        }
-    });
-
-    // Fallback: wenn kein Score über 2, nimm erstes Teilmatch
-    if(bestScore < 3){
-        const fallback = images.find(img => normalize(img).includes(nItem.split("_")[0]));
-        if(fallback) return fallback;
-        return null;
-    }
-    return best;
-}
-
 // Berechnung der Stacks
 function getStacks(total){
     const stacks = Math.floor(total/64);
@@ -154,7 +64,7 @@ function getStacks(total){
     return stacks + " Stacks + " + rest;
 }
 
-// Parsen einer Zeile
+// Parsen einer Zeile der Materialliste
 function parse(line){
     if(!line.includes("|")) return null;
     const parts = line.split("|").map(p => p.trim()).filter(p => p);
@@ -165,11 +75,12 @@ function parse(line){
     return {name, total};
 }
 
-// ---------------------------
-// MAIN
-// ---------------------------
-function convert() {
-    function process(text){
+// GitHub-Rohlink zur Materialliste
+const repoURL = "https://raw.githubusercontent.com/USERNAME/REPO/main/material_list_2026-03-29_16.54.28.txt"; // <-- anpassen
+
+fetch(repoURL)
+    .then(res => res.text())
+    .then(text => {
         const lines = text.split("\n");
         const out = document.getElementById("output");
         out.innerHTML = "";
@@ -178,33 +89,18 @@ function convert() {
             const item = parse(line);
             if(!item) return;
 
-            const img = findBestImage(item.name);
-
-            // DEBUG: Console zeigt, was matched wird
-            console.log("Item:", item.name, "=> Matched Image:", img);
-
             const row = document.createElement("tr");
             row.innerHTML = `
-                <td>
-                  ${img ? `<img src="images/${img}" onerror="this.onerror=null;this.src='https://via.placeholder.com/32?text=?';">` : "❌"}
-                </td>
                 <td>${item.name}</td>
                 <td>${item.total}</td>
                 <td>${getStacks(item.total)}</td>
             `;
             out.appendChild(row);
         });
-    }
-
-    const file = document.getElementById("fileInput").files[0];
-    if(file){
-        const reader = new FileReader();
-        reader.onload = e => process(e.target.result);
-        reader.readAsText(file);
-    } else {
-        process(document.getElementById("input").value);
-    }
-}
+    })
+    .catch(err => {
+        console.error("Fehler beim Laden der Materialliste:", err);
+    });
 </script>
 
 </body>
