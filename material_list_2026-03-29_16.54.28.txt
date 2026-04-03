@@ -4,7 +4,6 @@
 | Item                        | Total | Missing | Available |
 +-----------------------------+-------+---------+-----------+
 | Fichtenholzbretter          |  2118 |    2118 |         0 |
-| Steinziegel                 |  1373 |    1373 |         0 |
 | Stein                       |  1336 |    1336 |         0 |
 | Fichtenholztreppe           |   814 |     814 |         0 |
 | Andesit                     |   718 |     718 |         0 |
