@@ -10,53 +10,22 @@ body {
     color: #fff;
     padding: 20px;
 }
-
-#container {
-    max-width: 1200px;
-    margin: auto;
-    background: #2c2c2c;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 0 15px rgba(0,0,0,0.5);
-}
-
-h1 {
-    text-align: center;
-    color: #00ff99;
-}
-
 table {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 20px;
-    table-layout: fixed;
-    background-color: #333;
-    border-radius: 8px;
-    overflow: hidden;
 }
-
 th, td {
-    padding: 12px;
-    border-bottom: 1px solid #444;
+    padding: 8px;
+    border: 1px solid #444;
     text-align: center;
 }
-
 th {
-    background-color: #444;
-}
-
-tr:hover {
-    background-color: #3a3a3a;
-}
-
-td {
-    word-wrap: break-word;
+    background-color: #333;
 }
 </style>
 </head>
 <body>
 
-<div id="container">
 <h1>Materialliste</h1>
 
 <table>
@@ -69,8 +38,6 @@ td {
 </thead>
 <tbody id="output"></tbody>
 </table>
-
-</div>
 
 <script>
 // Berechnung der Stacks
@@ -92,10 +59,8 @@ function parseLine(line){
     return {name, total};
 }
 
-// Raw-Link der Materialliste aus deinem GitHub-Repo
-const repoRawURL = "https://raw.githubusercontent.com/karl-marx-und-friedrich-engels/item/main/material_list_2026-03-29_16.54.28.txt";
-
-fetch(repoRawURL)
+// Materialliste automatisch laden (im gleichen Verzeichnis wie die HTML-Datei)
+fetch('material_list_2026-03-29_16.54.28.txt')
     .then(res => res.text())
     .then(text => {
         const lines = text.trim().split("\n");
