@@ -1,1 +1,8 @@
 Haus | 600 | ~ | -2000
+Unbewohnte Base, 525, 172, -855
+F, 760, 88, -2043
+Home, 642, 79, -2088
+Bothell Farm, -231, 83, 2423
+Endportal, -474, -20, 2251
+Raidfarm Totems, -474, 62, -1621
+Gunpowder Farm, -2538, 190, 13096
