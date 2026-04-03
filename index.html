@@ -60,7 +60,7 @@ function parseLine(line){
 }
 
 // Materialliste automatisch laden (im gleichen Verzeichnis wie die HTML-Datei)
-fetch('material_list_2026-03-29_16.54.28.txt')
+fetch('https://raw.githubusercontent.com/karl-marx-und-friedrich-engels/item/main/material_list_2026-03-29_16.54.28.txt')
     .then(res => res.text())
     .then(text => {
         const lines = text.trim().split("\n");
