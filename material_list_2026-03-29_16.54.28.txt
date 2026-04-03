@@ -3,7 +3,6 @@
 +-----------------------------+-------+---------+-----------+
 | Item                        | Total | Missing | Available |
 +-----------------------------+-------+---------+-----------+
-| Bruchsteinmauer             |   138 |     138 |         0 |
 | Lagerfeuer                  |   108 |     108 |         0 |
 | Graue Glasscheibe           |    93 |      93 |         0 |
 | Moosblock                   |    72 |      72 |         0 |
@@ -11,17 +10,13 @@
 | Bücherregal                 |    70 |      70 |         0 |
 | Ziegelsteine                |    58 |      58 |         0 |
 | Eisengitter                 |    51 |      51 |         0 |
-| Bruchstein                  |    48 |      48 |         0 |
 | Graues Glas                 |    46 |      46 |         0 |
-| Steinziegeltreppe           |    45 |      45 |         0 |
 | Ofen                        |    41 |      41 |         0 |
-| Steintreppe                 |    41 |      41 |         0 |
 | Leiter                      |    40 |      40 |         0 |
 | Fichtenholztür              |    37 |      37 |         0 |
 | Laterne                     |    37 |      37 |         0 |
 | Eisenkette                  |    35 |      35 |         0 |
 | Brauner Trockenbeton        |    34 |      34 |         0 |
-| Bruchsteinstufe             |    29 |      29 |         0 |
 | Glatter Stein               |    28 |      28 |         0 |
 | Andesittreppe               |    26 |      26 |         0 |
 | Ziegeltreppe                |    20 |      20 |         0 |
@@ -33,7 +28,6 @@
 | Bemooste Steinziegel        |    10 |      10 |         0 |
 | Blumentopf                  |    10 |      10 |         0 |
 | Granit                      |    10 |      10 |         0 |
-| Steinziegelmauer            |     9 |       9 |         0 |
 | Türkise Wolle               |     8 |       8 |         0 |
 | Weiße Wolle                 |     8 |       8 |         0 |
 | Leuchtstein                 |     7 |       7 |         0 |
