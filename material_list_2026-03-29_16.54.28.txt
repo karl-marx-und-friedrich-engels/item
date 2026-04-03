@@ -5,7 +5,6 @@
 +-----------------------------+-------+---------+-----------+
 | Andesit                     |   718 |     718 |         0 |
 | Schwarzeichenholztreppe     |   322 |     322 |         0 |
-| Akazienlaub                 |   294 |     294 |         0 |
 | Entrindetes Eichenholz      |   288 |     288 |         0 |
 | Grobe Erde                  |   274 |     274 |         0 |
 | Eichenstamm                 |   243 |     243 |         0 |
@@ -16,7 +15,6 @@
 | Polierter Andesit           |   168 |     168 |         0 |
 | Polierte Andesittreppe      |   152 |     152 |         0 |
 | Bruchsteinmauer             |   138 |     138 |         0 |
-| Eichenholzfalltür           |   110 |     110 |         0 |
 | Lagerfeuer                  |   108 |     108 |         0 |
 | Graue Glasscheibe           |    93 |      93 |         0 |
 | Schwarzeichenholzbretter    |    83 |      83 |         0 |
