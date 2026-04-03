@@ -29,7 +29,6 @@
 | Eisenkette                  |    35 |      35 |         0 |
 | Brauner Trockenbeton        |    34 |      34 |         0 |
 | Bruchsteinstufe             |    29 |      29 |         0 |
-| Eichenholztreppe            |    29 |      29 |         0 |
 | Glatter Stein               |    28 |      28 |         0 |
 | Andesittreppe               |    26 |      26 |         0 |
 | Ziegeltreppe                |    20 |      20 |         0 |
@@ -37,7 +36,6 @@
 | Schwarzeichenholzfalltür    |    18 |      18 |         0 |
 | Tuffstein                   |    18 |      18 |         0 |
 | Roter Teppich               |    15 |      15 |         0 |
-| Eichenholz                  |    12 |      12 |         0 |
 | Andesitmauer                |    10 |      10 |         0 |
 | Bemooste Steinziegel        |    10 |      10 |         0 |
 | Blumentopf                  |    10 |      10 |         0 |
