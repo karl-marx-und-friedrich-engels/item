@@ -9,7 +9,6 @@
 | Grobe Erde                  |   274 |     274 |         0 |
 | Eichenstamm                 |   243 |     243 |         0 |
 | Schwarzeichenholzstufe      |   241 |     241 |         0 |
-| Entrindeter Fichtenstamm    |   217 |     217 |         0 |
 | Polierte Andesitstufe       |   172 |     172 |         0 |
 | Polierter Andesit           |   168 |     168 |         0 |
 | Polierte Andesittreppe      |   152 |     152 |         0 |
