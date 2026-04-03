@@ -2,203 +2,242 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8">
-<title>Projektübersicht - Minecraft Welt</title>
-<link rel="icon" type="image/png" href="Knowledge_Book_JE2.png">
+<title>Minecraft Projektübersicht</title>
 <style>
-  body { font-family: Arial, sans-serif; background: #1e1e1e; color: #eee; margin: 0; padding: 0;}
-  header { display: flex; justify-content: center; align-items: center; padding: 10px; background: #2c2c2c; position: relative;}
-  header h1 { margin: 0 20px; }
-  #serverStatus { margin-left: 20px; font-size: 14px; }
-  #logo { width: 48px; height: 48px; margin-left: 10px; }
-  .material-table { margin: 20px auto; border-collapse: collapse; width: 90%; max-width: 1000px;}
-  .material-table th, .material-table td { border: 1px solid #555; padding: 8px; text-align: left; }
-  .row-light { background-color: #3a5f3a; }
-  .row-dark { background-color: #2a4f2a; }
-  .checked { background-color: #1f7a1f !important; text-decoration: line-through;}
-  .progress-bar { width: 90%; max-width: 1000px; height: 20px; background: #555; margin: 0 auto 20px; border-radius: 5px; overflow: hidden;}
-  .progress-bar-fill { height: 100%; width: 0; background: #0f0; transition: width 0.5s; }
-  .checkbox-cell { text-align: center; width: 30px;}
-  /* Drei-Striche Menü */
-  #menuButton { position: absolute; right: 20px; top: 15px; cursor: pointer; }
-  #menuButton div { width: 25px; height: 3px; background-color: #eee; margin: 5px 0; }
-  #menuContent { display: none; position: absolute; right: 20px; top: 50px; background: #2c2c2c; padding: 10px; border: 1px solid #555; border-radius: 5px; }
-  #menuContent button { display: block; margin: 5px 0; width: 150px; }
-  #waypoints, #materialWrapper { display: none; }
+body {
+    font-family: Arial, sans-serif;
+    background-color: #1e1e1e;
+    color: #ddd;
+    margin: 0;
+    padding: 0;
+}
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #111;
+    padding: 10px;
+}
+#menuLeft {
+    display: flex;
+    gap: 20px;
+    font-weight: bold;
+    cursor: pointer;
+}
+#menuLeft div.active {
+    text-decoration: underline;
+}
+#serverStatus {
+    text-align: right;
+}
+#clock {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    top: 10px;
+    width: 50px;
+    height: 50px;
+}
+#content {
+    padding: 20px;
+}
+#materialWrapper, #waypointsWrapper {
+    display: none;
+}
+#materialWrapper.active, #waypointsWrapper.active {
+    display: block;
+}
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+th, td {
+    border: 1px solid #444;
+    padding: 5px;
+    text-align: left;
+}
+tr:nth-child(even) {
+    background-color: #2a2a2a;
+}
+tr:nth-child(odd) {
+    background-color: #202020;
+}
+tr.checked {
+    background-color: #336633 !important;
+}
+.copyBtn {
+    cursor: pointer;
+    padding: 2px 5px;
+    background-color: #444;
+    color: #ddd;
+    border-radius: 3px;
+}
+#projectStatus {
+    margin-top: 5px;
+    font-weight: bold;
+}
 </style>
 </head>
 <body>
 
 <header>
-  <img id="logo" src="resized_1024_clock_00.png" alt="Uhr">
-  <h1>Materialliste</h1>
-  <span id="serverStatus">Server: offline</span>
-  <div id="menuButton" onclick="toggleMenu()">
-    <div></div>
-    <div></div>
-    <div></div>
-  </div>
-  <div id="menuContent">
-    <button onclick="showMaterial()">Materialliste</button>
-    <button onclick="showWaypoints()">Waypoints</button>
-  </div>
+    <div id="menuLeft">
+        <div id="menuMaterial" class="active">Materialliste</div>
+        <div id="menuWaypoints">Waypoints</div>
+    </div>
+    <img id="clock" src="" alt="Uhr">
+    <div id="serverStatus">Server online: 0 / 20</div>
 </header>
 
-<div class="progress-bar"><div class="progress-bar-fill" id="progressFill"></div></div>
+<div id="content">
+    <div id="materialWrapper" class="active">
+        <div id="projectStatus"></div>
+        <table id="materialTable"></table>
+        <div id="progressBarContainer" style="background:#333; width:100%; height:20px; margin-top:10px;">
+            <div id="progressBar" style="background:#33aa33; height:100%; width:0%;"></div>
+        </div>
+    </div>
 
-<div id="materialWrapper">
-  <table class="material-table" id="materialTable">
-    <thead>
-      <tr>
-        <th>✓</th>
-        <th>Item</th>
-        <th>Total</th>
-        <th>Missing</th>
-        <th>Available</th>
-      </tr>
-    </thead>
-    <tbody id="materialBody"></tbody>
-  </table>
-</div>
-
-<div id="waypoints">
-  <h2>Waypoints</h2>
-  <table class="material-table" id="waypointTable">
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>X</th>
-        <th>Y</th>
-        <th>Z</th>
-        <th>Copy</th>
-      </tr>
-    </thead>
-    <tbody id="waypointBody"></tbody>
-  </table>
+    <div id="waypointsWrapper">
+        <table id="waypointsTable"></table>
+    </div>
 </div>
 
 <script>
-// --- Uhr Animation ---
-let frame = 0;
-let totalFrames = 64;
-let logo = document.getElementById("logo");
-function animateClock() {
-    frame = (frame + 1) % totalFrames;
-    logo.src = `resized_1024_clock_${frame.toString().padStart(2,'0')}.png`;
+// ----- Uhr Animation -----
+let clockImages = [];
+let clockIndex = 0;
+for(let i=0;i<=63;i++){
+    let img = new Image();
+    img.src = `resized_1024_clock_${String(i).padStart(2,'0')}.png`;
+    clockImages.push(img.src);
 }
-setInterval(animateClock, 80);
-
-// --- Menü ---
-function toggleMenu() {
-  let menu = document.getElementById("menuContent");
-  menu.style.display = menu.style.display === "block" ? "none" : "block";
+function updateClock(){
+    document.getElementById('clock').src = clockImages[clockIndex];
+    clockIndex = (clockIndex + 1) % clockImages.length;
+    requestAnimationFrame(updateClock);
 }
-function showMaterial() { document.getElementById("materialWrapper").style.display = "block"; document.getElementById("waypoints").style.display = "none"; }
-function showWaypoints() { document.getElementById("materialWrapper").style.display = "none"; document.getElementById("waypoints").style.display = "block"; }
+updateClock();
 
-// --- Materialliste laden ---
+// ----- Menü -----
+document.getElementById("menuMaterial").onclick = function() {
+    document.getElementById("materialWrapper").classList.add("active");
+    document.getElementById("waypointsWrapper").classList.remove("active");
+    this.classList.add("active");
+    document.getElementById("menuWaypoints").classList.remove("active");
+};
+document.getElementById("menuWaypoints").onclick = function() {
+    document.getElementById("waypointsWrapper").classList.add("active");
+    document.getElementById("materialWrapper").classList.remove("active");
+    this.classList.add("active");
+    document.getElementById("menuMaterial").classList.remove("active");
+};
+
+// ----- Materialliste -----
 async function loadMaterial() {
-    let res = await fetch("projekt1.txt"); // deine Projekt-1-Datei
-    let text = await res.text();
+    // Projektstatus aus Datei
+    let statusResp = await fetch("projects_status.txt");
+    let statusText = await statusResp.text();
+    let lines = statusText.split("\n");
+    let active = 0;
+    for(let line of lines){
+        if(line.startsWith("Projekt1:")){
+            active = parseInt(line.split(":")[1].trim());
+            break;
+        }
+    }
+    document.getElementById("projectStatus").textContent = active===1?"Projekt aktiv":"Projekt deaktiviert";
 
-    // Parse Active Status
-    let active = /Active:\s*1/.test(text);
-    if(!active) { document.getElementById("materialWrapper").innerHTML = "<p>Projekt ist deaktiviert</p>"; return; }
+    if(active !== 1){
+        document.getElementById("materialWrapper").innerHTML = "<p>Projekt deaktiviert</p>";
+        return;
+    }
 
-    // Parse Materialliste
-    let currentMatch = text.match(/Materialliste:\s*([\s\S]*?)Originalliste:/);
-    let originMatch = text.match(/Originalliste:\s*([\s\S]*)/);
+    // Projekt 1 Materialliste
+    let resp = await fetch("projekt1.txt");
+    let text = await resp.text();
+    let linesMaterial = [];
+    let linesOrigin = [];
+    let splitIndex = text.indexOf("Originalliste:");
+    if(splitIndex !== -1){
+        linesMaterial = text.substring(0, splitIndex).split("\n");
+        linesOrigin = text.substring(splitIndex).split("\n");
+    } else {
+        linesMaterial = text.split("\n");
+    }
 
-    if(!currentMatch || !originMatch) return;
-
-    let currentLines = currentMatch[1].split("\n").filter(l=>l.includes("|") && l.trim().startsWith("|"));
-    let originLines = originMatch[1].split("\n").filter(l=>l.includes("|") && l.trim().startsWith("|"));
-
-    // Hilfsfunktion parse
-    function parseTable(lines) {
+    function parseTable(lines){
         let items = [];
-        for(let line of lines) {
-            let cols = line.split("|").map(c=>c.trim());
-            if(cols.length >= 5 && !cols[1].startsWith("Item")) {
-                items.push({name: cols[1], total: parseInt(cols[2]), missing: parseInt(cols[3]), available: parseInt(cols[4])});
+        let inTable=false;
+        for(let line of lines){
+            if(line.startsWith("| Item")) { inTable=true; continue; }
+            if(inTable && line.startsWith("|")) {
+                let cols = line.split("|").map(x=>x.trim()).filter(x=>x);
+                if(cols.length>=4){
+                    items.push({name:cols[0], total:parseInt(cols[1]), missing:parseInt(cols[2]), available:parseInt(cols[3])});
+                }
             }
         }
         return items;
     }
 
-    let currentItems = parseTable(currentLines);
-    let originItems = parseTable(originLines);
+    let projectItems = parseTable(linesMaterial);
+    let originItems = parseTable(linesOrigin);
 
-    // Tabelle generieren
-    let tbody = document.getElementById("materialBody");
-    tbody.innerHTML = "";
-    for(let i=0;i<currentItems.length;i++) {
-        let row = document.createElement("tr");
-        row.className = (i%2===0) ? "row-light" : "row-dark";
+    // Tabelle anzeigen
+    let table = document.getElementById("materialTable");
+    table.innerHTML="<tr><th>Item</th><th>Total</th><th>Missing</th><th>Available</th><th>Abhaken</th></tr>";
+    projectItems.forEach((item,i)=>{
+        let tr = document.createElement("tr");
+        tr.innerHTML=`<td>${item.name}</td><td>${item.total}</td><td>${item.missing}</td><td>${item.available}</td>
+        <td><input type="checkbox" class="itemCheck"></td>`;
+        table.appendChild(tr);
+    });
 
-        let chk = document.createElement("td");
-        chk.className = "checkbox-cell";
-        let input = document.createElement("input");
-        input.type="checkbox";
-        input.onchange = ()=>{ row.classList.toggle("checked"); };
-        chk.appendChild(input);
-        row.appendChild(chk);
-
-        row.appendChild(createCell(currentItems[i].name));
-        row.appendChild(createCell(currentItems[i].total));
-        row.appendChild(createCell(currentItems[i].missing));
-        row.appendChild(createCell(currentItems[i].available));
-        tbody.appendChild(row);
-    }
-
-    // --- Prozent-Fortschritt berechnen ---
-    let totalItems = originItems.reduce((sum,it)=>sum+it.total,0);
-    let collectedItems = currentItems.reduce((sum,it)=>sum+it.total,0);
-    let percent = Math.round((collectedItems/totalItems)*100);
-    document.getElementById("progressFill").style.width = percent+"%";
+    // Fortschritt berechnen
+    let totalSum=0, collectedSum=0;
+    projectItems.forEach((p)=>{
+        totalSum+=p.total;
+        collectedSum+=p.total-p.missing;
+    });
+    document.getElementById("progressBar").style.width = ((collectedSum/totalSum)*100)+"%";
 }
 
-function createCell(text) {
-    let td = document.createElement("td");
-    td.textContent = text;
-    return td;
-}
-
-// --- Waypoints laden ---
+// ----- Waypoints -----
 async function loadWaypoints() {
-    let res = await fetch("waypoints.txt");
-    let text = await res.text();
-    let lines = text.split("\n").filter(l=>l.trim() !== "");
-    let tbody = document.getElementById("waypointBody");
-    tbody.innerHTML="";
-    for(let line of lines) {
-        let parts = line.split(",");
-        let row = document.createElement("tr");
-        ["Name","X","Y","Z"].forEach((v,i)=>{
-            let td = document.createElement("td");
-            td.textContent = parts[i] || "";
-            row.appendChild(td);
-        });
-        let btn = document.createElement("td");
-        let copyBtn = document.createElement("button");
-        copyBtn.textContent = "Copy";
-        copyBtn.onclick = ()=>{ navigator.clipboard.writeText(`${parts[1]}, ${parts[2]}, ${parts[3]}`); };
-        btn.appendChild(copyBtn);
-        row.appendChild(btn);
-        tbody.appendChild(row);
-    }
+    let resp = await fetch("waypoints.txt");
+    let text = await resp.text();
+    let lines = text.split("\n");
+    let table = document.getElementById("waypointsTable");
+    table.innerHTML="<tr><th>Name</th><th>X</th><th>Y</th><th>Z</th><th>Copy</th></tr>";
+    lines.forEach(line=>{
+        if(!line.trim()) return;
+        let [name,x,y,z]=line.split(",");
+        let tr = document.createElement("tr");
+        tr.innerHTML=`<td>${name}</td><td>${x}</td><td>${y}</td><td>${z}</td><td><span class="copyBtn">Copy</span></td>`;
+        table.appendChild(tr);
+    });
+    // Copy-Button
+    table.querySelectorAll(".copyBtn").forEach(btn=>{
+        btn.onclick=function(){
+            let row = btn.parentElement.parentElement;
+            let text=row.children[1].textContent+","+row.children[2].textContent+","+row.children[3].textContent;
+            navigator.clipboard.writeText(text);
+        }
+    });
 }
 
-// --- Serverstatus simuliert ---
-async function updateServerStatus() {
-    // Beispiel: ping über fetch oder statische Anzeige
-    document.getElementById("serverStatus").textContent = "Server: Online";
+// ----- Serverstatus simulieren -----
+async function loadServerStatus() {
+    // Hier könntest du später echte API abfragen
+    document.getElementById("serverStatus").textContent="Server online: 5 / 20";
 }
 
-// --- Initialisierung ---
+// ----- Init -----
 loadMaterial();
 loadWaypoints();
-updateServerStatus();
-showMaterial(); // initial Materialliste anzeigen
+loadServerStatus();
 </script>
 
 </body>
