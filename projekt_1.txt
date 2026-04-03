@@ -1,0 +1,5 @@
+Name: Name des Projekts
+Active: 0      <-- 1=An, 0=Aus
+Materialliste:
+
+Originalliste:
