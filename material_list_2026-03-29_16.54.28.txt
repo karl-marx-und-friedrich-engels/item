@@ -5,7 +5,6 @@
 +-----------------------------+-------+---------+-----------+
 | Lagerfeuer                  |   108 |     108 |         0 |
 | Graue Glasscheibe           |    93 |      93 |         0 |
-| Moosblock                   |    72 |      72 |         0 |
 | Fichtenholzzauntor          |    71 |      71 |         0 |
 | Bücherregal                 |    70 |      70 |         0 |
 | Ziegelsteine                |    58 |      58 |         0 |
