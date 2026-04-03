@@ -6,7 +6,7 @@
 <style>
 body {
     font-family: Arial, sans-serif;
-    background-color: #1e1e1e;
+    background-color: #1f1f1f;
     color: #fff;
     padding: 20px;
 }
@@ -14,25 +14,49 @@ body {
 #container {
     max-width: 1200px;
     margin: auto;
-    background: #2a2a2a;
+    background: #2c2c2c;
     padding: 20px;
-    border-radius: 8px;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0,0,0,0.5);
+}
+
+h1 {
+    text-align: center;
+    color: #00ff99;
 }
 
 table {
     width: 100%;
-    margin-top: 20px;
     border-collapse: collapse;
+    margin-top: 20px;
+    table-layout: fixed;
+    background-color: #333;
+    border-radius: 8px;
+    overflow: hidden;
 }
 
 th, td {
-    padding: 8px;
+    padding: 12px;
     border-bottom: 1px solid #444;
     text-align: center;
 }
 
 th {
-    background: #333;
+    background-color: #444;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+th:hover {
+    background-color: #555;
+}
+
+tr:hover {
+    background-color: #3a3a3a;
+}
+
+td {
+    word-wrap: break-word;
 }
 </style>
 </head>
@@ -41,11 +65,11 @@ th {
 <div id="container">
 <h1>Materialliste</h1>
 
-<table>
+<table id="materialTable">
 <thead>
 <tr>
-<th>Item</th>
-<th>Total</th>
+<th onclick="sortTable(0)">Item ▲▼</th>
+<th onclick="sortTable(1)">Total ▲▼</th>
 <th>Stacks</th>
 </tr>
 </thead>
@@ -74,8 +98,7 @@ function parseLine(line){
     return {name, total};
 }
 
-// Materialliste automatisch laden
-// Geht nur, wenn die Datei im gleichen Ordner wie die HTML liegt
+// Materialliste laden
 fetch('material_list_2026-03-29_16.54.28.txt')
     .then(res => res.text())
     .then(text => {
@@ -96,6 +119,31 @@ fetch('material_list_2026-03-29_16.54.28.txt')
     .catch(err => {
         console.error("Fehler beim Laden der Materialliste:", err);
     });
+
+// Tabelle sortieren (0 = Item, 1 = Total)
+let sortDirection = [true, true]; // aufsteigend standardmäßig
+function sortTable(colIndex) {
+    const table = document.getElementById("materialTable");
+    const tbody = table.tBodies[0];
+    const rows = Array.from(tbody.rows);
+
+    rows.sort((a,b) => {
+        let valA = a.cells[colIndex].textContent;
+        let valB = b.cells[colIndex].textContent;
+
+        if(colIndex === 1){ // Total ist numerisch
+            valA = parseInt(valA);
+            valB = parseInt(valB);
+        }
+
+        if(valA < valB) return sortDirection[colIndex] ? -1 : 1;
+        if(valA > valB) return sortDirection[colIndex] ? 1 : -1;
+        return 0;
+    });
+
+    sortDirection[colIndex] = !sortDirection[colIndex]; // umdrehen für nächste Sortierung
+    rows.forEach(row => tbody.appendChild(row));
+}
 </script>
 
 </body>
