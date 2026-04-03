@@ -2,4 +2,155 @@ Name: Name des Projekts
 Active: 0      <-- 1=An, 0=Aus
 Materialliste:
 
++-----------------------------+-------+---------+-----------+
+| Material List for placement 'Unnamed'                     |
++-----------------------------+-------+---------+-----------+
+| Item                        | Total | Missing | Available |
++-----------------------------+-------+---------+-----------+
+| Lagerfeuer                  |   108 |     108 |         0 |
+| Graue Glasscheibe           |    93 |      93 |         0 |
+| Fichtenholzzauntor          |    71 |      71 |         0 |
+| Ziegelsteine                |    58 |      58 |         0 |
+| Graues Glas                 |    46 |      46 |         0 |
+| Fichtenholztür              |    37 |      37 |         0 |
+| Brauner Trockenbeton        |    34 |      34 |         0 |
+| Glatter Stein               |    28 |      28 |         0 |
+| Andesittreppe               |    26 |      26 |         0 |
+| Strohballen                 |    19 |      19 |         0 |
+| Schwarzeichenholzfalltür    |    18 |      18 |         0 |
+| Tuffstein                   |    18 |      18 |         0 |
+| Roter Teppich               |    15 |      15 |         0 |
+| Andesitmauer                |    10 |      10 |         0 |
+| Bemooste Steinziegel        |    10 |      10 |         0 |
+| Granit                      |    10 |      10 |         0 |
+| Türkise Wolle               |     8 |       8 |         0 |
+| Weiße Wolle                 |     8 |       8 |         0 |
+| Leuchtstein                 |     7 |       7 |         0 |
+| Rote Wolle                  |     7 |       7 |         0 |
+| Steinstufe                  |     6 |       6 |         0 |
+| Weiße Glasscheibe           |     6 |       6 |         0 |
+| Fass                        |     5 |       5 |         0 |
+| Hellblaue Wolle             |     5 |       5 |         0 |
+| Andesitstufe                |     4 |       4 |         0 |
+| Birkenlaub                  |     4 |       4 |         0 |
+| Brauner Beton               |     4 |       4 |         0 |
+| Granittreppe                |     4 |       4 |         0 |
+| Schwarzstein                |     4 |       4 |         0 |
+| Steinziegelstufe            |     4 |       4 |         0 |
+| Hellblaue Glasscheibe       |     3 |       3 |         0 |
+| Polierter Schwarzsteinknopf |     3 |       3 |         0 |
+| Schwarzeichenholzzauntor    |     3 |       3 |         0 |
+| Bruchsteintreppe            |     2 |       2 |         0 |
+| Fichtenholzknopf            |     2 |       2 |         0 |
+| Fichtenholzschild           |     2 |       2 |         0 |
+| Komposter                   |     2 |       2 |         0 |
+| Schleifstein                |     2 |       2 |         0 |
+| Schwarzeichenholztür        |     2 |       2 |         0 |
+| Truhe                       |     2 |       2 |         0 |
+| Violette Wolle              |     2 |       2 |         0 |
+| Granitmauer                 |     1 |       1 |         0 |
+| Leitstein                   |     1 |       1 |         0 |
+| Steinknopf                  |     1 |       1 |         0 |
+| Tiefenschieferfliesen       |     1 |       1 |         0 |
+| Ziegelsteinmauer            |     1 |       1 |         0 |
++-----------------------------+-------+---------+-----------+
+| Item                        | Total | Missing | Available |
++-----------------------------+-------+---------+-----------+
+
 Originalliste:
+
++-----------------------------+-------+---------+-----------+
+| Material List for placement 'Unnamed'                     |
++-----------------------------+-------+---------+-----------+
+| Item                        | Total | Missing | Available |
++-----------------------------+-------+---------+-----------+
+| Fichtenholzbretter          |  2118 |    2118 |         0 |
+| Steinziegel                 |  1373 |    1373 |         0 |
+| Stein                       |  1336 |    1336 |         0 |
+| Fichtenholztreppe           |   814 |     814 |         0 |
+| Andesit                     |   718 |     718 |         0 |
+| Fichtenholzfalltür          |   545 |     545 |         0 |
+| Fichtenholzstufe            |   528 |     528 |         0 |
+| Eichenholzbretter           |   330 |     330 |         0 |
+| Schwarzeichenholztreppe     |   322 |     322 |         0 |
+| Akazienlaub                 |   294 |     294 |         0 |
+| Entrindetes Eichenholz      |   288 |     288 |         0 |
+| Grobe Erde                  |   274 |     274 |         0 |
+| Eichenstamm                 |   243 |     243 |         0 |
+| Schwarzeichenholzstufe      |   241 |     241 |         0 |
+| Entrindeter Fichtenstamm    |   217 |     217 |         0 |
+| Polierte Andesitstufe       |   172 |     172 |         0 |
+| Eichenlaub                  |   170 |     170 |         0 |
+| Polierter Andesit           |   168 |     168 |         0 |
+| Polierte Andesittreppe      |   152 |     152 |         0 |
+| Fichtenholzzaun             |   148 |     148 |         0 |
+| Bruchsteinmauer             |   138 |     138 |         0 |
+| Eichenholzfalltür           |   110 |     110 |         0 |
+| Lagerfeuer                  |   108 |     108 |         0 |
+| Graue Glasscheibe           |    93 |      93 |         0 |
+| Schwarzeichenholzbretter    |    83 |      83 |         0 |
+| Moosblock                   |    72 |      72 |         0 |
+| Fichtenholzzauntor          |    71 |      71 |         0 |
+| Bücherregal                 |    70 |      70 |         0 |
+| Ziegelsteine                |    58 |      58 |         0 |
+| Eisengitter                 |    51 |      51 |         0 |
+| Bruchstein                  |    48 |      48 |         0 |
+| Graues Glas                 |    46 |      46 |         0 |
+| Steinziegeltreppe           |    45 |      45 |         0 |
+| Steintreppe                 |    41 |      41 |         0 |
+| Leiter                      |    40 |      40 |         0 |
+| Fichtenholztür              |    37 |      37 |         0 |
+| Laterne                     |    37 |      37 |         0 |
+| Eisenkette                  |    35 |      35 |         0 |
+| Brauner Trockenbeton        |    34 |      34 |         0 |
+| Bruchsteinstufe             |    29 |      29 |         0 |
+| Eichenholztreppe            |    29 |      29 |         0 |
+| Glatter Stein               |    28 |      28 |         0 |
+| Andesittreppe               |    26 |      26 |         0 |
+| Ziegeltreppe                |    20 |      20 |         0 |
+| Strohballen                 |    19 |      19 |         0 |
+| Schwarzeichenholzfalltür    |    18 |      18 |         0 |
+| Tuffstein                   |    18 |      18 |         0 |
+| Roter Teppich               |    15 |      15 |         0 |
+| Eichenholz                  |    12 |      12 |         0 |
+| Andesitmauer                |    10 |      10 |         0 |
+| Bemooste Steinziegel        |    10 |      10 |         0 |
+| Blumentopf                  |    10 |      10 |         0 |
+| Granit                      |    10 |      10 |         0 |
+| Steinziegelmauer            |     9 |       9 |         0 |
+| Türkise Wolle               |     8 |       8 |         0 |
+| Weiße Wolle                 |     8 |       8 |         0 |
+| Leuchtstein                 |     7 |       7 |         0 |
+| Rote Wolle                  |     7 |       7 |         0 |
+| Steinstufe                  |     6 |       6 |         0 |
+| Weiße Glasscheibe           |     6 |       6 |         0 |
+| Ziegelstufe                 |     6 |       6 |         0 |
+| Fass                        |     5 |       5 |         0 |
+| Hellblaue Wolle             |     5 |       5 |         0 |
+| Andesitstufe                |     4 |       4 |         0 |
+| Birkenlaub                  |     4 |       4 |         0 |
+| Brauner Beton               |     4 |       4 |         0 |
+| Granittreppe                |     4 |       4 |         0 |
+| Schwarzstein                |     4 |       4 |         0 |
+| Steinziegelstufe            |     4 |       4 |         0 |
+| Hellblaue Glasscheibe       |     3 |       3 |         0 |
+| Polierter Schwarzsteinknopf |     3 |       3 |         0 |
+| Schwarzeichenholzzauntor    |     3 |       3 |         0 |
+| Bruchsteintreppe            |     2 |       2 |         0 |
+| Fichtenholzknopf            |     2 |       2 |         0 |
+| Fichtenholzschild           |     2 |       2 |         0 |
+| Komposter                   |     2 |       2 |         0 |
+| Schleifstein                |     2 |       2 |         0 |
+| Schwarzeichenholztür        |     2 |       2 |         0 |
+| Truhe                       |     2 |       2 |         0 |
+| Violette Wolle              |     2 |       2 |         0 |
+| Granitmauer                 |     1 |       1 |         0 |
+| Leitstein                   |     1 |       1 |         0 |
+| Steinknopf                  |     1 |       1 |         0 |
+| Tiefenschieferfliesen       |     1 |       1 |         0 |
+| Zaubertisch                 |     1 |       1 |         0 |
+| Ziegelsteinmauer            |     1 |       1 |         0 |
++-----------------------------+-------+---------+-----------+
+| Item                        | Total | Missing | Available |
++-----------------------------+-------+---------+-----------+
+
