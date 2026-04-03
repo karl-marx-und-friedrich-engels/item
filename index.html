@@ -2,8 +2,7 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8">
-<title>Materialliste</title>
-
+<title>Materialliste & Waypoints</title>
 <link rel="icon" href="Knowledge_Book_JE2.png">
 
 <style>
@@ -13,9 +12,10 @@ body {
     color: #fff;
     padding: 20px;
     text-align: center;
+    margin: 0;
 }
 
-/* HEADER */
+/* HEADER + LOGO */
 #header {
     display: flex;
     justify-content: center;
@@ -63,10 +63,11 @@ body {
     background: #444;
 }
 
-/* TABLE */
+/* TABLES */
 table {
     width: 100%;
     border-collapse: collapse;
+    margin-bottom: 30px;
 }
 
 th, td {
@@ -109,19 +110,18 @@ tr.selected:nth-child(even) {
 
 <!-- MENU -->
 <div id="menuButton" onclick="toggleMenu()">☰</div>
-
 <div id="menu">
-    <a href="#">Materialliste</a>
-    <a href="#">Waypoints</a>
-    <a href="#">Karte</a>
+    <a href="#material">Materialliste</a>
+    <a href="#waypoints">Waypoints</a>
 </div>
 
 <!-- HEADER -->
 <div id="header">
-    <h1>Materialliste</h1>
+    <h1 id="material">Materialliste</h1>
     <img id="logo" src="resized_1024_clock_00.png">
 </div>
 
+<!-- Materialliste Tabelle -->
 <table>
 <thead>
 <tr>
@@ -132,6 +132,20 @@ tr.selected:nth-child(even) {
 </tr>
 </thead>
 <tbody id="output"></tbody>
+</table>
+
+<!-- Waypoints Tabelle -->
+<h2 id="waypoints">Waypoints</h2>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>X</th>
+<th>Y</th>
+<th>Z</th>
+</tr>
+</thead>
+<tbody id="waypointsTable"></tbody>
 </table>
 
 <script>
@@ -160,7 +174,7 @@ let current = 0;
 setInterval(() => {
     logo.src = images[current].src;
     current = (current + 1) % frames;
-}, 50);
+}, 50); // 50ms = 20 FPS
 
 // ==========================
 // MATERIAL LISTE
@@ -230,7 +244,35 @@ fetch('material_list_2026-03-29_16.54.28.txt')
         out.appendChild(row);
     });
 })
-.catch(err => console.error("Fehler:", err));
+.catch(err => console.error("Fehler Materialliste:", err));
+
+// ==========================
+// WAYPOINTS
+// ==========================
+fetch('waypoints.txt')
+.then(res => res.text())
+.then(text => {
+    const lines = text.split("\n");
+    const out = document.getElementById("waypointsTable");
+
+    lines.forEach(line => {
+        if(!line.trim()) return;
+
+        const parts = line.split('|').map(p => p.trim());
+        if(parts.length < 4) return;
+
+        const row = document.createElement("tr");
+
+        parts.forEach(value => {
+            const td = document.createElement("td");
+            td.textContent = value;
+            row.appendChild(td);
+        });
+
+        out.appendChild(row);
+    });
+})
+.catch(err => console.error("Waypoint Fehler:", err));
 </script>
 
 </body>
