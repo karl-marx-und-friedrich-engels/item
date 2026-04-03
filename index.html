@@ -4,253 +4,97 @@
 <meta charset="UTF-8">
 <title>Minecraft Projektübersicht</title>
 <style>
-body {
-    font-family: Arial, sans-serif;
-    background-color: #1e1e1e;
-    color: #ddd;
-    margin: 0;
-    padding: 0;
-}
-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: #111;
-    padding: 10px;
-    position: relative;
-}
-#titleLeft {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-weight: bold;
-    font-size: 18px;
-}
-#clock {
-    width: 40px;
-    height: 40px;
-}
-#logo {
-    width: 40px;
-    height: 40px;
-}
-#menuRight {
-    display: flex;
-    flex-direction: column;
-    cursor: pointer;
-    gap: 5px;
-}
-.menuBar {
-    width: 25px;
-    height: 3px;
-    background-color: #ddd;
-}
-#content {
-    padding: 20px;
-}
-#materialWrapper, #waypointsWrapper {
-    display: none;
-}
-#materialWrapper.active, #waypointsWrapper.active {
-    display: block;
-}
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 10px;
-}
-th, td {
-    border: 1px solid #444;
-    padding: 5px;
-    text-align: left;
-}
-tr:nth-child(even) {
-    background-color: #2a2a2a;
-}
-tr:nth-child(odd) {
-    background-color: #202020;
-}
-tr.checked {
-    background-color: #336633 !important;
-}
-.copyBtn {
-    cursor: pointer;
-    padding: 2px 5px;
-    background-color: #444;
-    color: #ddd;
-    border-radius: 3px;
-}
-#projectStatus {
-    margin-top: 5px;
-    font-weight: bold;
-}
-#progressBarContainer {
-    background: #333;
-    width: 100%;
-    height: 20px;
-    margin-top: 10px;
-}
-#progressBar {
-    background: #33aa33;
-    height: 100%;
-    width: 0%;
-}
+body { font-family: Arial; background:#1e1e1e; color:#ddd; margin:0; }
+header { display:flex; justify-content:space-between; align-items:center; padding:10px; background:#111; }
+#titleLeft { display:flex; align-items:center; gap:10px; font-weight:bold; font-size:18px; }
+#clock, #logo { width:40px; height:40px; }
+#menuRight { display:flex; flex-direction:column; cursor:pointer; gap:5px; }
+.menuBar { width:25px; height:3px; background:#ddd; }
+#content { padding:20px; }
+#materialWrapper, #waypointsWrapper { display:none; }
+#materialWrapper.active, #waypointsWrapper.active { display:block; }
+table { width:100%; border-collapse:collapse; margin-top:10px; }
+th, td { border:1px solid #444; padding:5px; text-align:left; }
+tr:nth-child(even){ background:#2a2a2a; }
+tr:nth-child(odd){ background:#202020; }
+tr.checked{ background:#336633 !important; }
+.copyBtn{ cursor:pointer; padding:2px 5px; background:#444; color:#ddd; border-radius:3px; }
+#progressBarContainer{ background:#333; width:100%; height:20px; margin-top:10px; }
+#progressBar{ background:#33aa33; height:100%; width:0%; }
 </style>
 </head>
 <body>
 
 <header>
-    <div id="titleLeft">
-        <img id="clock" src="" alt="Uhr">
-        <img id="logo" src="Knowledge_Book_JE2.png" alt="Logo">
-        <span id="currentTitle">Materialliste</span>
-    </div>
-    <div id="menuRight" title="Ansicht wechseln">
-        <div class="menuBar"></div>
-        <div class="menuBar"></div>
-        <div class="menuBar"></div>
-    </div>
+  <div id="titleLeft">
+    <img id="clock" src="" alt="Uhr">
+    <img id="logo" src="Knowledge_Book_JE2.png" alt="Logo">
+    <span id="currentTitle">Materialliste</span>
+  </div>
+  <div id="menuRight" title="Ansicht wechseln">
+    <div class="menuBar"></div>
+    <div class="menuBar"></div>
+    <div class="menuBar"></div>
+  </div>
 </header>
 
 <div id="content">
-    <div id="materialWrapper" class="active">
-        <div id="projectStatus"></div>
-        <table id="materialTable"></table>
-        <div id="progressBarContainer">
-            <div id="progressBar"></div>
-        </div>
+  <div id="materialWrapper" class="active">
+    <div id="projectStatus"></div>
+    <table id="materialTable"></table>
+    <div id="progressBarContainer">
+      <div id="progressBar"></div>
     </div>
-    <div id="waypointsWrapper">
-        <table id="waypointsTable"></table>
-    </div>
+  </div>
+  <div id="waypointsWrapper">
+    <table id="waypointsTable"></table>
+  </div>
 </div>
 
 <script>
-// ---- Uhr Animation ----
-let clockImages = [];
-let clockIndex = 0;
-for(let i=0;i<=63;i++){
-    let img = new Image();
-    img.src = `resized_1024_clock_${String(i).padStart(2,'0')}.png`;
-    clockImages.push(img.src);
-}
-function updateClock(){
-    document.getElementById('clock').src = clockImages[clockIndex];
-    clockIndex = (clockIndex + 1) % clockImages.length;
-    setTimeout(updateClock, 150); // langsamer, angenehmer
-}
+let clockImages=[], clockIndex=0;
+for(let i=0;i<=63;i++){ clockImages.push(`resized_1024_clock_${String(i).padStart(2,'0')}.png`); }
+function updateClock(){ document.getElementById('clock').src=clockImages[clockIndex]; clockIndex=(clockIndex+1)%clockImages.length; setTimeout(updateClock,150); }
 updateClock();
 
-// ---- Menü Hamburger ----
-let showingMaterial = true;
-document.getElementById("menuRight").onclick = function() {
-    showingMaterial = !showingMaterial;
-    if(showingMaterial){
-        document.getElementById("materialWrapper").classList.add("active");
-        document.getElementById("waypointsWrapper").classList.remove("active");
-        document.getElementById("currentTitle").textContent="Materialliste";
-    } else {
-        document.getElementById("waypointsWrapper").classList.add("active");
-        document.getElementById("materialWrapper").classList.remove("active");
-        document.getElementById("currentTitle").textContent="Waypoints";
-    }
+let showingMaterial=true;
+document.getElementById("menuRight").onclick=function(){
+  showingMaterial=!showingMaterial;
+  document.getElementById("materialWrapper").classList.toggle("active",showingMaterial);
+  document.getElementById("waypointsWrapper").classList.toggle("active",!showingMaterial);
+  document.getElementById("currentTitle").textContent=showingMaterial?"Materialliste":"Waypoints";
 };
 
-// ---- Materialliste ----
-async function loadMaterial() {
-    // Projektstatus
-    let statusResp = await fetch("projects_status.txt");
-    let statusText = await statusResp.text();
-    let lines = statusText.split("\n");
-    let active = 0;
-    for(let line of lines){
-        if(line.startsWith("Projekt1:")){
-            active = parseInt(line.split(":")[1].trim());
-            break;
-        }
-    }
-    document.getElementById("projectStatus").textContent = active===1?"Projekt aktiv":"Projekt deaktiviert";
-
-    if(active !== 1){
-        document.getElementById("materialWrapper").innerHTML = "<p>Projekt deaktiviert</p>";
-        return;
-    }
-
-    // Projekt 1 Materialliste
-    let resp = await fetch("projekt1.txt");
-    let text = await resp.text();
-    let linesMaterial = [];
-    let linesOrigin = [];
-    let splitIndex = text.indexOf("Originalliste:");
-    if(splitIndex !== -1){
-        linesMaterial = text.substring(0, splitIndex).split("\n");
-        linesOrigin = text.substring(splitIndex).split("\n");
-    } else {
-        linesMaterial = text.split("\n");
-    }
-
-    function parseTable(lines){
-        let items = [];
-        let inTable=false;
-        for(let line of lines){
-            if(line.startsWith("| Item")) { inTable=true; continue; }
-            if(inTable && line.startsWith("|")) {
-                let cols = line.split("|").map(x=>x.trim()).filter(x=>x);
-                if(cols.length>=4){
-                    items.push({name:cols[0], total:parseInt(cols[1]), missing:parseInt(cols[2]), available:parseInt(cols[3])});
-                }
-            }
-        }
-        return items;
-    }
-
-    let projectItems = parseTable(linesMaterial);
-    let originItems = parseTable(linesOrigin);
-
-    // Tabelle anzeigen
-    let table = document.getElementById("materialTable");
-    table.innerHTML="<tr><th>Item</th><th>Total</th><th>Missing</th><th>Available</th><th>Abhaken</th></tr>";
-    projectItems.forEach((item,i)=>{
-        let tr = document.createElement("tr");
-        tr.innerHTML=`<td>${item.name}</td><td>${item.total}</td><td>${item.missing}</td><td>${item.available}</td>
-        <td><input type="checkbox" class="itemCheck"></td>`;
-        table.appendChild(tr);
-    });
-
-    // Fortschritt berechnen
-    let totalSum=0, collectedSum=0;
-    projectItems.forEach((p)=>{
-        totalSum+=p.total;
-        collectedSum+=p.total-p.missing;
-    });
-    document.getElementById("progressBar").style.width = ((collectedSum/totalSum)*100)+"%";
-}
-
-// ---- Waypoints ----
-async function loadWaypoints() {
-    let resp = await fetch("waypoints.txt");
-    let text = await resp.text();
-    let lines = text.split("\n");
-    let table = document.getElementById("waypointsTable");
-    table.innerHTML="<tr><th>Name</th><th>X</th><th>Y</th><th>Z</th><th>Copy</th></tr>";
+async function loadMaterial(){
+  try{
+    let statusText=(await fetch("projects_status.txt")).text();
+    let resp=await fetch("projekt1.txt"); let text=await resp.text();
+    let lines=text.split("\n");
+    let table=document.getElementById("materialTable"); table.innerHTML="<tr><th>Item</th><th>Total</th><th>Missing</th><th>Available</th><th>Abhaken</th></tr>";
     lines.forEach(line=>{
-        if(!line.trim()) return;
-        let [name,x,y,z]=line.split(",");
-        let tr = document.createElement("tr");
-        tr.innerHTML=`<td>${name}</td><td>${x}</td><td>${y}</td><td>${z}</td><td><span class="copyBtn">Copy</span></td>`;
-        table.appendChild(tr);
+      if(line.startsWith("|")){
+        let cols=line.split("|").map(x=>x.trim()).filter(x=>x);
+        if(cols.length>=4){ let tr=document.createElement("tr"); tr.innerHTML=`<td>${cols[0]}</td><td>${cols[1]}</td><td>${cols[2]}</td><td>${cols[3]}</td><td><input type="checkbox" class="itemCheck"></td>`; table.appendChild(tr); }
+      }
     });
-    // Copy-Button
-    table.querySelectorAll(".copyBtn").forEach(btn=>{
-        btn.onclick=function(){
-            let row = btn.parentElement.parentElement;
-            let text=row.children[1].textContent+","+row.children[2].textContent+","+row.children[3].textContent;
-            navigator.clipboard.writeText(text);
-        }
-    });
+  } catch(e){ console.error("Fehler beim Laden der Materialliste:",e); }
 }
 
-// ---- Init ----
+async function loadWaypoints(){
+  try{
+    let resp=await fetch("waypoints.txt"); let text=await resp.text();
+    let lines=text.split("\n"); let table=document.getElementById("waypointsTable"); table.innerHTML="<tr><th>Name</th><th>X</th><th>Y</th><th>Z</th><th>Copy</th></tr>";
+    lines.forEach(line=>{
+      if(!line.trim()) return;
+      let [name,x,y,z]=line.split(",");
+      let tr=document.createElement("tr");
+      tr.innerHTML=`<td>${name}</td><td>${x}</td><td>${y}</td><td>${z}</td><td><span class="copyBtn">Copy</span></td>`;
+      table.appendChild(tr);
+    });
+    table.querySelectorAll(".copyBtn").forEach(btn=>{btn.onclick=function(){let row=btn.parentElement.parentElement; navigator.clipboard.writeText(`${row.children[1].textContent},${row.children[2].textContent},${row.children[3].textContent}`);}});
+  } catch(e){ console.error("Fehler beim Laden der Waypoints:",e); }
+}
+
 loadMaterial();
 loadWaypoints();
 </script>
