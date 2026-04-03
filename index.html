@@ -2,7 +2,8 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8">
-<title>Materialliste & Projekte</title>
+<title>Materialliste & Waypoints</title>
+<link rel="icon" href="Knowledge_Book_JE2.png">
 <style>
 body {
     font-family: Arial, sans-serif;
@@ -11,223 +12,267 @@ body {
     margin: 0;
     padding: 0;
 }
+#header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #2a2a2a;
+    padding: 10px 20px;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+#menu-button {
+    cursor: pointer;
+    font-size: 24px;
+    user-select: none;
+}
+#menu {
+    position: absolute;
+    top: 50px;
+    right: 20px;
+    background: #2a2a2a;
+    border: 1px solid #444;
+    border-radius: 5px;
+    display: none;
+}
+#menu div {
+    padding: 8px 12px;
+    cursor: pointer;
+}
+#menu div:hover {
+    background-color: #00aa55;
+}
+#logo-container {
+    display: flex;
+    align-items: center;
+}
+#logo {
+    width: 48px;
+    height: 48px;
+    margin-right: 10px;
+}
 #container {
     max-width: 1200px;
-    margin: auto;
+    margin: 20px auto;
     background: #2a2a2a;
     padding: 20px;
     border-radius: 8px;
 }
-h1 {
-    text-align: center;
-    margin-bottom: 10px;
-}
-#menuToggle {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    cursor: pointer;
-    font-size: 24px;
-}
-#menu {
-    display: none;
-    position: absolute;
-    top: 60px;
-    right: 20px;
-    background: #333;
-    border-radius: 6px;
-    overflow: hidden;
-    z-index: 10;
-}
-#menu button {
-    display: block;
-    width: 150px;
-    background: #444;
-    color: #fff;
-    border: none;
-    padding: 10px;
-    text-align: left;
-    cursor: pointer;
-}
-#menu button:hover {
-    background: #555;
-}
 table {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 20px;
+    margin-top: 10px;
 }
 th, td {
     padding: 8px;
+    border-bottom: 1px solid #444;
     text-align: center;
 }
 th {
     background: #333;
 }
-tr:nth-child(even) { background-color: #2c2c2c; }
-tr:nth-child(odd) { background-color: #262626; }
-tr.checked {
-    background-color: #2a4d2a !important;
+tr:nth-child(even) {background-color: #2f3f2f;}
+tr:nth-child(odd) {background-color: #3f4f3f;}
+.completed {
+    background-color: #225522 !important;
+    color: #fff;
 }
-input[type="checkbox"] {
-    width: 20px;
-    height: 20px;
-}
-#progressContainer {
-    background-color: #444;
-    border-radius: 6px;
-    margin: 10px 0;
-    height: 25px;
-    width: 100%;
-}
-#progressBar {
-    height: 25px;
-    width: 0%;
+button.copy-btn {
+    padding: 3px 6px;
+    cursor: pointer;
     background-color: #00aa55;
-    border-radius: 6px;
-    text-align: center;
-    line-height: 25px;
+    border: none;
     color: white;
+    border-radius: 3px;
+}
+#progress-container {
+    width: 100%;
+    background: #444;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+#progress-bar {
+    height: 20px;
+    width: 0;
+    background: #00ff55;
+    border-radius: 5px;
+    text-align: center;
+    line-height: 20px;
+    color: #000;
     font-weight: bold;
 }
 </style>
 </head>
 <body>
 
+<div id="header">
+    <div id="logo-container">
+        <img id="logo" src="resized_1024_clock_00.png" alt="Uhr">
+        <h2>Materialliste</h2>
+    </div>
+    <div id="menu-button">&#9776;</div>
+    <div id="menu">
+        <div onclick="showMaterialList()">Materialliste</div>
+        <div onclick="showWaypoints()">Waypoints</div>
+    </div>
+</div>
+
 <div id="container">
-<h1>Materialliste</h1>
+    <div id="progress-container">
+        <div id="progress-bar">0%</div>
+    </div>
 
-<!-- Drei Striche Menü -->
-<div id="menuToggle">&#9776;</div>
-<div id="menu">
-    <button onclick="showSection('materials')">Materialliste</button>
-    <button onclick="showSection('waypoints')">Waypoints</button>
-</div>
+    <div id="material-list">
+        <table>
+            <thead>
+                <tr>
+                    <th>✔</th>
+                    <th>Item</th>
+                    <th>Total</th>
+                    <th>Stacks</th>
+                </tr>
+            </thead>
+            <tbody id="output-material"></tbody>
+        </table>
+    </div>
 
-<!-- Fortschrittsbalken -->
-<div id="progressContainer">
-    <div id="progressBar">0%</div>
-</div>
-
-<!-- Materialliste -->
-<div id="materialsSection">
-    <table>
-        <thead>
-            <tr>
-                <th>✓</th>
-                <th>Item</th>
-                <th>Total</th>
-                <th>Stacks</th>
-            </tr>
-        </thead>
-        <tbody id="materialList"></tbody>
-    </table>
-</div>
-
-<!-- Waypoints -->
-<div id="waypointsSection" style="display:none;">
-    <table>
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>X</th>
-                <th>Y</th>
-                <th>Z</th>
-                <th>Copy</th>
-            </tr>
-        </thead>
-        <tbody id="waypointsList"></tbody>
-    </table>
-</div>
+    <div id="waypoints" style="display:none;">
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>X</th>
+                    <th>Y</th>
+                    <th>Z</th>
+                    <th>Copy</th>
+                </tr>
+            </thead>
+            <tbody id="output-waypoints"></tbody>
+        </table>
+    </div>
 </div>
 
 <script>
-// Menü-Logik
-const menuToggle = document.getElementById('menuToggle');
-const menu = document.getElementById('menu');
-menuToggle.onclick = () => menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+// ---------------------------
+// MENU
+// ---------------------------
+const menuBtn = document.getElementById("menu-button");
+const menu = document.getElementById("menu");
+menuBtn.addEventListener("click", () => {
+    menu.style.display = menu.style.display === "block" ? "none" : "block";
+});
 
-function showSection(section){
-    document.getElementById('materialsSection').style.display = section==='materials' ? 'block' : 'none';
-    document.getElementById('waypointsSection').style.display = section==='waypoints' ? 'block' : 'none';
-    menu.style.display = 'none';
+function showMaterialList(){
+    document.getElementById("material-list").style.display = "block";
+    document.getElementById("waypoints").style.display = "none";
+}
+function showWaypoints(){
+    document.getElementById("material-list").style.display = "none";
+    document.getElementById("waypoints").style.display = "block";
 }
 
-// Materialliste laden
-async function loadMaterialList() {
-    const res = await fetch('material_list_2026-03-29_16.54.28.txt');
-    const text = await res.text();
-    const lines = text.split("\n").filter(l => l.includes("|") && !l.startsWith("+"));
-    const tbody = document.getElementById('materialList');
-    let totalMaterials = 0, collectedMaterials = 0;
+// ---------------------------
+// ANIMIERTE UHR
+// ---------------------------
+let clockIndex = 0;
+const clockFrames = [];
+for(let i=0;i<=63;i++){
+    clockFrames.push(`resized_1024_clock_${i.toString().padStart(2,'0')}.png`);
+}
+const logo = document.getElementById("logo");
+function animateClock(){
+    logo.src = clockFrames[clockIndex];
+    clockIndex = (clockIndex+1)%clockFrames.length;
+}
+setInterval(animateClock, 66); // ~15 FPS
 
-    lines.forEach(line => {
-        const parts = line.split("|").map(p => p.trim()).filter(p=>p);
-        if(parts.length<2) return;
-        const name = parts[0];
-        const total = parseInt(parts[1]);
-        totalMaterials += total;
-        collectedMaterials += 0; // Checkboxes starten alle ungecheckt
-
-        const tr = document.createElement('tr');
-        tr.innerHTML = `<td><input type="checkbox" onchange="updateProgress()"></td>
-                        <td>${name}</td>
-                        <td>${total}</td>
-                        <td>${Math.floor(total/64) + (total%64? " + " + (total%64) : "")}</td>`;
-        tbody.appendChild(tr);
+// ---------------------------
+// MATERIALLISTE
+// ---------------------------
+function normalize(text){
+    return text.toLowerCase().replace(/ä/g,"ae").replace(/ö/g,"oe").replace(/ü/g,"ue").replace(/ß/g,"ss").replace(/[^a-z0-9]/g,"");
+}
+function getStacks(total){
+    const stacks = Math.floor(total/64);
+    const rest = total % 64;
+    if(stacks===0) return rest + " Blöcke";
+    if(rest===0) return stacks + " Stacks";
+    return stacks + " Stacks + " + rest;
+}
+function parseLine(line){
+    const parts = line.split("|").map(p=>p.trim()).filter(p=>p);
+    if(parts.length<2) return null;
+    const name = parts[0];
+    const total = parseInt(parts[1]);
+    if(isNaN(total)) return null;
+    return {name,total};
+}
+async function loadMaterialList(){
+    const response = await fetch('material_list_2026-03-29_16.54.28.txt');
+    const text = await response.text();
+    const lines = text.split("\n");
+    const output = document.getElementById("output-material");
+    output.innerHTML="";
+    let sumTotal=0;
+    let sumOriginal=0;
+    lines.forEach(line=>{
+        const item = parseLine(line);
+        if(!item) return;
+        sumTotal+=item.total;
+        sumOriginal+=item.total; // angenommen Original = gleiche Datei
+        const row = document.createElement("tr");
+        row.innerHTML = `<td><input type="checkbox" class="item-checkbox"></td>
+                         <td>${item.name}</td>
+                         <td>${item.total}</td>
+                         <td>${getStacks(item.total)}</td>`;
+        output.appendChild(row);
     });
+    // Progressbar berechnen
+    const progress = Math.round((sumTotal/sumOriginal)*100);
+    const progressBar = document.getElementById("progress-bar");
+    progressBar.style.width=progress+"%";
+    progressBar.textContent=progress+"%";
 }
 
-// Fortschritt berechnen
-function updateProgress(){
-    const rows = document.querySelectorAll('#materialList tr');
-    let total = 0, checked = 0;
-    rows.forEach(r => {
-        const totalValue = parseInt(r.cells[2].innerText);
-        total += totalValue;
-        if(r.querySelector('input[type="checkbox"]').checked){
-            checked += totalValue;
-            r.classList.add('checked');
-        } else {
-            r.classList.remove('checked');
+// Checkboxen
+document.addEventListener("change", e=>{
+    if(e.target.classList.contains("item-checkbox")){
+        if(e.target.checked){
+            e.target.parentElement.parentElement.classList.add("completed");
+        }else{
+            e.target.parentElement.parentElement.classList.remove("completed");
         }
-    });
-    const percent = total? Math.round((checked/total)*100):0;
-    const bar = document.getElementById('progressBar');
-    bar.style.width = percent+'%';
-    bar.textContent = percent+'%';
-}
-
-// Waypoints laden
-async function loadWaypoints() {
-    const res = await fetch('waypoints.txt');
-    const text = await res.text();
-    const lines = text.split("\n").filter(l=>l.trim() && !l.startsWith("#"));
-    const tbody = document.getElementById('waypointsList');
-    tbody.innerHTML = '';
-
-    lines.forEach(line => {
-        const parts = line.split("|").map(p=>p.trim());
-        if(parts.length<4) return;
-        const tr = document.createElement('tr');
-        tr.innerHTML = `<td>${parts[0]}</td>
-                        <td>${parts[1]}</td>
-                        <td>${parts[2]}</td>
-                        <td>${parts[3]}</td>
-                        <td><button onclick="copyCoords('${parts[1]}','${parts[2]}','${parts[3]}')">Copy</button></td>`;
-        tbody.appendChild(tr);
-    });
-}
-
-function copyCoords(x,y,z){
-    navigator.clipboard.writeText(`${x}, ${y}, ${z}`);
-    alert('Koordinaten kopiert: '+x+', '+y+', '+z);
-}
-
-// Initialisierung
+    }
+});
 loadMaterialList();
-loadWaypoints();
-</script>
 
+// ---------------------------
+// WAYPOINTS
+// ---------------------------
+async function loadWaypoints(){
+    const response = await fetch('waypoints.txt');
+    const text = await response.text();
+    const lines = text.split("\n");
+    const output = document.getElementById("output-waypoints");
+    output.innerHTML="";
+    lines.forEach(line=>{
+        if(!line.trim()) return;
+        const [name,x,y,z] = line.split(",").map(p=>p.trim());
+        const row = document.createElement("tr");
+        row.innerHTML = `<td>${name}</td>
+                         <td>${x}</td>
+                         <td>${y}</td>
+                         <td>${z}</td>
+                         <td><button class="copy-btn" onclick="copyCoords('${x}','${y}','${z}')">Copy</button></td>`;
+        output.appendChild(row);
+    });
+}
+function copyCoords(x,y,z){
+    navigator.clipboard.writeText(`X:${x} Y:${y} Z:${z}`);
+}
+loadWaypoints();
+
+</script>
 </body>
 </html>
