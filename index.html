@@ -65,9 +65,8 @@ function getStacks(total){
 }
 
 // Parsen einer Zeile der Materialliste
-function parse(line){
-    if(!line.includes("|")) return null;
-    const parts = line.split("|").map(p => p.trim()).filter(p => p);
+function parseLine(line){
+    const parts = line.split("|").map(p => p.trim());
     if(parts.length < 2) return null;
     const name = parts[0];
     const total = parseInt(parts[1]);
@@ -75,32 +74,48 @@ function parse(line){
     return {name, total};
 }
 
-// GitHub-Rohlink zur Materialliste
-const repoURL = "https://raw.githubusercontent.com/karl-marx-und-friedrich-engels/item/main/material_list_2026-03-29_16.54.28.txt";
+// Materialliste direkt hier einfügen (Inhalt der material_list_2026-03-29_16.54.28.txt)
+const materialListText = `
+Fichtenholzbretter|2118
+Stein|1336
+Fichtenholztreppe|814
+Andesit|718
+Fichtenholzfalltür|545
+Fichtenholzstufe|528
+Eichenholzbretter|330
+Schwarzeichenholztreppe|322
+Akazienlaub|294
+Entrindetes Eichenholz|288
+Grobe Erde|274
+Eichenstamm|243
+Schwarzeichenholzstufe|241
+Entrindeter Fichtenstamm|217
+Polierte Andesitstufe|172
+Eichenlaub|170
+Polierter Andesit|168
+Polierte Andesittreppe|152
+Fichtenholzzaun|148
+Bruchsteinmauer|138
+Eichenholzfalltür|110
+Lagerfeuer|108
+Graue Glasscheibe|93
+Schwarzeichenholzbretter|83
+`;
 
-fetch(repoURL)
-    .then(res => res.text())
-    .then(text => {
-        const lines = text.split("\n");
-        const out = document.getElementById("output");
-        out.innerHTML = "";
-
-        lines.forEach(line => {
-            const item = parse(line);
-            if(!item) return;
-
-            const row = document.createElement("tr");
-            row.innerHTML = `
-                <td>${item.name}</td>
-                <td>${item.total}</td>
-                <td>${getStacks(item.total)}</td>
-            `;
-            out.appendChild(row);
-        });
-    })
-    .catch(err => {
-        console.error("Fehler beim Laden der Materialliste:", err);
-    });
+// Tabelle füllen
+const lines = materialListText.trim().split("\n");
+const out = document.getElementById("output");
+lines.forEach(line => {
+    const item = parseLine(line);
+    if(!item) return;
+    const row = document.createElement("tr");
+    row.innerHTML = `
+        <td>${item.name}</td>
+        <td>${item.total}</td>
+        <td>${getStacks(item.total)}</td>
+    `;
+    out.appendChild(row);
+});
 </script>
 
 </body>
