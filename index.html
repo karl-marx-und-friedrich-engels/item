@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <title>Materialliste</title>
 
-<!-- Favicon -->
 <link rel="icon" href="Knowledge_Book_JE2.png">
 
 <style>
@@ -16,6 +15,7 @@ body {
     text-align: center;
 }
 
+/* HEADER */
 #header {
     display: flex;
     justify-content: center;
@@ -29,6 +29,41 @@ body {
     height: 80px;
 }
 
+/* MENU BUTTON */
+#menuButton {
+    position: fixed;
+    top: 15px;
+    right: 20px;
+    font-size: 30px;
+    cursor: pointer;
+    z-index: 1000;
+}
+
+/* MENU */
+#menu {
+    position: fixed;
+    top: 60px;
+    right: 20px;
+    background: #222;
+    border: 1px solid #444;
+    border-radius: 6px;
+    display: none;
+    flex-direction: column;
+    min-width: 160px;
+}
+
+#menu a {
+    padding: 10px;
+    text-decoration: none;
+    color: white;
+    border-bottom: 1px solid #444;
+}
+
+#menu a:hover {
+    background: #444;
+}
+
+/* TABLE */
 table {
     width: 100%;
     border-collapse: collapse;
@@ -44,28 +79,26 @@ th {
     background-color: #222;
 }
 
-/* Grautöne */
 tbody tr:nth-child(odd) {
     background-color: #2b2b2b;
 }
+
 tbody tr:nth-child(even) {
     background-color: #3a3a3a;
 }
 
-/* Hover */
 tr:hover {
     background-color: #505050;
 }
 
-/* Checkbox */
 td.checkbox-cell {
     width: 40px;
 }
 
-/* Grün beim Abhaken */
 tr.selected:nth-child(odd) {
     background-color: #006600;
 }
+
 tr.selected:nth-child(even) {
     background-color: #00aa00;
 }
@@ -74,6 +107,16 @@ tr.selected:nth-child(even) {
 
 <body>
 
+<!-- MENU -->
+<div id="menuButton" onclick="toggleMenu()">☰</div>
+
+<div id="menu">
+    <a href="#">Materialliste</a>
+    <a href="#">Waypoints</a>
+    <a href="#">Karte</a>
+</div>
+
+<!-- HEADER -->
 <div id="header">
     <h1>Materialliste</h1>
     <img id="logo" src="resized_1024_clock_00.png">
@@ -93,31 +136,35 @@ tr.selected:nth-child(even) {
 
 <script>
 // ==========================
+// MENU
+// ==========================
+function toggleMenu(){
+    const menu = document.getElementById("menu");
+    menu.style.display = menu.style.display === "flex" ? "none" : "flex";
+}
+
+// ==========================
 // CLOCK ANIMATION
 // ==========================
 const logo = document.getElementById("logo");
 const frames = 64;
 const images = [];
 
-// preload aller Frames
 for (let i = 0; i < frames; i++) {
     const img = new Image();
     img.src = `resized_1024_clock_${String(i).padStart(2,'0')}.png`;
     images.push(img);
 }
 
-// Animation (smooth ~20 FPS)
 let current = 0;
 setInterval(() => {
     logo.src = images[current].src;
     current = (current + 1) % frames;
 }, 50);
 
-
 // ==========================
 // MATERIAL LISTE
 // ==========================
-
 function getStacks(total){
     const stacks = Math.floor(total/64);
     const rest = total % 64;
@@ -184,7 +231,6 @@ fetch('material_list_2026-03-29_16.54.28.txt')
     });
 })
 .catch(err => console.error("Fehler:", err));
-
 </script>
 
 </body>
