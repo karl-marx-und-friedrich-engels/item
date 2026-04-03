@@ -59,8 +59,8 @@ th {
 function getStacks(total){
     const stacks = Math.floor(total/64);
     const rest = total % 64;
-    if(stacks===0) return rest + " Blöcke";
-    if(rest===0) return stacks + " Stacks";
+    if(stacks === 0) return rest + " Blöcke";
+    if(rest === 0) return stacks + " Stacks";
     return stacks + " Stacks + " + rest;
 }
 
@@ -76,7 +76,7 @@ function parse(line){
 }
 
 // GitHub-Rohlink zur Materialliste
-const repoURL = "https://github.com/karl-marx-und-friedrich-engels/item/blob/main/material_list_2026-03-29_16.54.28.txt"; // <-- anpassen
+const repoURL = "https://raw.githubusercontent.com/karl-marx-und-friedrich-engels/item/main/material_list_2026-03-29_16.54.28.txt";
 
 fetch(repoURL)
     .then(res => res.text())
