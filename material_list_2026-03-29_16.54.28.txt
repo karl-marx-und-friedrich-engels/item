@@ -7,11 +7,8 @@
 | Graue Glasscheibe           |    93 |      93 |         0 |
 | Fichtenholzzauntor          |    71 |      71 |         0 |
 | Ziegelsteine                |    58 |      58 |         0 |
-| Eisengitter                 |    51 |      51 |         0 |
 | Graues Glas                 |    46 |      46 |         0 |
 | Fichtenholztür              |    37 |      37 |         0 |
-| Laterne                     |    37 |      37 |         0 |
-| Eisenkette                  |    35 |      35 |         0 |
 | Brauner Trockenbeton        |    34 |      34 |         0 |
 | Glatter Stein               |    28 |      28 |         0 |
 | Andesittreppe               |    26 |      26 |         0 |
