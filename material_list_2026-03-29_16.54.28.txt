@@ -4,7 +4,6 @@
 | Item                        | Total | Missing | Available |
 +-----------------------------+-------+---------+-----------+
 | Andesit                     |   718 |     718 |         0 |
-| Fichtenholzstufe            |   528 |     528 |         0 |
 | Schwarzeichenholztreppe     |   322 |     322 |         0 |
 | Akazienlaub                 |   294 |     294 |         0 |
 | Entrindetes Eichenholz      |   288 |     288 |         0 |
