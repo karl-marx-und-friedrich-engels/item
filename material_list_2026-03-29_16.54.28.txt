@@ -51,7 +51,6 @@
 | Leitstein                   |     1 |       1 |         0 |
 | Steinknopf                  |     1 |       1 |         0 |
 | Tiefenschieferfliesen       |     1 |       1 |         0 |
-| Zaubertisch                 |     1 |       1 |         0 |
 | Ziegelsteinmauer            |     1 |       1 |         0 |
 +-----------------------------+-------+---------+-----------+
 | Item                        | Total | Missing | Available |
