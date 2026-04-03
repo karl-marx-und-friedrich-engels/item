@@ -4,7 +4,6 @@
 | Item                        | Total | Missing | Available |
 +-----------------------------+-------+---------+-----------+
 | Schwarzeichenholztreppe     |   322 |     322 |         0 |
-| Grobe Erde                  |   274 |     274 |         0 |
 | Schwarzeichenholzstufe      |   241 |     241 |         0 |
 | Bruchsteinmauer             |   138 |     138 |         0 |
 | Lagerfeuer                  |   108 |     108 |         0 |
