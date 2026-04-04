@@ -43,11 +43,19 @@ body {
     flex-direction: column;
     min-width: 160px;
 }
+#menuHeader {
+    font-style: italic;
+    padding: 8px 10px;
+    border-bottom: 1px solid #444;
+    color: #ccc;
+}
 #menu a {
-    padding: 10px;
+    padding: 8px 10px;
     text-decoration: none;
     color: white;
     border-bottom: 1px solid #444;
+    margin-left: 10px; /* kleiner Versatz nach innen */
+    display: block;
 }
 #menu a:hover {
     background: #444;
@@ -248,6 +256,13 @@ fetch('projects_status.txt')
 .then(statusText => {
     const lines = statusText.split('\n');
     const menu = document.getElementById('menu');
+
+    // Überschrift für Materialliste
+    const headerDiv = document.createElement('div');
+    headerDiv.id="menuHeader";
+    headerDiv.textContent = "Materialliste";
+    menu.appendChild(headerDiv);
+
     const activeProjects = [];
     lines.forEach((line,index) => {
         const [proj, val] = line.split(':');
@@ -255,13 +270,22 @@ fetch('projects_status.txt')
             activeProjects.push({menuName: proj.trim(), file:`projekt_${index+1}.txt`});
         }
     });
+
     activeProjects.forEach(p => {
-        const a = document.createElement('a');
-        a.href="#";
-        a.textContent = p.menuName;
-        a.onclick = ()=>showSection('material', p.file);
-        menu.appendChild(a);
+        // den echten Namen aus der Datei auslesen
+        fetch(p.file)
+        .then(res=>res.text())
+        .then(txt=>{
+            const nameLine = txt.split('\n').find(l=>l.startsWith('Name:'));
+            const projectName = nameLine ? nameLine.split(':')[1].trim() : p.menuName;
+            const a = document.createElement('a');
+            a.href="#";
+            a.textContent = projectName;
+            a.onclick = ()=>showSection('material', p.file);
+            menu.appendChild(a);
+        });
     });
+
     const wp = document.createElement('a');
     wp.href="#"; wp.textContent="Waypoints"; wp.onclick = ()=>showSection('waypoints');
     menu.appendChild(wp);
