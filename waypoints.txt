@@ -4,3 +4,4 @@ Bothell Farm, -231, 83, -2423
 Endportal, -464, -20, 2251
 Raidfarm Totems, -474, 62, -1621
 Gunpowder Farm, -2538, 190, -3396
+Wüste, 506, 77, -4830
