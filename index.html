@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <title>Materialliste & Waypoints</title>
-<link rel="icon" href="Knowledge_Book_JE2.png">
+<link rel="icon" href="bilder/Knowledge_Book_JE2.png">
 <style>
 body {
     font-family: Arial, sans-serif;
@@ -99,22 +99,37 @@ button.copy-btn:hover {
     margin-bottom: 20px;
     font-size: 1.1em;
 }
+#progressBarContainer {
+    width: 80%;
+    height: 20px;
+    background-color: #444;
+    border-radius: 10px;
+    margin: 0 auto 20px;
+    overflow: hidden;
+}
+#progressBar {
+    height: 100%;
+    background-color: #00aa00;
+    width: 0%;
+    transition: width 0.5s;
+}
 </style>
 </head>
 <body>
 
 <div id="menuButton" onclick="toggleMenu()">☰</div>
-<div id="menu">
-    <a href="#" onclick="showSection('material')">Materialliste</a>
-    <a href="#" onclick="showSection('waypoints')">Waypoints</a>
-</div>
+<div id="menu"></div>
 
 <div id="header">
-    <h1>Materialliste</h1>
-    <img id="logo" src="resized_1024_clock_00.png">
+    <h1 id="projectTitle">Materialliste</h1>
+    <img id="logo" src="bilder/resized_1024_clock_00.png">
 </div>
 
 <div id="serverStatus">Serverstatus wird geladen...</div>
+
+<div id="progressBarContainer">
+    <div id="progressBar"></div>
+</div>
 
 <div id="material" style="display:block;">
 <table>
@@ -130,22 +145,6 @@ button.copy-btn:hover {
 </table>
 </div>
 
-<div id="waypoints" style="display:none;">
-<h2>Waypoints</h2>
-<table>
-<thead>
-<tr>
-<th>Name</th>
-<th>X</th>
-<th>Y</th>
-<th>Z</th>
-<th>Aktion</th>
-</tr>
-</thead>
-<tbody id="waypointsTable"></tbody>
-</table>
-</div>
-
 <script>
 // ==========================
 // MENU
@@ -154,9 +153,9 @@ function toggleMenu(){
     const menu = document.getElementById("menu");
     menu.style.display = menu.style.display === "flex" ? "none" : "flex";
 }
-function showSection(section){
-    document.getElementById('material').style.display = section === 'material' ? 'block' : 'none';
-    document.getElementById('waypoints').style.display = section === 'waypoints' ? 'block' : 'none';
+function showProject(projectFile, projectName){
+    loadProject(projectFile, projectName);
+    document.getElementById('material').style.display = 'block';
 }
 
 // ==========================
@@ -167,7 +166,7 @@ const frames = 64;
 const images = [];
 for (let i = 0; i < frames; i++) {
     const img = new Image();
-    img.src = `resized_1024_clock_${String(i).padStart(2,'0')}.png`;
+    img.src = `bilder/resized_1024_clock_${String(i).padStart(2,'0')}.png`;
     images.push(img);
 }
 let current = 0;
@@ -177,7 +176,7 @@ setInterval(() => {
 }, 50); // 20 FPS
 
 // ==========================
-// MATERIAL LISTE
+// HELPER
 // ==========================
 function getStacks(total){
     const stacks = Math.floor(total/64);
@@ -196,74 +195,106 @@ function parseLine(line){
     if(isNaN(total)) return null;
     return {name, total};
 }
-fetch('material_list_2026-03-29_16.54.28.txt')
+
+// ==========================
+// LOAD ACTIVE PROJECTS
+// ==========================
+fetch('projects_status.txt')
 .then(res => res.text())
-.then(text => {
-    const lines = text.split("\n");
-    const out = document.getElementById("output");
+.then(statusText => {
+    const lines = statusText.split('\n');
+    const menu = document.getElementById('menu');
+    const activeProjects = [];
     lines.forEach(line => {
-        const item = parseLine(line);
-        if(!item) return;
-        const row = document.createElement("tr");
-        const nameCell = document.createElement("td");
-        nameCell.textContent = item.name;
-        const totalCell = document.createElement("td");
-        totalCell.textContent = item.total;
-        const stacksCell = document.createElement("td");
-        stacksCell.textContent = getStacks(item.total);
-        const checkbox = document.createElement("input");
-        checkbox.type = "checkbox";
-        checkbox.style.width = "24px";
-        checkbox.style.height = "24px";
-        checkbox.addEventListener('change', () => {
-            row.classList.toggle('selected', checkbox.checked);
-        });
-        const checkboxCell = document.createElement("td");
-        checkboxCell.className = "checkbox-cell";
-        checkboxCell.appendChild(checkbox);
-        row.appendChild(nameCell);
-        row.appendChild(totalCell);
-        row.appendChild(stacksCell);
-        row.appendChild(checkboxCell);
-        out.appendChild(row);
+        const [proj, val] = line.split(':');
+        if(val && val.trim() === '1'){
+            activeProjects.push(proj.trim());
+        }
     });
-})
-.catch(err => console.error("Fehler Materialliste:", err));
-
-// ==========================
-// WAYPOINTS
-// ==========================
-const waypointsData = [
-    ["Unbewohnte Base", 525, 172, -855],
-    ["F", 760, 88, -2043],
-    ["Home", 642, 79, -2088],
-    ["Bothell Farm", -231, 83, 2423],
-    ["Endportal", -474, -20, 2251],
-    ["Raidfarm Totems", -474, 62, -1621],
-    ["Gunpowder Farm", -2538, 190, 13096]
-];
-
-const waypointsTable = document.getElementById("waypointsTable");
-waypointsData.forEach(wp => {
-    const row = document.createElement("tr");
-    wp.forEach((val, i) => {
-        const td = document.createElement("td");
-        td.textContent = val;
-        row.appendChild(td);
+    // Build menu
+    activeProjects.forEach((proj, index) => {
+        const a = document.createElement('a');
+        a.href = "#";
+        a.textContent = proj;
+        a.onclick = () => showProject(`projekt_${index+1}.txt`, proj);
+        menu.appendChild(a);
     });
-    const actionTd = document.createElement("td");
-    const copyBtn = document.createElement("button");
-    copyBtn.textContent = "Kopieren";
-    copyBtn.className = "copy-btn";
-    copyBtn.addEventListener('click', () => {
-        navigator.clipboard.writeText(`${wp[1]}, ${wp[2]}, ${wp[3]}`);
-        copyBtn.textContent = "✔";
-        setTimeout(() => copyBtn.textContent = "Kopieren", 1000);
-    });
-    actionTd.appendChild(copyBtn);
-    row.appendChild(actionTd);
-    waypointsTable.appendChild(row);
+    // Load first active project automatically
+    if(activeProjects.length > 0){
+        showProject(`projekt_1.txt`, activeProjects[0]);
+    }
 });
+
+// ==========================
+// LOAD PROJECT FILE
+// ==========================
+function loadProject(file, projectName){
+    fetch(file)
+    .then(res => res.text())
+    .then(text => {
+        const output = document.getElementById("output");
+        output.innerHTML = '';
+        document.getElementById('projectTitle').textContent = projectName;
+
+        const sections = text.split('Originalliste:');
+        const matLines = sections[0].split('\n');
+        const origLines = sections[1] ? sections[1].split('\n') : [];
+
+        let totalMat = 0, totalOrig = 0;
+
+        const matItems = {};
+        matLines.forEach(line => {
+            const item = parseLine(line);
+            if(item){
+                matItems[item.name] = item.total;
+                totalMat += item.total;
+            }
+        });
+        const origItems = {};
+        origLines.forEach(line => {
+            const item = parseLine(line);
+            if(item){
+                origItems[item.name] = item.total;
+                totalOrig += item.total;
+            }
+        });
+
+        // Progress %
+        const progress = totalOrig > 0 ? Math.floor((totalMat/totalOrig)*100) : 0;
+        document.getElementById('progressBar').style.width = progress + '%';
+
+        // Fill table
+        for(const name in matItems){
+            const total = matItems[name];
+            const row = document.createElement("tr");
+            const nameCell = document.createElement("td");
+            nameCell.textContent = name;
+            const totalCell = document.createElement("td");
+            totalCell.textContent = total;
+            const stacksCell = document.createElement("td");
+            stacksCell.textContent = getStacks(total);
+            const checkbox = document.createElement("input");
+            checkbox.type = "checkbox";
+            checkbox.style.width = "24px";
+            checkbox.style.height = "24px";
+            checkbox.addEventListener('change', () => {
+                row.classList.toggle('selected', checkbox.checked);
+            });
+            const checkboxCell = document.createElement("td");
+            checkboxCell.className = "checkbox-cell";
+            checkboxCell.appendChild(checkbox);
+
+            row.appendChild(nameCell);
+            row.appendChild(totalCell);
+            row.appendChild(stacksCell);
+            row.appendChild(checkboxCell);
+
+            output.appendChild(row);
+        }
+
+    })
+    .catch(err => console.error("Fehler beim Laden des Projekts:", err));
+}
 
 // ==========================
 // SERVER STATUS
