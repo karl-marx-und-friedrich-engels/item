@@ -1,4 +1,4 @@
-Projekt1:1
+Projekt1:0
 Projekt2:0
 Projekt3:0
 Projekt4:0
