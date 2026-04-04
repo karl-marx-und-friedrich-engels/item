@@ -145,16 +145,18 @@ button.copy-btn:hover {
 <div id="serverStatus">Serverstatus wird geladen...</div>
 
 <!-- Fortschrittsanzeige Blöcke -->
-<div class="progressContainer">
-    <div id="blockProgress" class="progressBar"></div>
-    <div id="blockProgressText" class="progressText">0% Blöcke</div>
-</div>
-<!-- Fortschrittsanzeige Items -->
-<div class="progressContainer">
-    <div id="itemProgress" class="progressBar"></div>
-    <div id="itemProgressText" class="progressText">0% Items</div>
+<div id="progressSection" style="display:block;">
+    <div class="progressContainer">
+        <div id="blockProgress" class="progressBar"></div>
+        <div id="blockProgressText" class="progressText">0% Blöcke</div>
+    </div>
+    <div class="progressContainer">
+        <div id="itemProgress" class="progressBar"></div>
+        <div id="itemProgressText" class="progressText">0% Items</div>
+    </div>
 </div>
 
+<!-- Materialliste -->
 <div id="material" style="display:block;">
 <table>
 <thead>
@@ -169,7 +171,8 @@ button.copy-btn:hover {
 </table>
 </div>
 
-<div id="waypoints" style="display:block;">
+<!-- Waypoints -->
+<div id="waypoints" style="display:none;">
 <h2>Waypoints</h2>
 <table>
 <thead>
@@ -193,9 +196,16 @@ function toggleMenu(){
     const menu = document.getElementById("menu");
     menu.style.display = menu.style.display === "flex" ? "none" : "flex";
 }
-function showProject(projectFile, projectName){
-    loadProject(projectFile, projectName);
-    document.getElementById('material').style.display = 'block';
+function showSection(section, projectFile=null, projectName=null){
+    // Material oder Waypoints anzeigen
+    document.getElementById("material").style.display = section === 'material' ? 'block' : 'none';
+    document.getElementById("waypoints").style.display = section === 'waypoints' ? 'block' : 'none';
+    document.getElementById("progressSection").style.display = section === 'material' ? 'block' : 'none';
+    if(section === 'material' && projectFile){
+        loadProject(projectFile, projectName);
+    } else if(section === 'waypoints'){
+        document.getElementById("projectTitle").textContent = "Waypoints";
+    }
 }
 
 // ==========================
@@ -251,16 +261,26 @@ fetch('projects_status.txt')
             activeProjects.push(proj.trim());
         }
     });
-    // Build menu
+    // Projekte ins Menü
     activeProjects.forEach((proj, index) => {
         const a = document.createElement('a');
         a.href = "#";
         a.textContent = proj;
-        a.onclick = () => showProject(`projekt_${index+1}.txt`, proj);
+        a.onclick = () => showSection('material', `projekt_${index+1}.txt`, proj);
         menu.appendChild(a);
     });
+
+    // Waypoints als letzter Menüpunkt
+    const wp = document.createElement('a');
+    wp.href = "#";
+    wp.textContent = "Waypoints";
+    wp.onclick = () => showSection('waypoints');
+    menu.appendChild(wp);
+
     if(activeProjects.length > 0){
-        showProject(`projekt_1.txt`, activeProjects[0]);
+        showSection('material', `projekt_1.txt`, activeProjects[0]);
+    } else {
+        showSection('waypoints');
     }
 });
 
@@ -301,48 +321,27 @@ function loadProject(file, projectName){
             }
         });
 
-        // Fortschritt Blöcke und Items
         const blockProgress = totalOrigBlocks > 0 ? Math.floor(((totalOrigBlocks - totalMatBlocks)/totalOrigBlocks)*100) : 0;
         const itemProgress = totalOrigItems > 0 ? Math.floor(((totalOrigItems - totalMatItems)/totalOrigItems)*100) : 0;
 
-        // Balken setzen
-        const blockBar = document.getElementById('blockProgress');
-        blockBar.style.width = blockProgress + '%';
+        document.getElementById('blockProgress').style.width = blockProgress + '%';
         document.getElementById('blockProgressText').textContent = blockProgress + '% Blöcke';
-
-        const itemBar = document.getElementById('itemProgress');
-        itemBar.style.width = itemProgress + '%';
+        document.getElementById('itemProgress').style.width = itemProgress + '%';
         document.getElementById('itemProgressText').textContent = itemProgress + '% Items';
 
-        // Fill table
         for(const name in matItems){
             const total = matItems[name];
             const row = document.createElement("tr");
-            const nameCell = document.createElement("td");
-            nameCell.textContent = name;
-            const totalCell = document.createElement("td");
-            totalCell.textContent = total;
-            const stacksCell = document.createElement("td");
-            stacksCell.textContent = getStacks(total);
+            const nameCell = document.createElement("td"); nameCell.textContent = name;
+            const totalCell = document.createElement("td"); totalCell.textContent = total;
+            const stacksCell = document.createElement("td"); stacksCell.textContent = getStacks(total);
             const checkbox = document.createElement("input");
-            checkbox.type = "checkbox";
-            checkbox.style.width = "24px";
-            checkbox.style.height = "24px";
-            checkbox.addEventListener('change', () => {
-                row.classList.toggle('selected', checkbox.checked);
-            });
-            const checkboxCell = document.createElement("td");
-            checkboxCell.className = "checkbox-cell";
-            checkboxCell.appendChild(checkbox);
-
-            row.appendChild(nameCell);
-            row.appendChild(totalCell);
-            row.appendChild(stacksCell);
-            row.appendChild(checkboxCell);
-
+            checkbox.type = "checkbox"; checkbox.style.width="24px"; checkbox.style.height="24px";
+            checkbox.addEventListener('change',()=>row.classList.toggle('selected', checkbox.checked));
+            const checkboxCell = document.createElement("td"); checkboxCell.className="checkbox-cell"; checkboxCell.appendChild(checkbox);
+            row.appendChild(nameCell); row.appendChild(totalCell); row.appendChild(stacksCell); row.appendChild(checkboxCell);
             output.appendChild(row);
         }
-
     })
     .catch(err => console.error("Fehler beim Laden des Projekts:", err));
 }
@@ -359,22 +358,12 @@ fetch('waypoints.txt')
         const [name,x,y,z] = line.split(',').map(s => s.trim());
         if(!name) return;
         const row = document.createElement("tr");
-        [name,x,y,z].forEach(val => {
-            const td = document.createElement("td");
-            td.textContent = val;
-            row.appendChild(td);
-        });
+        [name,x,y,z].forEach(val => { const td=document.createElement("td"); td.textContent=val; row.appendChild(td); });
         const actionTd = document.createElement("td");
         const copyBtn = document.createElement("button");
-        copyBtn.textContent = "Kopieren";
-        copyBtn.className = "copy-btn";
-        copyBtn.addEventListener('click', () => {
-            navigator.clipboard.writeText(`${x}, ${y}, ${z}`);
-            copyBtn.textContent = "✔";
-            setTimeout(() => copyBtn.textContent = "Kopieren", 1000);
-        });
-        actionTd.appendChild(copyBtn);
-        row.appendChild(actionTd);
+        copyBtn.textContent="Kopieren"; copyBtn.className="copy-btn";
+        copyBtn.addEventListener('click',()=>{navigator.clipboard.writeText(`${x}, ${y}, ${z}`); copyBtn.textContent="✔"; setTimeout(()=>copyBtn.textContent="Kopieren",1000);});
+        actionTd.appendChild(copyBtn); row.appendChild(actionTd);
         waypointsTable.appendChild(row);
     });
 });
@@ -386,17 +375,9 @@ const serverStatusDiv = document.getElementById("serverStatus");
 fetch('https://api.mcsrvstat.us/2/Season_4.exaroton.me')
 .then(res => res.json())
 .then(data => {
-    if(!data.online){
-        serverStatusDiv.textContent = "Server offline";
-        return;
-    }
+    if(!data.online){ serverStatusDiv.textContent="Server offline"; return; }
     let players = data.players && data.players.list ? data.players.list.join(', ') : 'Keine Spieler sichtbar';
-    serverStatusDiv.innerHTML = `
-        Server online! <br>
-        Spieler: ${data.players ? data.players.online : 0}/${data.players ? data.players.max : '?'}<br>
-        Version: ${data.version}<br>
-        Online Spieler: ${players}
-    `;
+    serverStatusDiv.innerHTML = `Server online! <br> Spieler: ${data.players ? data.players.online : 0}/${data.players ? data.players.max : '?'}<br> Version: ${data.version}<br> Online Spieler: ${players}`;
 })
 .catch(err => serverStatusDiv.textContent = "Fehler beim Abrufen des Serverstatus");
 </script>
