@@ -101,6 +101,10 @@ button.copy-btn {
 button.copy-btn:hover {
     background-color: #00aa00;
 }
+#serverStatus {
+    margin-bottom: 20px;
+    font-size: 1.1em;
+}
 .progressContainer {
     width: 80%;
     height: 24px;
@@ -126,6 +130,7 @@ button.copy-btn:hover {
     line-height: 24px;
     color: #fff;
     font-weight: bold;
+    pointer-events: none;
 }
 </style>
 </head>
@@ -139,7 +144,7 @@ button.copy-btn:hover {
     <img id="logo" src="bilder/resized_1024_clock_00.png">
 </div>
 
-<div id="progressSection">
+<div id="progressSection" style="display:block;">
     <div class="progressContainer">
         <div id="blockProgress" class="progressBar"></div>
         <div id="blockProgressText" class="progressText">0% Blöcke</div>
@@ -150,7 +155,7 @@ button.copy-btn:hover {
     </div>
 </div>
 
-<div id="material">
+<div id="material" style="display:block;">
 <table>
 <thead>
 <tr>
@@ -180,11 +185,14 @@ button.copy-btn:hover {
 </div>
 
 <script>
+// ==========================
 // MENU
+// ==========================
 function toggleMenu(){
     const menu = document.getElementById("menu");
     menu.style.display = menu.style.display === "flex" ? "none" : "flex";
 }
+
 function showSection(section, projectFile=null){
     document.getElementById("material").style.display = section==='material'?'block':'none';
     document.getElementById("progressSection").style.display = section==='material'?'block':'none';
@@ -193,7 +201,9 @@ function showSection(section, projectFile=null){
     if(section==='waypoints') loadWaypoints();
 }
 
-// CLOCK
+// ==========================
+// CLOCK ANIMATION
+// ==========================
 const logo = document.getElementById("logo");
 const frames = 64;
 const images = [];
@@ -205,7 +215,9 @@ for(let i=0;i<frames;i++){
 let current=0;
 setInterval(()=>{logo.src=images[current].src;current=(current+1)%frames;},50);
 
+// ==========================
 // HELPERS
+// ==========================
 function getStacks(total){
     const stacks=Math.floor(total/64);
     const rest=total%64;
@@ -215,81 +227,128 @@ function getStacks(total){
 }
 function parseLine(line){
     line=line.trim();
-    if(!line || line.startsWith('+') || line.startsWith('| Item')) return null;
+    if(!line || line.startsWith('+') || line.startsWith('| Item') || line.startsWith('| Material List')) return null;
     const parts=line.split('|').map(p=>p.trim()).filter(p=>p);
     if(parts.length<2) return null;
-    return {name:parts[0], total:parseInt(parts[1])};
+    const name=parts[0];
+    const total=parseInt(parts[1].replace(/\s+/g,''));
+    if(isNaN(total)) return null;
+    return {name,total};
 }
 
-// LOAD PROJECTS
-fetch('projects_status.txt').then(r=>r.text()).then(text=>{
+// ==========================
+// LOAD PROJECTS & MENU
+// ==========================
+fetch('projects_status.txt').then(res=>res.text()).then(statusText=>{
+    const lines=statusText.split('\n');
     const menu=document.getElementById('menu');
-    const lines=text.split('\n');
 
-    const material=document.createElement('a');
-    material.textContent="Materialliste";
-    menu.appendChild(material);
+    // Hauptpunkte
+    const materialLi=document.createElement('a'); materialLi.href="#"; materialLi.textContent="Materialliste";
+    menu.appendChild(materialLi);
 
-    const wp=document.createElement('a');
-    wp.textContent="Waypoints";
-    wp.onclick=()=>showSection('waypoints');
-    menu.appendChild(wp);
+    const wpLi=document.createElement('a'); wpLi.href="#"; wpLi.textContent="Waypoints"; wpLi.onclick=()=>showSection('waypoints');
+    menu.appendChild(wpLi);
 
-    lines.forEach((line,i)=>{
-        if(line.includes(':1')){
-            fetch(`projekt_${i+1}.txt`).then(r=>r.text()).then(t=>{
-                const name=t.split('\n').find(l=>l.startsWith('Name:')).split(':')[1].trim();
-                const a=document.createElement('a');
-                a.textContent=name;
-                a.className="menu-sub";
-                a.onclick=()=>showSection('material',`projekt_${i+1}.txt`);
-                menu.insertBefore(a,wp);
-            });
-        }
+    const activeProjects=[];
+    lines.forEach((line,index)=>{
+        const [proj,val]=line.split(':');
+        if(val && val.trim()==='1') activeProjects.push({file:`projekt_${index+1}.txt`});
     });
+
+    activeProjects.forEach(p=>{
+        fetch(p.file).then(res=>res.text()).then(txt=>{
+            const nameLine=txt.split('\n').find(l=>l.startsWith('Name:'));
+            const projectName=nameLine?nameLine.split(':')[1].trim():"Projekt";
+            const a=document.createElement('a');
+            a.href="#"; a.textContent=projectName;
+            a.className="menu-sub";
+            a.onclick=()=>showSection('material',p.file);
+            menu.insertBefore(a, wpLi);
+        });
+    });
+
+    if(activeProjects.length>0) showSection('material',activeProjects[0].file);
+    else showSection('waypoints');
 });
 
-// LOAD PROJECT
+// ==========================
+// LOAD PROJECT FILE
+// ==========================
 function loadProject(file){
-    fetch(file).then(r=>r.text()).then(text=>{
+    fetch(file).then(res=>res.text()).then(text=>{
         const output=document.getElementById("output");
         output.innerHTML='';
 
-        const name=text.split('\n').find(l=>l.startsWith('Name:')).split(':')[1].trim();
-        document.getElementById("projectTitle").textContent=name;
+        const nameLine=text.split('\n').find(l=>l.startsWith('Name:'));
+        const projectName=nameLine?nameLine.split(':')[1].trim():"Unbekanntes Projekt";
+        document.getElementById('projectTitle').textContent=projectName;
 
-        text.split('\n').forEach(l=>{
+        const sections=text.split('Originalliste:');
+        const matLines=sections[0].split('\n');
+        const origLines=sections[1]?sections[1].split('\n'):[];
+
+        let totalMatBlocks=0,totalOrigBlocks=0,totalMatItems=0,totalOrigItems=0;
+        const matItems={},origItems={};
+
+        matLines.forEach(l=>{
             const item=parseLine(l);
-            if(!item) return;
-            const row=document.createElement("tr");
-            row.innerHTML=`<td>${item.name}</td><td>${item.total}</td><td>${getStacks(item.total)}</td><td></td>`;
-            output.appendChild(row);
+            if(item){ matItems[item.name]=item.total; totalMatBlocks+=item.total; totalMatItems++; }
         });
-    });
+        origLines.forEach(l=>{
+            const item=parseLine(l);
+            if(item){ origItems[item.name]=item.total; totalOrigBlocks+=item.total; totalOrigItems++; }
+        });
+
+        const blockProgress=totalOrigBlocks>0?Math.floor(((totalOrigBlocks-totalMatBlocks)/totalOrigBlocks)*100):0;
+        const itemProgress=totalOrigItems>0?Math.floor(((totalOrigItems-totalMatItems)/totalOrigItems)*100):0;
+
+        document.getElementById('blockProgress').style.width=blockProgress+'%';
+        document.getElementById('blockProgressText').textContent=blockProgress+'% Blöcke';
+        document.getElementById('itemProgress').style.width=itemProgress+'%';
+        document.getElementById('itemProgressText').textContent=itemProgress+'% Items';
+
+        for(const name in matItems){
+            const total=matItems[name];
+            const row=document.createElement("tr");
+            const nameCell=document.createElement("td"); nameCell.textContent=name;
+            const totalCell=document.createElement("td"); totalCell.textContent=total;
+            const stacksCell=document.createElement("td"); stacksCell.textContent=getStacks(total);
+            const checkbox=document.createElement("input"); checkbox.type="checkbox"; checkbox.style.width="24px"; checkbox.style.height="24px";
+            checkbox.addEventListener('change',()=>row.classList.toggle('selected', checkbox.checked));
+            const checkboxCell=document.createElement("td"); checkboxCell.className="checkbox-cell"; checkboxCell.appendChild(checkbox);
+            row.appendChild(nameCell); row.appendChild(totalCell); row.appendChild(stacksCell); row.appendChild(checkboxCell);
+            output.appendChild(row);
+        }
+    }).catch(err=>console.error("Fehler beim Laden des Projekts:", err));
 }
 
+// ==========================
 // LOAD WAYPOINTS
+// ==========================
 function loadWaypoints(){
     const table=document.getElementById("waypointsTable");
-    table.innerHTML='';
-    fetch('waypoints.txt').then(r=>r.text()).then(text=>{
-        text.split('\n').forEach(l=>{
+    table.innerHTML=''; // Tabelle leeren
+    fetch('waypoints.txt').then(res=>res.text()).then(text=>{
+        const lines=text.split('\n');
+        lines.forEach(l=>{
             if(!l.trim()) return;
-            const p=l.split(',');
+            const parts=l.split(',');
             const row=document.createElement('tr');
-            row.innerHTML=`
-                <td>${p[0]}</td>
-                <td>${p[1]}</td>
-                <td>${p[2]}</td>
-                <td>${p[3]}</td>
-                <td><button class="copy-btn" onclick="navigator.clipboard.writeText('${p[1]},${p[2]},${p[3]}')">Kopieren</button></td>
-            `;
+            parts.forEach((v,i)=>{
+                const td=document.createElement('td'); td.textContent=v.trim(); row.appendChild(td);
+            });
+            const actionTd=document.createElement('td');
+            const copyBtn=document.createElement('button'); copyBtn.textContent="Kopieren"; copyBtn.className="copy-btn";
+            copyBtn.addEventListener('click',()=>{navigator.clipboard.writeText(parts.slice(1).join(', ')); copyBtn.textContent='✔'; setTimeout(()=>copyBtn.textContent='Kopieren',1000);});
+            actionTd.appendChild(copyBtn);
+            row.appendChild(actionTd);
             table.appendChild(row);
         });
-        document.getElementById("projectTitle").textContent="Waypoints";
-    });
+        document.getElementById('projectTitle').textContent="Waypoints";
+    }).catch(err=>console.error("Fehler beim Laden der Waypoints:",err));
 }
-</script>
 
+</script>
 </body>
 </html>
