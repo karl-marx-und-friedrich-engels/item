@@ -2,101 +2,315 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8">
-<title>Minecraft Projektübersicht</title>
+<title>Materialliste & Waypoints</title>
+<link rel="icon" href="Knowledge_Book_JE2.png">
+
 <style>
-body { font-family: Arial; background:#1e1e1e; color:#ddd; margin:0; }
-header { display:flex; justify-content:space-between; align-items:center; padding:10px; background:#111; }
-#titleLeft { display:flex; align-items:center; gap:10px; font-weight:bold; font-size:18px; }
-#clock, #logo { width:40px; height:40px; }
-#menuRight { display:flex; flex-direction:column; cursor:pointer; gap:5px; }
-.menuBar { width:25px; height:3px; background:#ddd; }
-#content { padding:20px; }
-#materialWrapper, #waypointsWrapper { display:none; }
-#materialWrapper.active, #waypointsWrapper.active { display:block; }
-table { width:100%; border-collapse:collapse; margin-top:10px; }
-th, td { border:1px solid #444; padding:5px; text-align:left; }
-tr:nth-child(even){ background:#2a2a2a; }
-tr:nth-child(odd){ background:#202020; }
-tr.checked{ background:#336633 !important; }
-.copyBtn{ cursor:pointer; padding:2px 5px; background:#444; color:#ddd; border-radius:3px; }
-#progressBarContainer{ background:#333; width:100%; height:20px; margin-top:10px; }
-#progressBar{ background:#33aa33; height:100%; width:0%; }
+body {
+    font-family: Arial, sans-serif;
+    background-color: #1a1a1a;
+    color: #fff;
+    padding: 20px;
+    margin: 0;
+    text-align: center;
+}
+
+/* HEADER + LOGO */
+#header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+#logo {
+    width: 80px;
+    height: 80px;
+}
+
+/* MENU BUTTON */
+#menuButton {
+    position: fixed;
+    top: 15px;
+    right: 20px;
+    font-size: 30px;
+    cursor: pointer;
+    z-index: 1000;
+}
+
+/* MENU */
+#menu {
+    position: fixed;
+    top: 60px;
+    right: 20px;
+    background: #222;
+    border: 1px solid #444;
+    border-radius: 6px;
+    display: none;
+    flex-direction: column;
+    min-width: 160px;
+}
+
+#menu a {
+    padding: 10px;
+    text-decoration: none;
+    color: white;
+    border-bottom: 1px solid #444;
+}
+
+#menu a:hover {
+    background: #444;
+}
+
+/* TABLES */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 30px;
+}
+
+th, td {
+    padding: 8px;
+    border: 1px solid #444;
+    text-align: center;
+}
+
+th {
+    background-color: #222;
+}
+
+tbody tr:nth-child(odd) {
+    background-color: #2b2b2b;
+}
+
+tbody tr:nth-child(even) {
+    background-color: #3a3a3a;
+}
+
+tr:hover {
+    background-color: #505050;
+}
+
+td.checkbox-cell {
+    width: 40px;
+}
+
+tr.selected:nth-child(odd) {
+    background-color: #006600;
+}
+
+tr.selected:nth-child(even) {
+    background-color: #00aa00;
+}
+
+button.copy-btn {
+    padding: 4px 8px;
+    margin-left: 5px;
+    cursor: pointer;
+    border: none;
+    border-radius: 4px;
+    background-color: #007700;
+    color: white;
+}
+
+button.copy-btn:hover {
+    background-color: #00aa00;
+}
 </style>
 </head>
+
 <body>
 
-<header>
-  <div id="titleLeft">
-    <img id="clock" src="" alt="Uhr">
-    <img id="logo" src="Knowledge_Book_JE2.png" alt="Logo">
-    <span id="currentTitle">Materialliste</span>
-  </div>
-  <div id="menuRight" title="Ansicht wechseln">
-    <div class="menuBar"></div>
-    <div class="menuBar"></div>
-    <div class="menuBar"></div>
-  </div>
-</header>
+<!-- MENU -->
+<div id="menuButton" onclick="toggleMenu()">☰</div>
+<div id="menu">
+    <a href="#" onclick="showSection('material')">Materialliste</a>
+    <a href="#" onclick="showSection('waypoints')">Waypoints</a>
+</div>
 
-<div id="content">
-  <div id="materialWrapper" class="active">
-    <div id="projectStatus"></div>
-    <table id="materialTable"></table>
-    <div id="progressBarContainer">
-      <div id="progressBar"></div>
-    </div>
-  </div>
-  <div id="waypointsWrapper">
-    <table id="waypointsTable"></table>
-  </div>
+<!-- HEADER -->
+<div id="header">
+    <h1>Materialliste</h1>
+    <img id="logo" src="resized_1024_clock_00.png">
+</div>
+
+<!-- MATERIALLISTE -->
+<div id="material" style="display:block;">
+<table>
+<thead>
+<tr>
+<th>Item</th>
+<th>Total</th>
+<th>Stacks</th>
+<th></th>
+</tr>
+</thead>
+<tbody id="output"></tbody>
+</table>
+</div>
+
+<!-- WAYPOINTS -->
+<div id="waypoints" style="display:none;">
+<h2>Waypoints</h2>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>X</th>
+<th>Y</th>
+<th>Z</th>
+<th>Aktion</th>
+</tr>
+</thead>
+<tbody id="waypointsTable"></tbody>
+</table>
 </div>
 
 <script>
-let clockImages=[], clockIndex=0;
-for(let i=0;i<=63;i++){ clockImages.push(`resized_1024_clock_${String(i).padStart(2,'0')}.png`); }
-function updateClock(){ document.getElementById('clock').src=clockImages[clockIndex]; clockIndex=(clockIndex+1)%clockImages.length; setTimeout(updateClock,150); }
-updateClock();
-
-let showingMaterial=true;
-document.getElementById("menuRight").onclick=function(){
-  showingMaterial=!showingMaterial;
-  document.getElementById("materialWrapper").classList.toggle("active",showingMaterial);
-  document.getElementById("waypointsWrapper").classList.toggle("active",!showingMaterial);
-  document.getElementById("currentTitle").textContent=showingMaterial?"Materialliste":"Waypoints";
-};
-
-async function loadMaterial(){
-  try{
-    let statusText=(await fetch("projects_status.txt")).text();
-    let resp=await fetch("projekt1.txt"); let text=await resp.text();
-    let lines=text.split("\n");
-    let table=document.getElementById("materialTable"); table.innerHTML="<tr><th>Item</th><th>Total</th><th>Missing</th><th>Available</th><th>Abhaken</th></tr>";
-    lines.forEach(line=>{
-      if(line.startsWith("|")){
-        let cols=line.split("|").map(x=>x.trim()).filter(x=>x);
-        if(cols.length>=4){ let tr=document.createElement("tr"); tr.innerHTML=`<td>${cols[0]}</td><td>${cols[1]}</td><td>${cols[2]}</td><td>${cols[3]}</td><td><input type="checkbox" class="itemCheck"></td>`; table.appendChild(tr); }
-      }
-    });
-  } catch(e){ console.error("Fehler beim Laden der Materialliste:",e); }
+// ==========================
+// MENU
+// ==========================
+function toggleMenu(){
+    const menu = document.getElementById("menu");
+    menu.style.display = menu.style.display === "flex" ? "none" : "flex";
 }
 
-async function loadWaypoints(){
-  try{
-    let resp=await fetch("waypoints.txt"); let text=await resp.text();
-    let lines=text.split("\n"); let table=document.getElementById("waypointsTable"); table.innerHTML="<tr><th>Name</th><th>X</th><th>Y</th><th>Z</th><th>Copy</th></tr>";
-    lines.forEach(line=>{
-      if(!line.trim()) return;
-      let [name,x,y,z]=line.split(",");
-      let tr=document.createElement("tr");
-      tr.innerHTML=`<td>${name}</td><td>${x}</td><td>${y}</td><td>${z}</td><td><span class="copyBtn">Copy</span></td>`;
-      table.appendChild(tr);
-    });
-    table.querySelectorAll(".copyBtn").forEach(btn=>{btn.onclick=function(){let row=btn.parentElement.parentElement; navigator.clipboard.writeText(`${row.children[1].textContent},${row.children[2].textContent},${row.children[3].textContent}`);}});
-  } catch(e){ console.error("Fehler beim Laden der Waypoints:",e); }
+function showSection(section){
+    document.getElementById('material').style.display = section === 'material' ? 'block' : 'none';
+    document.getElementById('waypoints').style.display = section === 'waypoints' ? 'block' : 'none';
 }
 
-loadMaterial();
-loadWaypoints();
+// ==========================
+// CLOCK ANIMATION
+// ==========================
+const logo = document.getElementById("logo");
+const frames = 64;
+const images = [];
+
+for (let i = 0; i < frames; i++) {
+    const img = new Image();
+    img.src = `resized_1024_clock_${String(i).padStart(2,'0')}.png`;
+    images.push(img);
+}
+
+let current = 0;
+setInterval(() => {
+    logo.src = images[current].src;
+    current = (current + 1) % frames;
+}, 50); // 20 FPS
+
+// ==========================
+// MATERIAL LISTE
+// ==========================
+function getStacks(total){
+    const stacks = Math.floor(total/64);
+    const rest = total % 64;
+    if(stacks === 0) return rest + " Blöcke";
+    if(rest === 0) return stacks + " Stacks";
+    return stacks + " Stacks + " + rest;
+}
+
+function parseLine(line){
+    line = line.trim();
+    if(!line || line.startsWith('+') || line.startsWith('| Item') || line.startsWith('| Material List')) return null;
+
+    const parts = line.split('|').map(p => p.trim()).filter(p => p);
+    if(parts.length < 2) return null;
+
+    const name = parts[0];
+    const total = parseInt(parts[1].replace(/\s+/g, ''));
+
+    if(isNaN(total)) return null;
+
+    return {name, total};
+}
+
+fetch('material_list_2026-03-29_16.54.28.txt')
+.then(res => res.text())
+.then(text => {
+    const lines = text.split("\n");
+    const out = document.getElementById("output");
+
+    lines.forEach(line => {
+        const item = parseLine(line);
+        if(!item) return;
+
+        const row = document.createElement("tr");
+
+        const nameCell = document.createElement("td");
+        nameCell.textContent = item.name;
+
+        const totalCell = document.createElement("td");
+        totalCell.textContent = item.total;
+
+        const stacksCell = document.createElement("td");
+        stacksCell.textContent = getStacks(item.total);
+
+        const checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.style.width = "24px";
+        checkbox.style.height = "24px";
+
+        checkbox.addEventListener('change', () => {
+            row.classList.toggle('selected', checkbox.checked);
+        });
+
+        const checkboxCell = document.createElement("td");
+        checkboxCell.className = "checkbox-cell";
+        checkboxCell.appendChild(checkbox);
+
+        row.appendChild(nameCell);
+        row.appendChild(totalCell);
+        row.appendChild(stacksCell);
+        row.appendChild(checkboxCell);
+
+        out.appendChild(row);
+    });
+})
+.catch(err => console.error("Fehler Materialliste:", err));
+
+// ==========================
+// WAYPOINTS
+// ==========================
+fetch('waypoints.txt')
+.then(res => res.text())
+.then(text => {
+    const lines = text.split("\n");
+    const out = document.getElementById("waypointsTable");
+
+    lines.forEach(line => {
+        if(!line.trim()) return;
+
+        const parts = line.split('|').map(p => p.trim());
+        if(parts.length < 4) return;
+
+        const row = document.createElement("tr");
+
+        parts.forEach((value, index) => {
+            const td = document.createElement("td");
+            td.textContent = value;
+            row.appendChild(td);
+        });
+
+        const actionTd = document.createElement("td");
+        const copyBtn = document.createElement("button");
+        copyBtn.textContent = "Kopieren";
+        copyBtn.className = "copy-btn";
+        copyBtn.addEventListener('click', () => {
+            const coords = parts[1] + ", " + parts[2] + ", " + parts[3];
+            navigator.clipboard.writeText(coords);
+            copyBtn.textContent = "✔";
+            setTimeout(() => copyBtn.textContent = "Kopieren", 1000);
+        });
+        actionTd.appendChild(copyBtn);
+        row.appendChild(actionTd);
+
+        out.appendChild(row);
+    });
+})
+.catch(err => console.error("Waypoint Fehler:", err));
+
 </script>
 
 </body>
