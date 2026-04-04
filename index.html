@@ -99,18 +99,27 @@ button.copy-btn:hover {
     margin-bottom: 20px;
     font-size: 1.1em;
 }
-#progressBarContainer {
+
+/* Fortschrittsbalken */
+.progressContainer {
     width: 80%;
-    height: 20px;
+    height: 24px;
     background-color: #444;
-    border-radius: 10px;
-    margin: 0 auto 20px;
+    border-radius: 12px;
+    margin: 10px auto;
     overflow: hidden;
+    position: relative;
 }
-#progressBar {
+.progressBar {
     height: 100%;
-    background-color: #00aa00;
     width: 0%;
+    background-color: #00aa00;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-weight: bold;
     transition: width 0.5s;
 }
 </style>
@@ -127,8 +136,13 @@ button.copy-btn:hover {
 
 <div id="serverStatus">Serverstatus wird geladen...</div>
 
-<div id="progressBarContainer">
-    <div id="progressBar"></div>
+<!-- Fortschrittsanzeige Blöcke -->
+<div class="progressContainer">
+    <div id="blockProgress" class="progressBar">0%</div>
+</div>
+<!-- Fortschrittsanzeige Items -->
+<div class="progressContainer">
+    <div id="itemProgress" class="progressBar">0%</div>
 </div>
 
 <div id="material" style="display:block;">
@@ -173,7 +187,7 @@ let current = 0;
 setInterval(() => {
     logo.src = images[current].src;
     current = (current + 1) % frames;
-}, 50); // 20 FPS
+}, 50);
 
 // ==========================
 // HELPER
@@ -219,7 +233,6 @@ fetch('projects_status.txt')
         a.onclick = () => showProject(`projekt_${index+1}.txt`, proj);
         menu.appendChild(a);
     });
-    // Load first active project automatically
     if(activeProjects.length > 0){
         showProject(`projekt_1.txt`, activeProjects[0]);
     }
@@ -240,14 +253,16 @@ function loadProject(file, projectName){
         const matLines = sections[0].split('\n');
         const origLines = sections[1] ? sections[1].split('\n') : [];
 
-        let totalMat = 0, totalOrig = 0;
+        let totalMatBlocks = 0, totalOrigBlocks = 0;
+        let totalMatItems = 0, totalOrigItems = 0;
 
         const matItems = {};
         matLines.forEach(line => {
             const item = parseLine(line);
             if(item){
                 matItems[item.name] = item.total;
-                totalMat += item.total;
+                totalMatBlocks += item.total;
+                totalMatItems++;
             }
         });
         const origItems = {};
@@ -255,13 +270,22 @@ function loadProject(file, projectName){
             const item = parseLine(line);
             if(item){
                 origItems[item.name] = item.total;
-                totalOrig += item.total;
+                totalOrigBlocks += item.total;
+                totalOrigItems++;
             }
         });
 
-        // Progress %
-        const progress = totalOrig > 0 ? Math.floor((totalMat/totalOrig)*100) : 0;
-        document.getElementById('progressBar').style.width = progress + '%';
+        // Fortschritt Blöcke und Items
+        const blockProgress = totalOrigBlocks > 0 ? Math.floor(((totalOrigBlocks - totalMatBlocks)/totalOrigBlocks)*100) : 0;
+        const itemProgress = totalOrigItems > 0 ? Math.floor(((totalOrigItems - totalMatItems)/totalOrigItems)*100) : 0;
+
+        const blockBar = document.getElementById('blockProgress');
+        blockBar.style.width = blockProgress + '%';
+        blockBar.textContent = blockProgress + '% Blöcke';
+
+        const itemBar = document.getElementById('itemProgress');
+        itemBar.style.width = itemProgress + '%';
+        itemBar.textContent = itemProgress + '% Items';
 
         // Fill table
         for(const name in matItems){
@@ -316,7 +340,6 @@ fetch('https://api.mcsrvstat.us/2/Season_4.exaroton.me')
     `;
 })
 .catch(err => serverStatusDiv.textContent = "Fehler beim Abrufen des Serverstatus");
-
 </script>
 </body>
 </html>
