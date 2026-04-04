@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <title>Materialliste & Waypoints</title>
-<link rel="icon" href="bilder/Knowledge_Book_JE2.png">
+
 <style>
 body {
     font-family: Arial, sans-serif;
@@ -30,7 +30,6 @@ body {
     right: 20px;
     font-size: 30px;
     cursor: pointer;
-    z-index: 1000;
 }
 #menu {
     position: fixed;
@@ -38,99 +37,48 @@ body {
     right: 20px;
     background: #222;
     border: 1px solid #444;
-    border-radius: 6px;
     display: none;
     flex-direction: column;
-    min-width: 180px;
 }
 #menu a {
-    padding: 8px 10px;
-    text-decoration: none;
+    padding: 8px;
     color: white;
-    border-bottom: 1px solid #444;
-    display: block;
+    text-decoration: none;
 }
 #menu a:hover {
     background: #444;
 }
-.menu-sub {
-    font-style: italic;
-    margin-left: 15px;
-    font-size: 0.9em;
-}
+
 table {
     width: 100%;
     border-collapse: collapse;
-    margin-bottom: 30px;
 }
 th, td {
     padding: 8px;
     border: 1px solid #444;
-    text-align: center;
 }
-th {
-    background-color: #222;
+tr.selected {
+    background-color: #00aa00 !important;
 }
-tbody tr:nth-child(odd) {
-    background-color: #2b2b2b;
-}
-tbody tr:nth-child(even) {
-    background-color: #3a3a3a;
-}
-tr:hover {
-    background-color: #505050;
-}
-td.checkbox-cell {
-    width: 40px;
-}
-tr.selected:nth-child(odd) {
-    background-color: #006600;
-}
-tr.selected:nth-child(even) {
-    background-color: #00aa00;
-}
-button.copy-btn {
-    padding: 4px 8px;
-    margin-left: 5px;
-    cursor: pointer;
-    border: none;
-    border-radius: 4px;
-    background-color: #007700;
-    color: white;
-}
-button.copy-btn:hover {
-    background-color: #00aa00;
-}
-#serverStatus {
-    margin-bottom: 20px;
-    font-size: 1.1em;
-}
+
 .progressContainer {
     width: 80%;
     height: 24px;
     background-color: #444;
-    border-radius: 12px;
     margin: 10px auto;
     position: relative;
-    overflow: hidden;
 }
 .progressBar {
     height: 100%;
     width: 0%;
     background-color: #00aa00;
-    border-radius: 12px 0 0 12px;
-    transition: width 0.5s;
 }
 .progressText {
     position: absolute;
     width: 100%;
     text-align: center;
     top: 0;
-    left: 0;
     line-height: 24px;
-    color: #fff;
-    font-weight: bold;
-    pointer-events: none;
 }
 </style>
 </head>
@@ -141,21 +89,18 @@ button.copy-btn:hover {
 
 <div id="header">
     <h1 id="projectTitle">Materialliste</h1>
-    <img id="logo" src="bilder/resized_1024_clock_00.png">
 </div>
 
-<div id="progressSection" style="display:block;">
-    <div class="progressContainer">
-        <div id="blockProgress" class="progressBar"></div>
-        <div id="blockProgressText" class="progressText">0% Blöcke</div>
-    </div>
-    <div class="progressContainer">
-        <div id="itemProgress" class="progressBar"></div>
-        <div id="itemProgressText" class="progressText">0% Items</div>
-    </div>
+<div class="progressContainer">
+    <div id="blockProgress" class="progressBar"></div>
+    <div id="blockProgressText" class="progressText">0%</div>
 </div>
 
-<div id="material" style="display:block;">
+<div class="progressContainer">
+    <div id="itemProgress" class="progressBar"></div>
+    <div id="itemProgressText" class="progressText">0%</div>
+</div>
+
 <table>
 <thead>
 <tr>
@@ -167,24 +112,9 @@ button.copy-btn:hover {
 </thead>
 <tbody id="output"></tbody>
 </table>
-</div>
-
-<div id="waypointsSection" style="display:none;">
-<table>
-<thead>
-<tr>
-<th>Name</th>
-<th>X</th>
-<th>Y</th>
-<th>Z</th>
-<th>Aktion</th>
-</tr>
-</thead>
-<tbody id="waypointsTable"></tbody>
-</table>
-</div>
 
 <script>
+
 // ==========================
 // MENU
 // ==========================
@@ -193,161 +123,148 @@ function toggleMenu(){
     menu.style.display = menu.style.display === "flex" ? "none" : "flex";
 }
 
-function showSection(section, projectFile=null){
-    document.getElementById("material").style.display = section==='material'?'block':'none';
-    document.getElementById("progressSection").style.display = section==='material'?'block':'none';
-    document.getElementById("waypointsSection").style.display = section==='waypoints'?'block':'none';
-    if(section==='material' && projectFile) loadProject(projectFile);
-    if(section==='waypoints') loadWaypoints();
-}
-
-// ==========================
-// CLOCK ANIMATION
-// ==========================
-const logo = document.getElementById("logo");
-const frames = 64;
-const images = [];
-for(let i=0;i<frames;i++){
-    const img = new Image();
-    img.src=`bilder/resized_1024_clock_${String(i).padStart(2,'0')}.png`;
-    images.push(img);
-}
-let current=0;
-setInterval(()=>{logo.src=images[current].src;current=(current+1)%frames;},50);
-
 // ==========================
 // HELPERS
 // ==========================
 function getStacks(total){
     const stacks=Math.floor(total/64);
     const rest=total%64;
-    if(stacks===0) return rest+" Blöcke";
+    if(stacks===0) return rest;
     if(rest===0) return stacks+" Stacks";
     return stacks+" Stacks + "+rest;
 }
+
 function parseLine(line){
     line=line.trim();
-    if(!line || line.startsWith('+') || line.startsWith('| Item') || line.startsWith('| Material List')) return null;
+    if(!line || line.startsWith('+') || line.includes('Item')) return null;
+
     const parts=line.split('|').map(p=>p.trim()).filter(p=>p);
     if(parts.length<2) return null;
+
     const name=parts[0];
-    const total=parseInt(parts[1].replace(/\s+/g,''));
+    const total=parseInt(parts[1]);
+
     if(isNaN(total)) return null;
+
     return {name,total};
 }
 
 // ==========================
-// LOAD PROJECTS & MENU
-// ==========================
-fetch('projects_status.txt').then(res=>res.text()).then(statusText=>{
-    const lines=statusText.split('\n');
-    const menu=document.getElementById('menu');
-
-    // Hauptpunkte
-    const materialLi=document.createElement('a'); materialLi.href="#"; materialLi.textContent="Materialliste";
-    menu.appendChild(materialLi);
-
-    const wpLi=document.createElement('a'); wpLi.href="#"; wpLi.textContent="Waypoints"; wpLi.onclick=()=>showSection('waypoints');
-    menu.appendChild(wpLi);
-
-    const activeProjects=[];
-    lines.forEach((line,index)=>{
-        const [proj,val]=line.split(':');
-        if(val && val.trim()==='1') activeProjects.push({file:`projekt_${index+1}.txt`});
-    });
-
-    activeProjects.forEach(p=>{
-        fetch(p.file).then(res=>res.text()).then(txt=>{
-            const nameLine=txt.split('\n').find(l=>l.startsWith('Name:'));
-            const projectName=nameLine?nameLine.split(':')[1].trim():"Projekt";
-            const a=document.createElement('a');
-            a.href="#"; a.textContent=projectName;
-            a.className="menu-sub";
-            a.onclick=()=>showSection('material',p.file);
-            menu.insertBefore(a, wpLi);
-        });
-    });
-
-    if(activeProjects.length>0) showSection('material',activeProjects[0].file);
-    else showSection('waypoints');
-});
-
-// ==========================
-// LOAD PROJECT FILE
+// LOAD PROJECT
 // ==========================
 function loadProject(file){
     fetch(file).then(res=>res.text()).then(text=>{
+
         const output=document.getElementById("output");
         output.innerHTML='';
 
         const nameLine=text.split('\n').find(l=>l.startsWith('Name:'));
-        const projectName=nameLine?nameLine.split(':')[1].trim():"Unbekanntes Projekt";
+        const projectName=nameLine?nameLine.split(':')[1].trim():"Projekt";
         document.getElementById('projectTitle').textContent=projectName;
 
         const sections=text.split('Originalliste:');
         const matLines=sections[0].split('\n');
-        const origLines=sections[1]?sections[1].split('\n'):[];
+        const origLines=sections[1].split('\n');
 
-        let totalMatBlocks=0,totalOrigBlocks=0,totalMatItems=0,totalOrigItems=0;
-        const matItems={},origItems={};
+        let totalMatBlocks=0,totalOrigBlocks=0;
+        let totalMatItems=0,totalOrigItems=0;
 
         matLines.forEach(l=>{
             const item=parseLine(l);
-            if(item){ matItems[item.name]=item.total; totalMatBlocks+=item.total; totalMatItems++; }
+            if(item){
+                totalMatBlocks+=item.total;
+                totalMatItems++;
+            }
         });
+
         origLines.forEach(l=>{
             const item=parseLine(l);
-            if(item){ origItems[item.name]=item.total; totalOrigBlocks+=item.total; totalOrigItems++; }
+            if(item){
+                totalOrigBlocks+=item.total;
+                totalOrigItems++;
+            }
         });
 
-        const blockProgress=totalOrigBlocks>0?Math.floor(((totalOrigBlocks-totalMatBlocks)/totalOrigBlocks)*100):0;
-        const itemProgress=totalOrigItems>0?Math.floor(((totalOrigItems-totalMatItems)/totalOrigItems)*100):0;
+        // ==========================
+        // FERTIG ERKENNUNG
+        // ==========================
+        const isFinished = totalMatItems === 0;
+
+        let blockProgress = 0;
+        let itemProgress = 0;
+
+        if (isFinished) {
+            blockProgress = 100;
+            itemProgress = 100;
+        } else {
+            blockProgress = Math.floor(((totalOrigBlocks - totalMatBlocks) / totalOrigBlocks) * 100);
+            itemProgress = Math.floor(((totalOrigItems - totalMatItems) / totalOrigItems) * 100);
+        }
 
         document.getElementById('blockProgress').style.width=blockProgress+'%';
-        document.getElementById('blockProgressText').textContent=blockProgress+'% Blöcke';
         document.getElementById('itemProgress').style.width=itemProgress+'%';
-        document.getElementById('itemProgressText').textContent=itemProgress+'% Items';
 
-        for(const name in matItems){
-            const total=matItems[name];
+        if (isFinished) {
+            document.getElementById('blockProgressText').textContent="100% – Alle Materialien gesammelt 🎉";
+            document.getElementById('itemProgressText').textContent="Projekt fertig ✅";
+            document.getElementById('projectTitle').textContent += " ✅";
+
             const row=document.createElement("tr");
-            const nameCell=document.createElement("td"); nameCell.textContent=name;
-            const totalCell=document.createElement("td"); totalCell.textContent=total;
-            const stacksCell=document.createElement("td"); stacksCell.textContent=getStacks(total);
-            const checkbox=document.createElement("input"); checkbox.type="checkbox"; checkbox.style.width="24px"; checkbox.style.height="24px";
-            checkbox.addEventListener('change',()=>row.classList.toggle('selected', checkbox.checked));
-            const checkboxCell=document.createElement("td"); checkboxCell.className="checkbox-cell"; checkboxCell.appendChild(checkbox);
-            row.appendChild(nameCell); row.appendChild(totalCell); row.appendChild(stacksCell); row.appendChild(checkboxCell);
+            const cell=document.createElement("td");
+            cell.colSpan=4;
+            cell.textContent="🎉 Alles gesammelt!";
+            row.appendChild(cell);
             output.appendChild(row);
+
+            return;
+        } else {
+            document.getElementById('blockProgressText').textContent=blockProgress+"%";
+            document.getElementById('itemProgressText').textContent=itemProgress+"%";
         }
-    }).catch(err=>console.error("Fehler beim Laden des Projekts:", err));
+
+        // ==========================
+        // ITEMS RENDERN
+        // ==========================
+        matLines.forEach(l=>{
+            const item=parseLine(l);
+            if(!item) return;
+
+            const row=document.createElement("tr");
+
+            const nameCell=document.createElement("td");
+            nameCell.textContent=item.name;
+
+            const totalCell=document.createElement("td");
+            totalCell.textContent=item.total;
+
+            const stacksCell=document.createElement("td");
+            stacksCell.textContent=getStacks(item.total);
+
+            const checkbox=document.createElement("input");
+            checkbox.type="checkbox";
+
+            checkbox.addEventListener('change',()=>{
+                row.classList.toggle('selected', checkbox.checked);
+            });
+
+            const checkboxCell=document.createElement("td");
+            checkboxCell.appendChild(checkbox);
+
+            row.appendChild(nameCell);
+            row.appendChild(totalCell);
+            row.appendChild(stacksCell);
+            row.appendChild(checkboxCell);
+
+            output.appendChild(row);
+        });
+
+    });
 }
 
 // ==========================
-// LOAD WAYPOINTS
+// START
 // ==========================
-function loadWaypoints(){
-    const table=document.getElementById("waypointsTable");
-    table.innerHTML=''; // Tabelle leeren
-    fetch('waypoints.txt').then(res=>res.text()).then(text=>{
-        const lines=text.split('\n');
-        lines.forEach(l=>{
-            if(!l.trim()) return;
-            const parts=l.split(',');
-            const row=document.createElement('tr');
-            parts.forEach((v,i)=>{
-                const td=document.createElement('td'); td.textContent=v.trim(); row.appendChild(td);
-            });
-            const actionTd=document.createElement('td');
-            const copyBtn=document.createElement('button'); copyBtn.textContent="Kopieren"; copyBtn.className="copy-btn";
-            copyBtn.addEventListener('click',()=>{navigator.clipboard.writeText(parts.slice(1).join(', ')); copyBtn.textContent='✔'; setTimeout(()=>copyBtn.textContent='Kopieren',1000);});
-            actionTd.appendChild(copyBtn);
-            row.appendChild(actionTd);
-            table.appendChild(row);
-        });
-        document.getElementById('projectTitle').textContent="Waypoints";
-    }).catch(err=>console.error("Fehler beim Laden der Waypoints:",err));
-}
+loadProject("projekt_1.txt");
 
 </script>
 </body>
