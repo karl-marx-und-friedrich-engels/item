@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <title>Materialliste & Waypoints</title>
 <link rel="icon" href="bilder/Knowledge_Book_JE2.png">
-
 <style>
 body {
     font-family: Arial, sans-serif;
@@ -204,6 +203,20 @@ function showSection(section, projectFile=null){
 }
 
 // ==========================
+// CLOCK ANIMATION
+// ==========================
+const logo = document.getElementById("logo");
+const frames = 64;
+const images = [];
+for(let i=0;i<frames;i++){
+    const img = new Image();
+    img.src=`bilder/resized_1024_clock_${String(i).padStart(2,'0')}.png`;
+    images.push(img);
+}
+let current=0;
+setInterval(()=>{logo.src=images[current].src;current=(current+1)%frames;},50);
+
+// ==========================
 // HELPERS
 // ==========================
 function getStacks(total){
@@ -230,7 +243,6 @@ function parseLine(line){
 // ==========================
 function loadProject(file){
     fetch(file).then(res=>res.text()).then(text=>{
-
         const output=document.getElementById("output");
         output.innerHTML='';
 
@@ -249,22 +261,25 @@ function loadProject(file){
             const item=parseLine(l);
             if(item){ matItems[item.name]=item.total; totalMatBlocks+=item.total; totalMatItems++; }
         });
-
         origLines.forEach(l=>{
             const item=parseLine(l);
             if(item){ origItems[item.name]=item.total; totalOrigBlocks+=item.total; totalOrigItems++; }
         });
 
-        // 🔥 NEU: FERTIG CHECK
-        const isFinished = totalMatItems === 0;
+        // 🔥 NEU: CHECK OB MATERIAL LISTE LEER IST
+        const materialContent = sections[0]
+            .split('\n')
+            .filter(l => l.includes('|') && !l.includes('Item') && !l.includes('Material List'));
 
-        let blockProgress = 0;
-        let itemProgress = 0;
+        const isFinished = materialContent.length === 0;
 
-        if (isFinished) {
+        let blockProgress=0;
+        let itemProgress=0;
+
+        if(isFinished){
             blockProgress = 100;
             itemProgress = 100;
-        } else {
+        }else{
             blockProgress = totalOrigBlocks>0 ? Math.floor(((totalOrigBlocks-totalMatBlocks)/totalOrigBlocks)*100) : 0;
             itemProgress = totalOrigItems>0 ? Math.floor(((totalOrigItems-totalMatItems)/totalOrigItems)*100) : 0;
         }
@@ -272,8 +287,8 @@ function loadProject(file){
         document.getElementById('blockProgress').style.width=blockProgress+'%';
         document.getElementById('itemProgress').style.width=itemProgress+'%';
 
-        if (isFinished) {
-            document.getElementById('blockProgressText').textContent="100% – Alle Materialien gesammelt 🎉";
+        if(isFinished){
+            document.getElementById('blockProgressText').textContent="100% Blöcke – Alles gesammelt 🎉";
             document.getElementById('itemProgressText').textContent="Projekt fertig ✅";
             document.getElementById('projectTitle').textContent += " ✅";
 
@@ -284,7 +299,7 @@ function loadProject(file){
             row.appendChild(cell);
             output.appendChild(row);
             return;
-        } else {
+        }else{
             document.getElementById('blockProgressText').textContent=blockProgress+'% Blöcke';
             document.getElementById('itemProgressText').textContent=itemProgress+'% Items';
         }
@@ -293,14 +308,9 @@ function loadProject(file){
             const total=matItems[name];
             const row=document.createElement("tr");
 
-            const nameCell=document.createElement("td");
-            nameCell.textContent=name;
-
-            const totalCell=document.createElement("td");
-            totalCell.textContent=total;
-
-            const stacksCell=document.createElement("td");
-            stacksCell.textContent=getStacks(total);
+            const nameCell=document.createElement("td"); nameCell.textContent=name;
+            const totalCell=document.createElement("td"); totalCell.textContent=total;
+            const stacksCell=document.createElement("td"); stacksCell.textContent=getStacks(total);
 
             const checkbox=document.createElement("input");
             checkbox.type="checkbox";
@@ -319,14 +329,40 @@ function loadProject(file){
 
             output.appendChild(row);
         }
-
     });
 }
 
 // ==========================
-// START
+// LOAD WAYPOINTS
 // ==========================
-loadProject("projekt_1.txt");
+function loadWaypoints(){
+    const table=document.getElementById("waypointsTable");
+    table.innerHTML='';
+    fetch('waypoints.txt').then(res=>res.text()).then(text=>{
+        const lines=text.split('\n');
+        lines.forEach(l=>{
+            if(!l.trim()) return;
+            const parts=l.split(',');
+            const row=document.createElement('tr');
+            parts.forEach((v,i)=>{
+                const td=document.createElement('td'); td.textContent=v.trim(); row.appendChild(td);
+            });
+            const actionTd=document.createElement('td');
+            const copyBtn=document.createElement('button');
+            copyBtn.textContent="Kopieren";
+            copyBtn.className="copy-btn";
+            copyBtn.addEventListener('click',()=>{
+                navigator.clipboard.writeText(parts.slice(1).join(', '));
+                copyBtn.textContent='✔';
+                setTimeout(()=>copyBtn.textContent='Kopieren',1000);
+            });
+            actionTd.appendChild(copyBtn);
+            row.appendChild(actionTd);
+            table.appendChild(row);
+        });
+        document.getElementById('projectTitle').textContent="Waypoints";
+    });
+}
 
 </script>
 </body>
