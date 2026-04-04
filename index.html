@@ -185,7 +185,6 @@ button.copy-btn:hover {
 </div>
 
 <script>
-
 // ==========================
 // MENU
 // ==========================
@@ -226,7 +225,6 @@ function getStacks(total){
     if(rest===0) return stacks+" Stacks";
     return stacks+" Stacks + "+rest;
 }
-
 function parseLine(line){
     line=line.trim();
     if(!line || line.startsWith('+') || line.startsWith('| Item') || line.startsWith('| Material List')) return null;
@@ -237,6 +235,42 @@ function parseLine(line){
     if(isNaN(total)) return null;
     return {name,total};
 }
+
+// ==========================
+// LOAD PROJECTS & MENU
+// ==========================
+fetch('projects_status.txt').then(res=>res.text()).then(statusText=>{
+    const lines=statusText.split('\n');
+    const menu=document.getElementById('menu');
+
+    // Hauptpunkte
+    const materialLi=document.createElement('a'); materialLi.href="#"; materialLi.textContent="Materialliste";
+    menu.appendChild(materialLi);
+
+    const wpLi=document.createElement('a'); wpLi.href="#"; wpLi.textContent="Waypoints"; wpLi.onclick=()=>showSection('waypoints');
+    menu.appendChild(wpLi);
+
+    const activeProjects=[];
+    lines.forEach((line,index)=>{
+        const [proj,val]=line.split(':');
+        if(val && val.trim()==='1') activeProjects.push({file:`projekt_${index+1}.txt`});
+    });
+
+    activeProjects.forEach(p=>{
+        fetch(p.file).then(res=>res.text()).then(txt=>{
+            const nameLine=txt.split('\n').find(l=>l.startsWith('Name:'));
+            const projectName=nameLine?nameLine.split(':')[1].trim():"Projekt";
+            const a=document.createElement('a');
+            a.href="#"; a.textContent=projectName;
+            a.className="menu-sub";
+            a.onclick=()=>showSection('material',p.file);
+            menu.insertBefore(a, wpLi);
+        });
+    });
+
+    if(activeProjects.length>0) showSection('material',activeProjects[0].file);
+    else showSection('waypoints');
+});
 
 // ==========================
 // LOAD PROJECT FILE
@@ -266,70 +300,27 @@ function loadProject(file){
             if(item){ origItems[item.name]=item.total; totalOrigBlocks+=item.total; totalOrigItems++; }
         });
 
-        // 🔥 NEU: CHECK OB MATERIAL LISTE LEER IST
-        const materialContent = sections[0]
-            .split('\n')
-            .filter(l => l.includes('|') && !l.includes('Item') && !l.includes('Material List'));
-
-        const isFinished = materialContent.length === 0;
-
-        let blockProgress=0;
-        let itemProgress=0;
-
-        if(isFinished){
-            blockProgress = 100;
-            itemProgress = 100;
-        }else{
-            blockProgress = totalOrigBlocks>0 ? Math.floor(((totalOrigBlocks-totalMatBlocks)/totalOrigBlocks)*100) : 0;
-            itemProgress = totalOrigItems>0 ? Math.floor(((totalOrigItems-totalMatItems)/totalOrigItems)*100) : 0;
-        }
+        const blockProgress=totalOrigBlocks>0?Math.floor(((totalOrigBlocks-totalMatBlocks)/totalOrigBlocks)*100):0;
+        const itemProgress=totalOrigItems>0?Math.floor(((totalOrigItems-totalMatItems)/totalOrigItems)*100):0;
 
         document.getElementById('blockProgress').style.width=blockProgress+'%';
+        document.getElementById('blockProgressText').textContent=blockProgress+'% Blöcke';
         document.getElementById('itemProgress').style.width=itemProgress+'%';
-
-        if(isFinished){
-            document.getElementById('blockProgressText').textContent="100% Blöcke – Alles gesammelt 🎉";
-            document.getElementById('itemProgressText').textContent="Projekt fertig ✅";
-            document.getElementById('projectTitle').textContent += " ✅";
-
-            const row=document.createElement("tr");
-            const cell=document.createElement("td");
-            cell.colSpan=4;
-            cell.textContent="🎉 Alles gesammelt!";
-            row.appendChild(cell);
-            output.appendChild(row);
-            return;
-        }else{
-            document.getElementById('blockProgressText').textContent=blockProgress+'% Blöcke';
-            document.getElementById('itemProgressText').textContent=itemProgress+'% Items';
-        }
+        document.getElementById('itemProgressText').textContent=itemProgress+'% Items';
 
         for(const name in matItems){
             const total=matItems[name];
             const row=document.createElement("tr");
-
             const nameCell=document.createElement("td"); nameCell.textContent=name;
             const totalCell=document.createElement("td"); totalCell.textContent=total;
             const stacksCell=document.createElement("td"); stacksCell.textContent=getStacks(total);
-
-            const checkbox=document.createElement("input");
-            checkbox.type="checkbox";
-            checkbox.style.width="24px";
-            checkbox.style.height="24px";
+            const checkbox=document.createElement("input"); checkbox.type="checkbox"; checkbox.style.width="24px"; checkbox.style.height="24px";
             checkbox.addEventListener('change',()=>row.classList.toggle('selected', checkbox.checked));
-
-            const checkboxCell=document.createElement("td");
-            checkboxCell.className="checkbox-cell";
-            checkboxCell.appendChild(checkbox);
-
-            row.appendChild(nameCell);
-            row.appendChild(totalCell);
-            row.appendChild(stacksCell);
-            row.appendChild(checkboxCell);
-
+            const checkboxCell=document.createElement("td"); checkboxCell.className="checkbox-cell"; checkboxCell.appendChild(checkbox);
+            row.appendChild(nameCell); row.appendChild(totalCell); row.appendChild(stacksCell); row.appendChild(checkboxCell);
             output.appendChild(row);
         }
-    });
+    }).catch(err=>console.error("Fehler beim Laden des Projekts:", err));
 }
 
 // ==========================
@@ -337,7 +328,7 @@ function loadProject(file){
 // ==========================
 function loadWaypoints(){
     const table=document.getElementById("waypointsTable");
-    table.innerHTML='';
+    table.innerHTML=''; // Tabelle leeren
     fetch('waypoints.txt').then(res=>res.text()).then(text=>{
         const lines=text.split('\n');
         lines.forEach(l=>{
@@ -348,20 +339,14 @@ function loadWaypoints(){
                 const td=document.createElement('td'); td.textContent=v.trim(); row.appendChild(td);
             });
             const actionTd=document.createElement('td');
-            const copyBtn=document.createElement('button');
-            copyBtn.textContent="Kopieren";
-            copyBtn.className="copy-btn";
-            copyBtn.addEventListener('click',()=>{
-                navigator.clipboard.writeText(parts.slice(1).join(', '));
-                copyBtn.textContent='✔';
-                setTimeout(()=>copyBtn.textContent='Kopieren',1000);
-            });
+            const copyBtn=document.createElement('button'); copyBtn.textContent="Kopieren"; copyBtn.className="copy-btn";
+            copyBtn.addEventListener('click',()=>{navigator.clipboard.writeText(parts.slice(1).join(', ')); copyBtn.textContent='✔'; setTimeout(()=>copyBtn.textContent='Kopieren',1000);});
             actionTd.appendChild(copyBtn);
             row.appendChild(actionTd);
             table.appendChild(row);
         });
         document.getElementById('projectTitle').textContent="Waypoints";
-    });
+    }).catch(err=>console.error("Fehler beim Laden der Waypoints:",err));
 }
 
 </script>
