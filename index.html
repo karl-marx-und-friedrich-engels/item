@@ -41,24 +41,22 @@ body {
     border-radius: 6px;
     display: none;
     flex-direction: column;
-    min-width: 160px;
-}
-#menuHeader {
-    font-style: italic;
-    padding: 8px 10px;
-    border-bottom: 1px solid #444;
-    color: #ccc;
+    min-width: 180px;
 }
 #menu a {
     padding: 8px 10px;
     text-decoration: none;
     color: white;
     border-bottom: 1px solid #444;
-    margin-left: 10px; /* kleiner Versatz nach innen */
     display: block;
 }
 #menu a:hover {
     background: #444;
+}
+.menu-sub {
+    font-style: italic;
+    margin-left: 15px;
+    font-size: 0.9em;
 }
 table {
     width: 100%;
@@ -107,8 +105,6 @@ button.copy-btn:hover {
     margin-bottom: 20px;
     font-size: 1.1em;
 }
-
-/* Fortschrittsbalken */
 .progressContainer {
     width: 80%;
     height: 24px;
@@ -175,22 +171,6 @@ button.copy-btn:hover {
 </table>
 </div>
 
-<div id="waypoints" style="display:none;">
-<h2>Waypoints</h2>
-<table>
-<thead>
-<tr>
-<th>Name</th>
-<th>X</th>
-<th>Y</th>
-<th>Z</th>
-<th>Aktion</th>
-</tr>
-</thead>
-<tbody id="waypointsTable"></tbody>
-</table>
-</div>
-
 <script>
 // ==========================
 // MENU
@@ -201,7 +181,6 @@ function toggleMenu(){
 }
 function showSection(section, projectFile=null){
     document.getElementById("material").style.display = section === 'material' ? 'block' : 'none';
-    document.getElementById("waypoints").style.display = section === 'waypoints' ? 'block' : 'none';
     document.getElementById("progressSection").style.display = section === 'material' ? 'block' : 'none';
     if(section === 'material' && projectFile){
         loadProject(projectFile);
@@ -257,38 +236,37 @@ fetch('projects_status.txt')
     const lines = statusText.split('\n');
     const menu = document.getElementById('menu');
 
-    // Überschrift für Materialliste
-    const headerDiv = document.createElement('div');
-    headerDiv.id="menuHeader";
-    headerDiv.textContent = "Materialliste";
-    menu.appendChild(headerDiv);
+    // Hauptpunkte
+    const materialLi = document.createElement('a');
+    materialLi.href="#"; materialLi.textContent="Materialliste"; materialLi.onclick=null;
+    menu.appendChild(materialLi);
 
+    const wpLi = document.createElement('a');
+    wpLi.href="#"; wpLi.textContent="Waypoints"; wpLi.onclick=()=>showSection('waypoints');
+    menu.appendChild(wpLi);
+
+    // Aktive Projekte unter Materialliste
     const activeProjects = [];
     lines.forEach((line,index) => {
         const [proj, val] = line.split(':');
         if(val && val.trim() === '1'){
-            activeProjects.push({menuName: proj.trim(), file:`projekt_${index+1}.txt`});
+            activeProjects.push({file:`projekt_${index+1}.txt`});
         }
     });
 
     activeProjects.forEach(p => {
-        // den echten Namen aus der Datei auslesen
         fetch(p.file)
         .then(res=>res.text())
         .then(txt=>{
             const nameLine = txt.split('\n').find(l=>l.startsWith('Name:'));
-            const projectName = nameLine ? nameLine.split(':')[1].trim() : p.menuName;
+            const projectName = nameLine ? nameLine.split(':')[1].trim() : "Projekt";
             const a = document.createElement('a');
-            a.href="#";
-            a.textContent = projectName;
+            a.href="#"; a.textContent=projectName;
+            a.className="menu-sub";
             a.onclick = ()=>showSection('material', p.file);
-            menu.appendChild(a);
+            menu.insertBefore(a, wpLi);
         });
     });
-
-    const wp = document.createElement('a');
-    wp.href="#"; wp.textContent="Waypoints"; wp.onclick = ()=>showSection('waypoints');
-    menu.appendChild(wp);
 
     if(activeProjects.length>0) showSection('material', activeProjects[0].file);
     else showSection('waypoints');
@@ -304,7 +282,6 @@ function loadProject(file){
         const output = document.getElementById("output");
         output.innerHTML='';
 
-        // Projektname aus der Datei auslesen
         const nameLine = text.split('\n').find(l=>l.startsWith('Name:'));
         const projectName = nameLine ? nameLine.split(':')[1].trim() : "Unbekanntes Projekt";
         document.getElementById('projectTitle').textContent = projectName;
@@ -348,40 +325,6 @@ function loadProject(file){
     })
     .catch(err=>console.error("Fehler beim Laden des Projekts:", err));
 }
-
-// ==========================
-// WAYPOINTS
-// ==========================
-const waypointsTable = document.getElementById("waypointsTable");
-fetch('waypoints.txt')
-.then(res=>res.text())
-.then(text=>{
-    const lines = text.split('\n');
-    lines.forEach(line=>{
-        const [name,x,y,z]=line.split(',').map(s=>s.trim());
-        if(!name) return;
-        const row=document.createElement("tr");
-        [name,x,y,z].forEach(val=>{ const td=document.createElement("td"); td.textContent=val; row.appendChild(td); });
-        const actionTd=document.createElement("td");
-        const copyBtn=document.createElement("button"); copyBtn.textContent="Kopieren"; copyBtn.className="copy-btn";
-        copyBtn.addEventListener('click',()=>{navigator.clipboard.writeText(`${x}, ${y}, ${z}`); copyBtn.textContent="✔"; setTimeout(()=>copyBtn.textContent="Kopieren",1000);});
-        actionTd.appendChild(copyBtn); row.appendChild(actionTd);
-        waypointsTable.appendChild(row);
-    });
-});
-
-// ==========================
-// SERVER STATUS
-// ==========================
-const serverStatusDiv = document.getElementById("serverStatus");
-fetch('https://api.mcsrvstat.us/2/Season_4.exaroton.me')
-.then(res => res.json())
-.then(data => {
-    if(!data.online){ serverStatusDiv.textContent="Server offline"; return; }
-    let players = data.players && data.players.list ? data.players.list.join(', ') : 'Keine Spieler sichtbar';
-    serverStatusDiv.innerHTML = `Server online! <br> Spieler: ${data.players ? data.players.online : 0}/${data.players ? data.players.max : '?'}<br> Version: ${data.version}<br> Online Spieler: ${players}`;
-})
-.catch(err => serverStatusDiv.textContent = "Fehler beim Abrufen des Serverstatus");
 </script>
 </body>
 </html>
