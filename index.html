@@ -110,7 +110,6 @@ button.copy-btn:hover {
     position: relative;
     overflow: hidden;
 }
-
 .progressBar {
     height: 100%;
     width: 0%;
@@ -118,7 +117,6 @@ button.copy-btn:hover {
     border-radius: 12px 0 0 12px;
     transition: width 0.5s;
 }
-
 .progressText {
     position: absolute;
     width: 100%;
@@ -144,7 +142,6 @@ button.copy-btn:hover {
 
 <div id="serverStatus">Serverstatus wird geladen...</div>
 
-<!-- Fortschrittsanzeige Blöcke -->
 <div id="progressSection" style="display:block;">
     <div class="progressContainer">
         <div id="blockProgress" class="progressBar"></div>
@@ -156,7 +153,6 @@ button.copy-btn:hover {
     </div>
 </div>
 
-<!-- Materialliste -->
 <div id="material" style="display:block;">
 <table>
 <thead>
@@ -171,7 +167,6 @@ button.copy-btn:hover {
 </table>
 </div>
 
-<!-- Waypoints -->
 <div id="waypoints" style="display:none;">
 <h2>Waypoints</h2>
 <table>
@@ -196,13 +191,12 @@ function toggleMenu(){
     const menu = document.getElementById("menu");
     menu.style.display = menu.style.display === "flex" ? "none" : "flex";
 }
-function showSection(section, projectFile=null, projectName=null){
-    // Material oder Waypoints anzeigen
+function showSection(section, projectFile=null){
     document.getElementById("material").style.display = section === 'material' ? 'block' : 'none';
     document.getElementById("waypoints").style.display = section === 'waypoints' ? 'block' : 'none';
     document.getElementById("progressSection").style.display = section === 'material' ? 'block' : 'none';
     if(section === 'material' && projectFile){
-        loadProject(projectFile, projectName);
+        loadProject(projectFile);
     } else if(section === 'waypoints'){
         document.getElementById("projectTitle").textContent = "Waypoints";
     }
@@ -226,7 +220,7 @@ setInterval(() => {
 }, 50);
 
 // ==========================
-// HELPER
+// HELPERS
 // ==========================
 function getStacks(total){
     const stacks = Math.floor(total/64);
@@ -247,7 +241,7 @@ function parseLine(line){
 }
 
 // ==========================
-// LOAD ACTIVE PROJECTS
+// LOAD PROJECTS
 // ==========================
 fetch('projects_status.txt')
 .then(res => res.text())
@@ -255,95 +249,80 @@ fetch('projects_status.txt')
     const lines = statusText.split('\n');
     const menu = document.getElementById('menu');
     const activeProjects = [];
-    lines.forEach(line => {
+    lines.forEach((line,index) => {
         const [proj, val] = line.split(':');
         if(val && val.trim() === '1'){
-            activeProjects.push(proj.trim());
+            activeProjects.push({menuName: proj.trim(), file:`projekt_${index+1}.txt`});
         }
     });
-    // Projekte ins Menü
-    activeProjects.forEach((proj, index) => {
+    activeProjects.forEach(p => {
         const a = document.createElement('a');
-        a.href = "#";
-        a.textContent = proj;
-        a.onclick = () => showSection('material', `projekt_${index+1}.txt`, proj);
+        a.href="#";
+        a.textContent = p.menuName;
+        a.onclick = ()=>showSection('material', p.file);
         menu.appendChild(a);
     });
-
-    // Waypoints als letzter Menüpunkt
     const wp = document.createElement('a');
-    wp.href = "#";
-    wp.textContent = "Waypoints";
-    wp.onclick = () => showSection('waypoints');
+    wp.href="#"; wp.textContent="Waypoints"; wp.onclick = ()=>showSection('waypoints');
     menu.appendChild(wp);
 
-    if(activeProjects.length > 0){
-        showSection('material', `projekt_1.txt`, activeProjects[0]);
-    } else {
-        showSection('waypoints');
-    }
+    if(activeProjects.length>0) showSection('material', activeProjects[0].file);
+    else showSection('waypoints');
 });
 
 // ==========================
 // LOAD PROJECT FILE
 // ==========================
-function loadProject(file, projectName){
+function loadProject(file){
     fetch(file)
-    .then(res => res.text())
-    .then(text => {
+    .then(res=>res.text())
+    .then(text=>{
         const output = document.getElementById("output");
-        output.innerHTML = '';
+        output.innerHTML='';
+
+        // Projektname aus der Datei auslesen
+        const nameLine = text.split('\n').find(l=>l.startsWith('Name:'));
+        const projectName = nameLine ? nameLine.split(':')[1].trim() : "Unbekanntes Projekt";
         document.getElementById('projectTitle').textContent = projectName;
 
         const sections = text.split('Originalliste:');
         const matLines = sections[0].split('\n');
         const origLines = sections[1] ? sections[1].split('\n') : [];
 
-        let totalMatBlocks = 0, totalOrigBlocks = 0;
-        let totalMatItems = 0, totalOrigItems = 0;
+        let totalMatBlocks=0, totalOrigBlocks=0, totalMatItems=0, totalOrigItems=0;
+        const matItems={}, origItems={};
 
-        const matItems = {};
-        matLines.forEach(line => {
-            const item = parseLine(line);
-            if(item){
-                matItems[item.name] = item.total;
-                totalMatBlocks += item.total;
-                totalMatItems++;
-            }
+        matLines.forEach(l=>{
+            const item=parseLine(l);
+            if(item){ matItems[item.name]=item.total; totalMatBlocks+=item.total; totalMatItems++; }
         });
-        const origItems = {};
-        origLines.forEach(line => {
-            const item = parseLine(line);
-            if(item){
-                origItems[item.name] = item.total;
-                totalOrigBlocks += item.total;
-                totalOrigItems++;
-            }
+        origLines.forEach(l=>{
+            const item=parseLine(l);
+            if(item){ origItems[item.name]=item.total; totalOrigBlocks+=item.total; totalOrigItems++; }
         });
 
-        const blockProgress = totalOrigBlocks > 0 ? Math.floor(((totalOrigBlocks - totalMatBlocks)/totalOrigBlocks)*100) : 0;
-        const itemProgress = totalOrigItems > 0 ? Math.floor(((totalOrigItems - totalMatItems)/totalOrigItems)*100) : 0;
+        const blockProgress = totalOrigBlocks>0?Math.floor(((totalOrigBlocks-totalMatBlocks)/totalOrigBlocks)*100):0;
+        const itemProgress = totalOrigItems>0?Math.floor(((totalOrigItems-totalMatItems)/totalOrigItems)*100):0;
 
-        document.getElementById('blockProgress').style.width = blockProgress + '%';
-        document.getElementById('blockProgressText').textContent = blockProgress + '% Blöcke';
-        document.getElementById('itemProgress').style.width = itemProgress + '%';
-        document.getElementById('itemProgressText').textContent = itemProgress + '% Items';
+        document.getElementById('blockProgress').style.width=blockProgress+'%';
+        document.getElementById('blockProgressText').textContent=blockProgress+'% Blöcke';
+        document.getElementById('itemProgress').style.width=itemProgress+'%';
+        document.getElementById('itemProgressText').textContent=itemProgress+'% Items';
 
         for(const name in matItems){
-            const total = matItems[name];
-            const row = document.createElement("tr");
-            const nameCell = document.createElement("td"); nameCell.textContent = name;
-            const totalCell = document.createElement("td"); totalCell.textContent = total;
-            const stacksCell = document.createElement("td"); stacksCell.textContent = getStacks(total);
-            const checkbox = document.createElement("input");
-            checkbox.type = "checkbox"; checkbox.style.width="24px"; checkbox.style.height="24px";
+            const total=matItems[name];
+            const row=document.createElement("tr");
+            const nameCell=document.createElement("td"); nameCell.textContent=name;
+            const totalCell=document.createElement("td"); totalCell.textContent=total;
+            const stacksCell=document.createElement("td"); stacksCell.textContent=getStacks(total);
+            const checkbox=document.createElement("input"); checkbox.type="checkbox"; checkbox.style.width="24px"; checkbox.style.height="24px";
             checkbox.addEventListener('change',()=>row.classList.toggle('selected', checkbox.checked));
-            const checkboxCell = document.createElement("td"); checkboxCell.className="checkbox-cell"; checkboxCell.appendChild(checkbox);
+            const checkboxCell=document.createElement("td"); checkboxCell.className="checkbox-cell"; checkboxCell.appendChild(checkbox);
             row.appendChild(nameCell); row.appendChild(totalCell); row.appendChild(stacksCell); row.appendChild(checkboxCell);
             output.appendChild(row);
         }
     })
-    .catch(err => console.error("Fehler beim Laden des Projekts:", err));
+    .catch(err=>console.error("Fehler beim Laden des Projekts:", err));
 }
 
 // ==========================
@@ -351,17 +330,16 @@ function loadProject(file, projectName){
 // ==========================
 const waypointsTable = document.getElementById("waypointsTable");
 fetch('waypoints.txt')
-.then(res => res.text())
-.then(text => {
+.then(res=>res.text())
+.then(text=>{
     const lines = text.split('\n');
-    lines.forEach(line => {
-        const [name,x,y,z] = line.split(',').map(s => s.trim());
+    lines.forEach(line=>{
+        const [name,x,y,z]=line.split(',').map(s=>s.trim());
         if(!name) return;
-        const row = document.createElement("tr");
-        [name,x,y,z].forEach(val => { const td=document.createElement("td"); td.textContent=val; row.appendChild(td); });
-        const actionTd = document.createElement("td");
-        const copyBtn = document.createElement("button");
-        copyBtn.textContent="Kopieren"; copyBtn.className="copy-btn";
+        const row=document.createElement("tr");
+        [name,x,y,z].forEach(val=>{ const td=document.createElement("td"); td.textContent=val; row.appendChild(td); });
+        const actionTd=document.createElement("td");
+        const copyBtn=document.createElement("button"); copyBtn.textContent="Kopieren"; copyBtn.className="copy-btn";
         copyBtn.addEventListener('click',()=>{navigator.clipboard.writeText(`${x}, ${y}, ${z}`); copyBtn.textContent="✔"; setTimeout(()=>copyBtn.textContent="Kopieren",1000);});
         actionTd.appendChild(copyBtn); row.appendChild(actionTd);
         waypointsTable.appendChild(row);
