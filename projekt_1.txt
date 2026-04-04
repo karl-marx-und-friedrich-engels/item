@@ -7,23 +7,16 @@ Materialliste:
 | Item                        | Total | Missing | Available |
 +-----------------------------+-------+---------+-----------+
 | Brauner Trockenbeton        |    34 |      34 |         0 |
-| Glatter Stein               |    28 |      28 |         0 |
-| Andesittreppe               |    26 |      26 |         0 |
-| Strohballen                 |    19 |      19 |         0 |
 | Schwarzeichenholzfalltür    |    18 |      18 |         0 |
 | Tuffstein                   |    18 |      18 |         0 |
 | Roter Teppich               |    15 |      15 |         0 |
 | Andesitmauer                |    10 |      10 |         0 |
 | Bemooste Steinziegel        |    10 |      10 |         0 |
 | Granit                      |    10 |      10 |         0 |
-| Türkise Wolle               |     8 |       8 |         0 |
-| Weiße Wolle                 |     8 |       8 |         0 |
 | Leuchtstein                 |     7 |       7 |         0 |
-| Rote Wolle                  |     7 |       7 |         0 |
 | Steinstufe                  |     6 |       6 |         0 |
 | Weiße Glasscheibe           |     6 |       6 |         0 |
 | Fass                        |     5 |       5 |         0 |
-| Hellblaue Wolle             |     5 |       5 |         0 |
 | Andesitstufe                |     4 |       4 |         0 |
 | Birkenlaub                  |     4 |       4 |         0 |
 | Brauner Beton               |     4 |       4 |         0 |
