@@ -9,7 +9,6 @@ Materialliste:
 | Brauner Trockenbeton        |    34 |      34 |         0 |
 | Schwarzeichenholzfalltür    |    18 |      18 |         0 |
 | Tuffstein                   |    18 |      18 |         0 |
-| Roter Teppich               |    15 |      15 |         0 |
 | Andesitmauer                |    10 |      10 |         0 |
 | Bemooste Steinziegel        |    10 |      10 |         0 |
 | Granit                      |    10 |      10 |         0 |
