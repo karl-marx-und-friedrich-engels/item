@@ -6,6 +6,7 @@ Materialliste:
 +-----------------------------+-------+---------+-----------+
 | Item                        | Total | Missing | Available |
 +-----------------------------+-------+---------+-----------+
+| Moosblock                   |    72 |      72 |         0 |
 | Brauner Trockenbeton        |    34 |      34 |         0 |
 | Bemooste Steinziegel        |    10 |      10 |         0 |
 | Weiße Glasscheibe           |     6 |       6 |         0 |
