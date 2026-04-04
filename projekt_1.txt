@@ -7,14 +7,9 @@ Materialliste:
 | Item                        | Total | Missing | Available |
 +-----------------------------+-------+---------+-----------+
 | Brauner Trockenbeton        |    34 |      34 |         0 |
-| Schwarzeichenholzfalltür    |    18 |      18 |         0 |
 | Bemooste Steinziegel        |    10 |      10 |         0 |
-| Leuchtstein                 |     7 |       7 |         0 |
 | Weiße Glasscheibe           |     6 |       6 |         0 |
-| Birkenlaub                  |     4 |       4 |         0 |
 | Brauner Beton               |     4 |       4 |         0 |
-| Hellblaue Glasscheibe       |     3 |       3 |         0 |
-| Violette Wolle              |     2 |       2 |         0 |
 | Leitstein                   |     1 |       1 |         0 |
 | Ziegelsteinmauer            |     1 |       1 |         0 |
 +-----------------------------+-------+---------+-----------+
