@@ -3,7 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <title>Materialliste & Waypoints</title>
-<link rel="icon" href="bilder/Knowledge_Book_JE2.png">
+
+<!-- WICHTIG: ID hinzugefügt -->
+<link id="favicon" rel="icon" href="bilder/Knowledge_Book_JE2.png">
+
 <style>
 body {
     font-family: Arial, sans-serif;
@@ -74,7 +77,7 @@ th {
 tbody tr:nth-child(odd) {
     background-color: #2b2b2b;
 }
-tbody tr:nth-child(even) {
+tbody tr:nth-child(even) { 
     background-color: #3a3a3a;
 }
 tr:hover {
@@ -202,7 +205,7 @@ function showSection(section, projectFile=null){
 }
 
 // ==========================
-// CLOCK ANIMATION
+// CLOCK ANIMATION (UNVERÄNDERT)
 // ==========================
 const logo = document.getElementById("logo");
 const frames = 64;
@@ -216,7 +219,40 @@ let current=0;
 setInterval(()=>{logo.src=images[current].src;current=(current+1)%frames;},50);
 
 // ==========================
-// HELPERS
+// FAVICON AUS CONFIG LADEN (NEU)
+// ==========================
+async function loadFaviconFromConfig(){
+    const configPath = "bilder/text/config.txt";
+    const basePath = "bilder/";
+
+    try{
+        const res = await fetch(configPath);
+        const text = await res.text();
+
+        const lines = text.split('\n').map(l => l.trim());
+
+        let activeIcon = null;
+
+        for(const line of lines){
+            if(!line || line.startsWith('#')) continue;
+            activeIcon = line;
+            break;
+        }
+
+        if(activeIcon){
+            document.getElementById("favicon").href = basePath + activeIcon;
+        }
+
+    } catch(err){
+        console.error("Fehler beim Laden der Favicon-Config:", err);
+    }
+}
+
+// DIREKT STARTEN
+loadFaviconFromConfig();
+
+// ==========================
+// REST (UNVERÄNDERT)
 // ==========================
 function getStacks(total){
     const stacks=Math.floor(total/64);
@@ -236,14 +272,10 @@ function parseLine(line){
     return {name,total};
 }
 
-// ==========================
-// LOAD PROJECTS & MENU
-// ==========================
 fetch('projects_status.txt').then(res=>res.text()).then(statusText=>{
     const lines=statusText.split('\n');
     const menu=document.getElementById('menu');
 
-    // Hauptpunkte
     const materialLi=document.createElement('a'); materialLi.href="#"; materialLi.textContent="Materialliste";
     menu.appendChild(materialLi);
 
@@ -272,9 +304,6 @@ fetch('projects_status.txt').then(res=>res.text()).then(statusText=>{
     else showSection('waypoints');
 });
 
-// ==========================
-// LOAD PROJECT FILE
-// ==========================
 function loadProject(file){
     fetch(file).then(res=>res.text()).then(text=>{
         const output=document.getElementById("output");
@@ -323,12 +352,9 @@ function loadProject(file){
     }).catch(err=>console.error("Fehler beim Laden des Projekts:", err));
 }
 
-// ==========================
-// LOAD WAYPOINTS
-// ==========================
 function loadWaypoints(){
     const table=document.getElementById("waypointsTable");
-    table.innerHTML=''; // Tabelle leeren
+    table.innerHTML='';
     fetch('waypoints.txt').then(res=>res.text()).then(text=>{
         const lines=text.split('\n');
         lines.forEach(l=>{
@@ -348,7 +374,6 @@ function loadWaypoints(){
         document.getElementById('projectTitle').textContent="Waypoints";
     }).catch(err=>console.error("Fehler beim Laden der Waypoints:",err));
 }
-
 </script>
 </body>
 </html>
