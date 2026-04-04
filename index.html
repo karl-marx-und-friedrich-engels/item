@@ -169,6 +169,22 @@ button.copy-btn:hover {
 </table>
 </div>
 
+<div id="waypoints" style="display:block;">
+<h2>Waypoints</h2>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>X</th>
+<th>Y</th>
+<th>Z</th>
+<th>Aktion</th>
+</tr>
+</thead>
+<tbody id="waypointsTable"></tbody>
+</table>
+</div>
+
 <script>
 // ==========================
 // MENU
@@ -332,6 +348,38 @@ function loadProject(file, projectName){
 }
 
 // ==========================
+// WAYPOINTS
+// ==========================
+const waypointsTable = document.getElementById("waypointsTable");
+fetch('waypoints.txt')
+.then(res => res.text())
+.then(text => {
+    const lines = text.split('\n');
+    lines.forEach(line => {
+        const [name,x,y,z] = line.split(',').map(s => s.trim());
+        if(!name) return;
+        const row = document.createElement("tr");
+        [name,x,y,z].forEach(val => {
+            const td = document.createElement("td");
+            td.textContent = val;
+            row.appendChild(td);
+        });
+        const actionTd = document.createElement("td");
+        const copyBtn = document.createElement("button");
+        copyBtn.textContent = "Kopieren";
+        copyBtn.className = "copy-btn";
+        copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(`${x}, ${y}, ${z}`);
+            copyBtn.textContent = "✔";
+            setTimeout(() => copyBtn.textContent = "Kopieren", 1000);
+        });
+        actionTd.appendChild(copyBtn);
+        row.appendChild(actionTd);
+        waypointsTable.appendChild(row);
+    });
+});
+
+// ==========================
 // SERVER STATUS
 // ==========================
 const serverStatusDiv = document.getElementById("serverStatus");
@@ -353,5 +401,4 @@ fetch('https://api.mcsrvstat.us/2/Season_4.exaroton.me')
 .catch(err => serverStatusDiv.textContent = "Fehler beim Abrufen des Serverstatus");
 </script>
 </body>
-</html>
 </html>
