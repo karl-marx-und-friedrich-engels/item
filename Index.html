@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>👀 ?</title>
+
+<style>
+body {
+    background-color: #1a1a1a;
+    margin: 0;
+    overflow: hidden;
+}
+
+/* Osterei */
+#egg {
+    position: absolute;
+    width: 60px;
+    cursor: pointer;
+    transition: transform 0.2s, opacity 0.3s;
+    opacity: 0.7;
+}
+
+#egg:hover {
+    transform: scale(1.2);
+    opacity: 1;
+}
+</style>
+</head>
+<body>
+
+<img id="egg" src="https://upload.wikimedia.org/wikipedia/commons/3/3a/Easter_egg_icon.png">
+
+<script>
+const egg = document.getElementById("egg");
+
+// zufällige Position
+function moveEgg() {
+    const x = Math.random() * (window.innerWidth - 80);
+    const y = Math.random() * (window.innerHeight - 80);
+    egg.style.left = x + "px";
+    egg.style.top = y + "px";
+}
+
+// Startposition
+moveEgg();
+
+// bewegt sich alle paar Sekunden (optional)
+setInterval(moveEgg, 2500);
+
+// Klick → echte Seite
+egg.addEventListener("click", () => {
+    window.location.href = "ostern.html";
+});
+</script>
+
+</body>
+</html>
