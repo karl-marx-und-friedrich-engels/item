@@ -14,10 +14,13 @@ body {
 /* Osterei */
 #egg {
     position: absolute;
-    width: 60px;
+    width: 10vw;          /* responsive Größe */
+    max-width: 160px;
+    min-width: 80px;
+    height: auto;
     cursor: pointer;
     transition: transform 0.2s, opacity 0.3s;
-    opacity: 0.7;
+    opacity: 0.8;
 }
 
 #egg:hover {
@@ -35,21 +38,38 @@ const egg = document.getElementById("egg");
 
 // zufällige Position
 function moveEgg() {
-    const x = Math.random() * (window.innerWidth - 80);
-    const y = Math.random() * (window.innerHeight - 80);
+    const maxX = window.innerWidth - egg.offsetWidth;
+    const maxY = window.innerHeight - egg.offsetHeight;
+
+    const x = Math.random() * maxX;
+    const y = Math.random() * maxY;
+
     egg.style.left = x + "px";
     egg.style.top = y + "px";
 }
 
-// Startposition
-moveEgg();
+// Startposition nach Laden
+window.onload = moveEgg;
 
-// bewegt sich alle paar Sekunden (optional)
-setInterval(moveEgg, 2500);
+// bewegt sich alle 2 Sekunden
+setInterval(moveEgg, 2000);
+
+// 😈 Bonus: Ei weicht Maus aus
+document.addEventListener("mousemove", (e) => {
+    const rect = egg.getBoundingClientRect();
+    const distX = e.clientX - (rect.left + rect.width / 2);
+    const distY = e.clientY - (rect.top + rect.height / 2);
+
+    const distance = Math.sqrt(distX * distX + distY * distY);
+
+    if (distance < 120) { // wenn Maus nah ist
+        moveEgg();
+    }
+});
 
 // Klick → echte Seite
 egg.addEventListener("click", () => {
-    window.location.href = "Ostern.html";
+    window.location.href = "ostern.html"; // wichtig: klein!
 });
 </script>
 
