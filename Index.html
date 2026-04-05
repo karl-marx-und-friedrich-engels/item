@@ -24,7 +24,7 @@ body {
 /* Osterei */
 #egg {
     position: absolute;
-    width: 10vw;
+    width: 10vw;          /* responsive Größe */
     max-width: 150px;
     min-width: 70px;
     height: auto;
@@ -73,7 +73,7 @@ const egg = document.getElementById("egg");
 const scoreDisplay = document.getElementById("score");
 
 let score = 0;
-let speed = 2000;
+let speed = 2000; // Startgeschwindigkeit
 
 // zufällige Position
 function moveEgg() {
@@ -93,7 +93,7 @@ function showEgg() {
     egg.classList.add("show");
 }
 
-// Explosion Effekt
+// Explosion Effekt beim Klick
 function createEffect(x, y) {
     for (let i = 0; i < 10; i++) {
         const spark = document.createElement("div");
@@ -108,7 +108,6 @@ function createEffect(x, y) {
         spark.style.setProperty("--y", Math.sin(angle) * distance + "px");
 
         document.body.appendChild(spark);
-
         setTimeout(() => spark.remove(), 600);
     }
 }
@@ -125,7 +124,7 @@ document.addEventListener("mousemove", (e) => {
     }
 });
 
-// Klick
+// Klick auf das Ei
 egg.addEventListener("click", (e) => {
     score++;
     scoreDisplay.textContent = "🥚 Gefunden: " + score;
@@ -136,16 +135,16 @@ egg.addEventListener("click", (e) => {
     // wird schneller
     speed = Math.max(600, speed - 150);
 
-    // nach 5 Treffern → echte Seite
+    // nach 5 Treffern → Weiterleitung
     if (score >= 5) {
         document.body.innerHTML = "<h1 style='color:white;text-align:center;margin-top:20%'>🎉 Gefunden!</h1>";
         setTimeout(() => {
-            window.location.href = "ostern.html";
+            window.location.href = "ostern.html"; // Dateiname exakt beachten
         }, 1200);
     }
 });
 
-// Bewegung mit steigender Schwierigkeit
+// Bewegungsschleife
 function loop() {
     moveEgg();
     setTimeout(loop, speed);
