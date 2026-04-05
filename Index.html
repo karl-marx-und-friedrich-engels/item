@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8">
-<title>👀 Finde das Ei...</title>
+<title>🎯 Finde das Ei!</title>
 
 <style>
 body {
@@ -17,14 +17,14 @@ body {
     position: fixed;
     top: 15px;
     left: 20px;
-    font-size: 20px;
+    font-size: 22px;
     color: white;
 }
 
 /* Osterei */
-#egg {
+.egg {
     position: absolute;
-    width: 10vw;          /* responsive Größe */
+    width: 10vw;
     max-width: 150px;
     min-width: 70px;
     height: auto;
@@ -34,12 +34,12 @@ body {
     transition: transform 0.2s, opacity 0.4s;
 }
 
-#egg.show {
+.egg.show {
     opacity: 0.9;
     transform: scale(1);
 }
 
-#egg:hover {
+.egg:hover {
     transform: scale(1.2);
 }
 
@@ -64,9 +64,9 @@ body {
 </head>
 <body>
 
-<div id="score">🥚 Gefunden: 0</div>
+<div id="score">🥚 Punkte: 0</div>
 
-<img id="egg" src="bilder/s11728_easter_elegant_vector_decor_isolated_on_white_backgrou_832f0ebb-2223-4a05-a85f-e0ef085eab4a_1-removebg-preview_11zon.png">
+<img class="egg" src="bilder/s11728_easter_elegant_vector_decor_isolated_on_white_backgrou_832f0ebb-2223-4a05-a85f-e0ef085eab4a_1-removebg-preview_11zon.png" id="egg">
 
 <script>
 const egg = document.getElementById("egg");
@@ -74,8 +74,10 @@ const scoreDisplay = document.getElementById("score");
 
 let score = 0;
 let speed = 2000; // Startgeschwindigkeit
+const pointsPerClick = 2; // Punkte pro Klick
+const pointsToWin = 10;   // Punkte bis Weiterleitung
 
-// zufällige Position
+// Zufällige Position
 function moveEgg() {
     const maxX = window.innerWidth - egg.offsetWidth;
     const maxY = window.innerHeight - egg.offsetHeight;
@@ -93,7 +95,7 @@ function showEgg() {
     egg.classList.add("show");
 }
 
-// Explosion Effekt beim Klick
+// Funken-Effekt beim Klick
 function createEffect(x, y) {
     for (let i = 0; i < 10; i++) {
         const spark = document.createElement("div");
@@ -124,22 +126,22 @@ document.addEventListener("mousemove", (e) => {
     }
 });
 
-// Klick auf das Ei
+// Klick auf Ei
 egg.addEventListener("click", (e) => {
-    score++;
-    scoreDisplay.textContent = "🥚 Gefunden: " + score;
+    score += pointsPerClick;
+    scoreDisplay.textContent = "🥚 Punkte: " + score;
 
     createEffect(e.clientX, e.clientY);
     moveEgg();
 
-    // wird schneller
+    // Geschwindigkeit erhöhen
     speed = Math.max(600, speed - 150);
 
-    // nach 5 Treffern → Weiterleitung
-    if (score >= 5) {
-        document.body.innerHTML = "<h1 style='color:white;text-align:center;margin-top:20%'>🎉 Gefunden!</h1>";
+    // Weiterleitung bei Erreichen der Punktzahl
+    if (score >= pointsToWin) {
+        document.body.innerHTML = "<h1 style='color:white;text-align:center;margin-top:20%'>🎉 Du hast " + score + " Punkte erreicht!</h1>";
         setTimeout(() => {
-            window.location.href = "ostern.html"; // Dateiname exakt beachten
+            window.location.href = "ostern.html";
         }, 1200);
     }
 });
