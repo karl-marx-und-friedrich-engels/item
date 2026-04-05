@@ -2,39 +2,78 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8">
-<title>👀 ?</title>
+<title>👀 Finde das Ei...</title>
 
 <style>
 body {
-    background-color: #1a1a1a;
+    background: radial-gradient(circle, #222, #000);
     margin: 0;
     overflow: hidden;
+    font-family: Arial, sans-serif;
+}
+
+/* Score Anzeige */
+#score {
+    position: fixed;
+    top: 15px;
+    left: 20px;
+    font-size: 20px;
+    color: white;
 }
 
 /* Osterei */
 #egg {
     position: absolute;
-    width: 10vw;          /* responsive Größe */
-    max-width: 160px;
-    min-width: 80px;
+    width: 10vw;
+    max-width: 150px;
+    min-width: 70px;
     height: auto;
     cursor: pointer;
-    transition: transform 0.2s, opacity 0.3s;
-    opacity: 0.8;
+    opacity: 0;
+    transform: scale(0.5);
+    transition: transform 0.2s, opacity 0.4s;
+}
+
+#egg.show {
+    opacity: 0.9;
+    transform: scale(1);
 }
 
 #egg:hover {
     transform: scale(1.2);
-    opacity: 1;
+}
+
+/* Klick Effekt */
+.spark {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    background: yellow;
+    border-radius: 50%;
+    pointer-events: none;
+    animation: explode 0.6s forwards;
+}
+
+@keyframes explode {
+    to {
+        transform: translate(var(--x), var(--y));
+        opacity: 0;
+    }
 }
 </style>
 </head>
 <body>
 
+<div id="score">🥚 Gefunden: 0</div>
+
 <img id="egg" src="bilder/s11728_easter_elegant_vector_decor_isolated_on_white_backgrou_832f0ebb-2223-4a05-a85f-e0ef085eab4a_1-removebg-preview_11zon.png">
 
 <script>
 const egg = document.getElementById("egg");
+const scoreDisplay = document.getElementById("score");
+
+let score = 0;
+let speed = 2000;
 
 // zufällige Position
 function moveEgg() {
@@ -48,29 +87,75 @@ function moveEgg() {
     egg.style.top = y + "px";
 }
 
-// Startposition nach Laden
-window.onload = moveEgg;
+// Spawn Animation
+function showEgg() {
+    moveEgg();
+    egg.classList.add("show");
+}
 
-// bewegt sich alle 2 Sekunden
-setInterval(moveEgg, 2000);
+// Explosion Effekt
+function createEffect(x, y) {
+    for (let i = 0; i < 10; i++) {
+        const spark = document.createElement("div");
+        spark.className = "spark";
+        spark.style.left = x + "px";
+        spark.style.top = y + "px";
 
-// 😈 Bonus: Ei weicht Maus aus
+        const angle = Math.random() * 2 * Math.PI;
+        const distance = Math.random() * 80;
+
+        spark.style.setProperty("--x", Math.cos(angle) * distance + "px");
+        spark.style.setProperty("--y", Math.sin(angle) * distance + "px");
+
+        document.body.appendChild(spark);
+
+        setTimeout(() => spark.remove(), 600);
+    }
+}
+
+// Maus ausweichen 😈
 document.addEventListener("mousemove", (e) => {
     const rect = egg.getBoundingClientRect();
-    const distX = e.clientX - (rect.left + rect.width / 2);
-    const distY = e.clientY - (rect.top + rect.height / 2);
+    const dx = e.clientX - (rect.left + rect.width / 2);
+    const dy = e.clientY - (rect.top + rect.height / 2);
+    const distance = Math.sqrt(dx * dx + dy * dy);
 
-    const distance = Math.sqrt(distX * distX + distY * distY);
-
-    if (distance < 120) { // wenn Maus nah ist
+    if (distance < 120) {
         moveEgg();
     }
 });
 
-// Klick → echte Seite
-egg.addEventListener("click", () => {
-    window.location.href = "ostern.html"; // wichtig: klein!
+// Klick
+egg.addEventListener("click", (e) => {
+    score++;
+    scoreDisplay.textContent = "🥚 Gefunden: " + score;
+
+    createEffect(e.clientX, e.clientY);
+    moveEgg();
+
+    // wird schneller
+    speed = Math.max(600, speed - 150);
+
+    // nach 5 Treffern → echte Seite
+    if (score >= 5) {
+        document.body.innerHTML = "<h1 style='color:white;text-align:center;margin-top:20%'>🎉 Gefunden!</h1>";
+        setTimeout(() => {
+            window.location.href = "ostern.html";
+        }, 1200);
+    }
 });
+
+// Bewegung mit steigender Schwierigkeit
+function loop() {
+    moveEgg();
+    setTimeout(loop, speed);
+}
+
+// Start
+window.onload = () => {
+    showEgg();
+    loop();
+};
 </script>
 
 </body>
