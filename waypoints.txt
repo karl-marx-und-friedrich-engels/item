@@ -4,4 +4,4 @@ Raidfarm, -474, 62, -1621
 Endportal, -464, -20, 2251
 Gunpowder Farm, -2538, 190, -3396
 Ominous Bottle Farm, -231, 83, -2423
-Alte Unbewohnte Base, 525, 172, -855
+kaffeevollautomaten Base, 525, 172, -855
