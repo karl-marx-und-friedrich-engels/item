@@ -1,7 +1,7 @@
 Home, 642, 79, -2088
-Endportal, -464, -20, 2251
-Raidfarm Totems, -474, 62, -1621
-Gunpowder Farm, -2538, 190, -3396
 Wüste, 506, 77, -4830
+Endportal, -464, -20, 2251
+Gunpowder Farm, -2538, 190, -3396
+Raidfarm Totems, -474, 62, -1621
 Unbewohnte Base, 525, 172, -855
 Ominous Bottle Farm, -231, 83, -2423
