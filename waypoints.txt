@@ -1,7 +1,1 @@
-Home, 642, 79, -2088
-Wüste, 506, 77, -4830
-Raidfarm, -474, 62, -1621
-Endportal, -464, -20, 2251
-Gunpowder Farm, -2538, 190, -3396
-Ominous Bottle Farm, -231, 83, -2423
-Kaffeevollautomaten Base, 525, 172, -855
+Home, 1180, 70, 836
