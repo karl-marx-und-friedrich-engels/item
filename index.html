@@ -2,29 +2,17 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8">
-<title>Minecraft Planer & Zentrale</title>
+<title>Materialliste & Waypoints</title>
 <link rel="icon" href="bilder/f/Spyglass_(item)_JE3_BE1.png">
 <style>
-:root {
-    --bg-color: #1a1a1a;
-    --card-bg: #222;
-    --card-hover: #2e2e2e;
-    --mc-green: #38873c;
-    --mc-green-hover: #4caf50;
-    --border-color: #444;
-    --text-color: #fff;
-    --text-muted: #aaa;
-}
-
 body {
     font-family: Arial, sans-serif;
-    background-color: var(--bg-color);
-    color: var(--text-color);
+    background-color: #1a1a1a;
+    color: #fff;
     padding: 20px;
     margin: 0;
     text-align: center;
 }
-
 #header {
     display: flex;
     justify-content: center;
@@ -32,12 +20,10 @@ body {
     gap: 15px;
     margin-bottom: 20px;
 }
-
 #logo {
     width: 80px;
     height: 80px;
 }
-
 #menuButton {
     position: fixed;
     top: 15px;
@@ -46,13 +32,12 @@ body {
     cursor: pointer;
     z-index: 1000;
 }
-
 #menu {
     position: fixed;
     top: 60px;
     right: 20px;
     background: #222;
-    border: 1px solid var(--border-color);
+    border: 1px solid #444;
     border-radius: 6px;
     display: none;
     flex-direction: column;
@@ -63,7 +48,7 @@ body {
     padding: 8px 10px;
     text-decoration: none;
     color: white;
-    border-bottom: 1px solid var(--border-color);
+    border-bottom: 1px solid #444;
     display: block;
     text-align: left;
 }
@@ -74,62 +59,55 @@ body {
     font-style: italic;
     margin-left: 15px;
     font-size: 0.9em;
-    color: var(--text-muted);
+    color: #aaa;
 }
-
-/* Zurück-Button für alle Unterseiten */
-.back-btn {
-    display: inline-block;
-    background: var(--card-bg);
-    border: 1px solid var(--border-color);
-    color: var(--text-color);
-    padding: 8px 16px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-weight: bold;
-    margin-bottom: 20px;
-    transition: background 0.2s;
-}
-.back-btn:hover {
-    background: var(--card-hover);
-}
-
-/* Absolut einheitlicher Tabellen-Look für alle Sektionen */
 table {
     width: 100%;
     border-collapse: collapse;
     margin-bottom: 30px;
 }
 th, td {
-    padding: 12px 10px;
-    border: 1px solid var(--border-color);
+    padding: 8px;
+    border: 1px solid #444;
     text-align: center;
-    vertical-align: middle;
 }
 th {
     background-color: #222;
-    color: #fff;
 }
-tbody tr:nth-child(odd) { background-color: #2b2b2b; }
-tbody tr:nth-child(even) { background-color: #3a3a3a; }
-tr:hover { background-color: #505050; }
-
-td.checkbox-cell { width: 40px; }
-tr.selected:nth-child(odd) { background-color: #006600; }
-tr.selected:nth-child(even) { background-color: #00aa00; }
-
+tbody tr:nth-child(odd) {
+    background-color: #2b2b2b;
+}
+tbody tr:nth-child(even) {
+    background-color: #3a3a3a;
+}
+tr:hover {
+    background-color: #505050;
+}
+td.checkbox-cell {
+    width: 40px;
+}
+tr.selected:nth-child(odd) {
+    background-color: #006600;
+}
+tr.selected:nth-child(even) {
+    background-color: #00aa00;
+}
 button.copy-btn {
     padding: 4px 8px;
     margin-left: 5px;
     cursor: pointer;
     border: none;
     border-radius: 4px;
-    background-color: var(--mc-green);
+    background-color: #007700;
     color: white;
 }
-button.copy-btn:hover { background-color: var(--mc-green-hover); }
-
-/* Fortschrittsbalken */
+button.copy-btn:hover {
+    background-color: #00aa00;
+}
+#serverStatus {
+    margin-bottom: 20px;
+    font-size: 1.1em;
+}
 .progressContainer {
     width: 80%;
     height: 24px;
@@ -158,49 +136,80 @@ button.copy-btn:hover { background-color: var(--mc-green-hover); }
     pointer-events: none;
 }
 
-/* Hauptseite Dashboard-Anordnung (Kacheln ohne Symbole) */
-.dashboard-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 20px;
-    max-width: 800px;
-    margin: 40px auto;
+/* Zurück Button Design */
+.back-btn {
+    display: inline-block;
+    background: #222;
+    border: 1px solid #444;
+    color: #fff;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    margin-bottom: 25px;
+    transition: background 0.2s;
 }
-.dash-card {
-    background: var(--card-bg);
-    border: 2px solid var(--border-color);
-    padding: 35px 20px;
+.back-btn:hover { background: #333; }
+
+/* Blackboard Kacheln (Übersichtsseite) */
+.bb-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 20px;
+    max-width: 900px;
+    margin: 20px auto;
+}
+.bb-card {
+    background: #222;
+    border: 1px solid #444;
+    padding: 25px;
     border-radius: 8px;
     cursor: pointer;
-    font-size: 1.2em;
-    font-weight: bold;
-    transition: all 0.2s;
+    text-align: left;
+    transition: transform 0.2s, background 0.2s, border-color 0.2s;
 }
-.dash-card:hover {
-    background: var(--mc-green);
-    border-color: #fff;
-    transform: scale(1.03);
+.bb-card:hover {
+    background: #2b2b2b;
+    transform: scale(1.02);
+    border-color: #00aa00;
 }
+.bb-card h3 { margin-top: 0; margin-bottom: 10px; color: #00aa00; }
+.bb-card p { margin: 0; color: #aaa; font-size: 0.95em; line-height: 1.4; }
 
-/* Bilder-Vorschau Container innerhalb der Blackboard-Tabelle */
-.bb-image-container {
+/* Blackboard Detailansicht (Eigene Seite) */
+#blackboardDetail {
+    max-width: 900px;
+    margin: 0 auto;
+    text-align: left;
+    background: #222;
+    border: 1px solid #444;
+    padding: 30px;
+    border-radius: 8px;
+}
+.bb-text {
+    font-size: 1.1em;
+    line-height: 1.6;
+    margin-bottom: 30px;
+    white-space: pre-wrap;
+}
+.bb-gallery {
     display: flex;
     flex-wrap: wrap;
-    gap: 10px;
-    justify-content: flex-start;
-    margin-top: 10px;
+    gap: 15px;
+    justify-content: center;
+    margin-top: 15px;
 }
-.bb-image-container img {
-    height: 80px;
-    width: 120px;
+.bb-gallery img {
+    width: 220px;
+    height: 140px;
     object-fit: cover;
-    border-radius: 4px;
-    border: 1px solid var(--border-color);
+    border: 1px solid #444;
+    border-radius: 6px;
     background-color: #111;
     transition: transform 0.2s;
 }
-.bb-image-container img:hover {
-    transform: scale(1.1);
+.bb-gallery img:hover {
+    transform: scale(1.05);
     cursor: zoom-in;
 }
 </style>
@@ -211,20 +220,11 @@ button.copy-btn:hover { background-color: var(--mc-green-hover); }
 <div id="menu"></div>
 
 <div id="header">
-    <h1 id="projectTitle">Minecraft Zentrale</h1>
+    <h1 id="projectTitle">Materialliste</h1>
     <img id="logo" src="bilder/resized_1024_clock_00.png">
 </div>
 
-<div id="dashboardSection" style="display:block;">
-    <h2>Willkommen! Wähle eine Übersicht aus:</h2>
-    <div class="dashboard-grid">
-        <div class="dash-card" onclick="openFirstProject()">Materiallisten</div>
-        <div class="dash-card" onclick="showSection('waypoints')">Waypoints</div>
-        <div class="dash-card" onclick="showSection('blackboard')">Blackboard</div>
-    </div>
-</div>
-
-<div id="progressSection" style="display:none;">
+<div id="progressSection" style="display:block;">
     <div class="progressContainer">
         <div id="blockProgress" class="progressBar"></div>
         <div id="blockProgressText" class="progressText">0% Blöcke</div>
@@ -235,150 +235,72 @@ button.copy-btn:hover { background-color: var(--mc-green-hover); }
     </div>
 </div>
 
-<div id="material" style="display:none;">
-    <button class="back-btn" onclick="showSection('dashboard')">← Zurück zur Hauptseite</button>
-    <table>
-    <thead>
-    <tr>
-    <th>Item</th>
-    <th>Total</th>
-    <th>Stacks</th>
-    <th></th>
-    </tr>
-    </thead>
-    <tbody id="output"></tbody>
-    </table>
+<div id="material" style="display:block;">
+<table>
+<thead>
+<tr>
+<th>Item</th>
+<th>Total</th>
+<th>Stacks</th>
+<th></th>
+</tr>
+</thead>
+<tbody id="output"></tbody>
+</table>
 </div>
 
 <div id="waypointsSection" style="display:none;">
-    <button class="back-btn" onclick="showSection('dashboard')">← Zurück zur Hauptseite</button>
-    <table>
-    <thead>
-    <tr>
-    <th>Name</th>
-    <th>X</th>
-    <th>Y</th>
-    <th>Z</th>
-    <th>Aktion</th>
-    </tr>
-    </thead>
-    <tbody id="waypointsTable"></tbody>
-    </table>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>X</th>
+<th>Y</th>
+<th>Z</th>
+<th>Aktion</th>
+</tr>
+</thead>
+<tbody id="waypointsTable"></tbody>
+</table>
 </div>
 
-<div id="blackboardSection" style="display:none;">
-    <button class="back-btn" onclick="showSection('dashboard')">← Zurück zur Hauptseite</button>
-    <table>
-    <thead>
-    <tr>
-    <th style="width: 80px;">Einheit</th>
-    <th>Beschreibung & Zugehörige Bilder</th>
-    </tr>
-    </thead>
-    <tbody id="blackboardTable"></tbody>
-    </table>
+<div id="blackboardOverview" style="display:none;">
+    <p style="color: #aaa; margin-bottom: 25px;">Wähle ein Blackboard aus, um alle Details und Bilder anzuzeigen.</p>
+    <div id="bbGridContainer" class="bb-grid"></div>
+</div>
+
+<div id="blackboardDetailSection" style="display:none;">
+    <button class="back-btn" onclick="showSection('blackboardOverview')">← Zurück zur Übersicht</button>
+    <div id="blackboardDetail">
+        <h2 id="bbDetailTitle" style="color: #00aa00; margin-top: 0; margin-bottom: 15px; border-bottom: 1px solid #444; padding-bottom: 10px;"></h2>
+        <div id="bbDetailText" class="bb-text"></div>
+        <h3 style="border-top: 1px solid #444; padding-top: 20px; margin-top: 30px; color: #00aa00;">Projekt-Bilder:</h3>
+        <div id="bbDetailGallery" class="bb-gallery"></div>
+    </div>
 </div>
 
 <script>
-let firstProjectFile = null;
-
 // ==========================
-// SEKTIONS-STEUERUNG
+// SEKTIONS-STEUERUNG (Aktualisiert für die neuen Blackboard-Seiten)
 // ==========================
 function toggleMenu(){
     const menu = document.getElementById("menu");
     menu.style.display = menu.style.display === "flex" ? "none" : "flex";
 }
 
-function showSection(section, projectFile=null){
-    document.getElementById("dashboardSection").style.display = section==='dashboard'?'block':'none';
+function showSection(section, extraParam=null){
     document.getElementById("material").style.display = section==='material'?'block':'none';
     document.getElementById("progressSection").style.display = section==='material'?'block':'none';
     document.getElementById("waypointsSection").style.display = section==='waypoints'?'block':'none';
-    document.getElementById("blackboardSection").style.display = section==='blackboard'?'block':'none';
+    document.getElementById("blackboardOverview").style.display = section==='blackboardOverview'?'block':'none';
+    document.getElementById("blackboardDetailSection").style.display = section==='blackboardDetail'?'block':'none';
     
-    if(section==='dashboard') {
-        document.getElementById('projectTitle').textContent = "Minecraft Zentrale";
-    }
-    if(section==='material') {
-        if(projectFile) loadProject(projectFile);
-        else document.getElementById('projectTitle').textContent = "Materialliste";
-    }
+    if(section==='material' && extraParam) loadProject(extraParam);
     if(section==='waypoints') loadWaypoints();
-    if(section==='blackboard') loadBlackboard();
+    if(section==='blackboardOverview') loadBlackboardOverview();
+    if(section==='blackboardDetail' && extraParam) loadBlackboardDetail(extraParam);
     
     document.getElementById("menu").style.display = "none";
-}
-
-function openFirstProject() {
-    if(firstProjectFile) showSection('material', firstProjectFile);
-    else showSection('material');
-}
-
-// ==========================
-// BLACKBOARD LOGIK (Einheitliche Tabelle + Bild-Erkennung)
-// ==========================
-function loadBlackboard(){
-    const table = document.getElementById("blackboardTable");
-    table.innerHTML = '';
-    
-    fetch('blackboard.txt').then(res => res.text()).then(text => {
-        const lines = text.split('\n');
-        let counter = 1;
-        
-        lines.forEach(l => {
-            if(!l.trim()) return;
-            
-            const row = document.createElement('tr');
-            
-            // Spalte 1: Nummerierung (#1, #2...)
-            const numTd = document.createElement('td');
-            numTd.innerHTML = `<strong>#${counter}</strong>`;
-            
-            // Spalte 2: Text + Bilder-Container
-            const contentTd = document.createElement('td');
-            contentTd.style.textAlign = "left";
-            contentTd.style.padding = "15px";
-            
-            // Text-Element
-            const textDiv = document.createElement('div');
-            textDiv.textContent = l.trim();
-            textDiv.style.fontWeight = "bold";
-            textDiv.style.fontSize = "1.05em";
-            contentTd.appendChild(textDiv);
-            
-            // Container für Bilder dieser Einheit
-            const imgContainer = document.createElement('div');
-            imgContainer.className = "bb-image-container";
-            
-            // Schleife prüft automatisch Bildnummern von 00 bis 19
-            for(let j = 0; j <= 19; j++) {
-                const imgNum = String(j).padStart(2, '0');
-                const img = document.createElement('img');
-                // Pfad z.B. bilder/blackboard/1.00.png
-                img.src = `bilder/blackboard/${counter}.${imgNum}.png`;
-                img.alt = `Bild ${counter}.${imgNum}`;
-                
-                // CRITICAL: Wenn das Bild lokal nicht existiert, wird es lautlos gelöscht!
-                img.onerror = function() {
-                    this.remove();
-                };
-                
-                imgContainer.appendChild(img);
-            }
-            
-            contentTd.appendChild(imgContainer);
-            row.appendChild(numTd);
-            row.appendChild(contentTd);
-            table.appendChild(row);
-            
-            counter++;
-        });
-        document.getElementById('projectTitle').textContent = "Blackboard";
-    }).catch(err => {
-        console.error("Fehler beim Laden des Blackboards:", err);
-        table.innerHTML = '<tr><td colspan="2">blackboard.txt konnte nicht geladen werden.</td></tr>';
-    });
 }
 
 // ==========================
@@ -417,58 +339,70 @@ function parseLine(line){
 }
 
 // ==========================
-// LOAD PROJECTS & MENU
+// LOAD PROJECTS, BLACKBOARDS & MENU
 // ==========================
 fetch('projects_status.txt').then(res=>res.text()).then(statusText=>{
     const lines=statusText.split('\n');
     const menu=document.getElementById('menu');
-    menu.innerHTML = '';
 
-    const dashLi=document.createElement('a'); dashLi.href="#"; dashLi.textContent="🏠 Hauptseite"; dashLi.onclick=()=>showSection('dashboard');
-    menu.appendChild(dashLi);
-
-    const materialLi=document.createElement('a'); materialLi.href="#"; materialLi.textContent="📋 Materialliste";
-    materialLi.onclick=()=> openFirstProject();
+    // Hauptpunkte hinzufügen
+    const materialLi=document.createElement('a'); materialLi.href="#"; materialLi.textContent="Materialliste";
     menu.appendChild(materialLi);
 
-    const projectSubContainer = document.createElement('div');
-    menu.appendChild(projectSubContainer);
-
-    const wpLi=document.createElement('a'); wpLi.href="#"; wpLi.textContent="📍 Waypoints"; wpLi.onclick=()=>showSection('waypoints');
+    const wpLi=document.createElement('a'); wpLi.href="#"; wpLi.textContent="Waypoints"; wpLi.onclick=()=>showSection('waypoints');
     menu.appendChild(wpLi);
 
-    const bbLi=document.createElement('a'); bbLi.href="#"; bbLi.textContent="📝 Blackboard"; bbLi.onclick=()=>showSection('blackboard');
-    menu.appendChild(bbLi);
+    const bbMainLi=document.createElement('a'); bbMainLi.href="#"; bbMainLi.textContent="Blackboards"; bbMainLi.onclick=()=>showSection('blackboardOverview');
+    menu.appendChild(bbMainLi);
 
+    // Projekt-Unterpunkte laden
     const activeProjects=[];
     lines.forEach((line,index)=>{
         const [proj,val]=line.split(':');
-        if(val && val.trim()==='1') activeProjects.push({file:`projekt_${index+1}.txt`, index: index});
+        if(val && val.trim()==='1') activeProjects.push({file:`projekt_${index+1}.txt`});
     });
-
-    if(activeProjects.length>0) {
-        firstProjectFile = activeProjects[0].file;
-    }
 
     activeProjects.forEach(p=>{
         fetch(p.file).then(res=>res.text()).then(txt=>{
             const nameLine=txt.split('\n').find(l=>l.startsWith('Name:'));
-            const projectName=nameLine?nameLine.split(':')[1].trim():`Projekt ${p.index+1}`;
+            const projectName=nameLine?nameLine.split(':')[1].trim():"Projekt";
             const a=document.createElement('a');
             a.href="#"; a.textContent=projectName;
             a.className="menu-sub";
-            a.setAttribute('data-index', p.index);
             a.onclick=()=>showSection('material',p.file);
-            
-            projectSubContainer.appendChild(a);
-            
-            Array.from(projectSubContainer.children)
-                .sort((x, y) => parseInt(x.getAttribute('data-index')) - parseInt(y.getAttribute('data-index')))
-                .forEach(node => projectSubContainer.appendChild(node));
+            menu.insertBefore(a, wpLi);
         });
     });
 
-    showSection('dashboard');
+    // Blackboard-Unterpunkte dynamisch ins Menü laden
+    fetch('blackboards/blackboard_status.txt').then(res=>res.text()).then(bbStatusText=>{
+        const bbLines = bbStatusText.split('\n');
+        bbLines.forEach(line => {
+            const [folder, val] = line.split(':');
+            if(val && val.trim() === '1') {
+                const folderName = folder.trim();
+                fetch(`blackboards/${folderName}/info.txt`).then(res=>res.text()).then(txt => {
+                    const titleLine = txt.split('\n').find(l => l.toLowerCase().startsWith('titel:'));
+                    const bbName = titleLine ? titleLine.split(':')[1].trim() : folderName;
+                    
+                    const a = document.createElement('a');
+                    a.href = "#"; a.textContent = bbName;
+                    a.className = "menu-sub";
+                    a.onclick = () => showSection('blackboardDetail', folderName);
+                    menu.appendChild(a);
+                }).catch(() => {
+                    const a = document.createElement('a');
+                    a.href = "#"; a.textContent = folderName;
+                    a.className = "menu-sub";
+                    a.onclick = () => showSection('blackboardDetail', folderName);
+                    menu.appendChild(a);
+                });
+            }
+        });
+    }).catch(() => console.log("Keine blackboard_status.txt gefunden."));
+
+    if(activeProjects.length>0) showSection('material',activeProjects[0].file);
+    else showSection('waypoints');
 });
 
 // ==========================
@@ -546,6 +480,125 @@ function loadWaypoints(){
         });
         document.getElementById('projectTitle').textContent="Waypoints";
     }).catch(err=>console.error("Fehler beim Laden der Waypoints:",err));
+}
+
+// ==========================
+// BLACKBOARD: ÜBERSICHTS-GENERATOR (KACHELN)
+// ==========================
+function loadBlackboardOverview() {
+    const container = document.getElementById("bbGridContainer");
+    container.innerHTML = "Wird geladen...";
+    document.getElementById('projectTitle').textContent = "Blackboards";
+
+    fetch('blackboards/blackboard_status.txt').then(res=>res.text()).then(bbStatusText=>{
+        container.innerHTML = "";
+        const bbLines = bbStatusText.split('\n');
+        let hasActive = false;
+
+        bbLines.forEach(line => {
+            const [folder, val] = line.split(':');
+            if(val && val.trim() === '1') {
+                hasActive = true;
+                const folderName = folder.trim();
+
+                const card = document.createElement("div");
+                card.className = "bb-card";
+                card.onclick = () => showSection('blackboardDetail', folderName);
+                
+                const h3 = document.createElement("h3");
+                h3.textContent = folderName;
+                card.appendChild(h3);
+
+                const p = document.createElement("p");
+                p.textContent = "Klicke für Details und Bilder.";
+                card.appendChild(p);
+
+                container.appendChild(card);
+
+                // Holt echten Titel & Beschreibung für die Kachelvorschau
+                fetch(`blackboards/${folderName}/info.txt`).then(res=>res.text()).then(txt=>{
+                    const lines = txt.split('\n');
+                    const titleLine = lines.find(l => l.toLowerCase().startsWith('titel:'));
+                    const descLine = lines.find(l => l.toLowerCase().startsWith('beschreibung:'));
+                    
+                    if(titleLine) h3.textContent = titleLine.split(':')[1].trim();
+                    if(descLine) {
+                        let descText = descLine.split(/:(.+)/)[1].trim();
+                        if(descText.length > 70) descText = descText.substring(0, 67) + "...";
+                        p.textContent = descText;
+                    }
+                }).catch(()=>{});
+            }
+        });
+
+        if(!hasActive) container.innerHTML = "<p>Keine aktiven Blackboards vorhanden.</p>";
+    }).catch(() => {
+        container.innerHTML = "<p>blackboards/blackboard_status.txt konnte nicht geladen werden.</p>";
+    });
+}
+
+// ==========================
+// BLACKBOARD: DETAILANSICHT (EIGENE SEITE)
+// ==========================
+function loadBlackboardDetail(folder) {
+    const titleEl = document.getElementById("bbDetailTitle");
+    const textEl = document.getElementById("bbDetailText");
+    const galleryEl = document.getElementById("bbDetailGallery");
+
+    titleEl.textContent = "Wird geladen...";
+    textEl.textContent = "";
+    galleryEl.innerHTML = "";
+
+    fetch(`blackboards/${folder}/info.txt`).then(res=>res.text()).then(txt => {
+        const lines = txt.split('\n');
+        let title = folder;
+        let fullText = "";
+        let explicitImages = [];
+
+        lines.forEach(l => {
+            const cleanLine = l.trim();
+            if(cleanLine.toLowerCase().startsWith('titel:')) {
+                title = l.split(':')[1].trim();
+            } else if(cleanLine.toLowerCase().startsWith('bilder:')) {
+                // Liest benutzerdefinierte Bildnamen aus
+                const imgList = l.split(/:(.+)/)[1].trim();
+                explicitImages = imgList.split(',').map(img => img.trim()).filter(img => img);
+            } else {
+                fullText += l + "\n";
+            }
+        });
+
+        document.getElementById('projectTitle').textContent = title;
+        titleEl.textContent = title;
+        textEl.textContent = fullText.trim();
+
+        // Bilder laden
+        if(explicitImages.length > 0) {
+            // Methode A: Benutzerdefinierte Namen aus der Textdatei laden
+            explicitImages.forEach(imgName => {
+                const img = document.createElement("img");
+                img.src = `blackboards/${folder}/${imgName}`;
+                img.alt = imgName;
+                img.onerror = function() { this.remove(); };
+                galleryEl.appendChild(img);
+            });
+        } else {
+            // Methode B: Automatischer Suchlauf nach Nummern (0.png, 1.png, 2.png...)
+            const extensions = ['png', 'jpg', 'jpeg'];
+            for(let i = 0; i <= 20; i++) {
+                extensions.forEach(ext => {
+                    const img = document.createElement("img");
+                    img.src = `blackboards/${folder}/${i}.${ext}`;
+                    img.alt = `Bild ${i}`;
+                    img.onerror = function() { this.remove(); };
+                    galleryEl.appendChild(img);
+                });
+            }
+        }
+    }).catch(() => {
+        titleEl.textContent = "Fehler";
+        textEl.textContent = `Die Datei info.txt im Ordner 'blackboards/${folder}/' wurde nicht gefunden.`;
+    });
 }
 </script>
 </body>
