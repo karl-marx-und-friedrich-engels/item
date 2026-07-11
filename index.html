@@ -5,123 +5,173 @@
 <title>Minecraft Planer & Dashboard</title>
 <link rel="icon" href="bilder/f/Spyglass_(item)_JE3_BE1.png">
 <style>
+:root {
+    --bg-color: #141414;
+    --card-bg: #1f1f1f;
+    --card-hover: #2a2a2a;
+    --mc-green: #38873c;
+    --mc-green-hover: #4caf50;
+    --border-color: #333;
+    --text-color: #f5f5f5;
+    --text-muted: #aaa;
+}
+
 body {
-    font-family: Arial, sans-serif;
-    background-color: #1a1a1a;
-    color: #fff;
-    padding: 20px;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    padding: 30px 20px;
     margin: 0;
     text-align: center;
 }
+
 #header {
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 15px;
-    margin-bottom: 20px;
+    gap: 20px;
+    margin-bottom: 40px;
 }
+
 #logo {
-    width: 80px;
-    height: 80px;
+    width: 70px;
+    height: 70px;
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.5));
 }
+
 #menuButton {
     position: fixed;
-    top: 15px;
-    right: 20px;
-    font-size: 30px;
+    top: 20px;
+    right: 25px;
+    font-size: 28px;
     cursor: pointer;
     z-index: 1000;
+    background: var(--card-bg);
+    padding: 5px 12px;
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
+    transition: background 0.2s;
 }
+#menuButton:hover {
+    background: var(--card-hover);
+}
+
 #menu {
     position: fixed;
-    top: 60px;
-    right: 20px;
-    background: #222;
-    border: 1px solid #444;
-    border-radius: 6px;
+    top: 70px;
+    right: 25px;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
     display: none;
     flex-direction: column;
-    min-width: 180px;
+    min-width: 200px;
     z-index: 999;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+    overflow: hidden;
 }
 #menu a {
-    padding: 8px 10px;
+    padding: 12px 15px;
     text-decoration: none;
-    color: white;
-    border-bottom: 1px solid #444;
+    color: var(--text-color);
+    border-bottom: 1px solid var(--border-color);
     display: block;
     text-align: left;
+    font-size: 0.95em;
+    transition: background 0.2s;
 }
 #menu a:hover {
-    background: #444;
+    background: var(--card-hover);
 }
 .menu-sub {
     font-style: italic;
     margin-left: 15px;
-    font-size: 0.9em;
+    font-size: 0.85em;
+    color: var(--text-muted);
 }
+
+/* Zurück Button auf den Unterseiten */
+.back-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    margin-bottom: 25px;
+    transition: all 0.2s;
+}
+.back-btn:hover {
+    background: var(--card-hover);
+    transform: translateX(-3px);
+}
+
+/* Schickere Tabellen */
 table {
     width: 100%;
     border-collapse: collapse;
     margin-bottom: 30px;
+    background: var(--card-bg);
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
 }
 th, td {
-    padding: 8px;
-    border: 1px solid #444;
+    padding: 12px 15px;
+    border-bottom: 1px solid var(--border-color);
     text-align: center;
 }
 th {
-    background-color: #222;
+    background-color: #151515;
+    color: var(--text-muted);
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.85em;
+    letter-spacing: 1px;
 }
-tbody tr:nth-child(odd) {
-    background-color: #2b2b2b;
+tbody tr:nth-child(odd) { background-color: #1f1f1f; }
+tbody tr:nth-child(even) { background-color: #252525; }
+tr:hover { background-color: #2e2e2e; }
+
+td.checkbox-cell { width: 50px; }
+tr.selected:nth-child(odd), tr.selected:nth-child(even) {
+    background-color: rgba(56, 135, 60, 0.25);
+    color: #81c784;
 }
-tbody tr:nth-child(even) {
-    background-color: #3a3a3a;
-}
-tr:hover {
-    background-color: #505050;
-}
-td.checkbox-cell {
-    width: 40px;
-}
-tr.selected:nth-child(odd) {
-    background-color: #006600;
-}
-tr.selected:nth-child(even) {
-    background-color: #00aa00;
-}
+
 button.copy-btn {
-    padding: 4px 8px;
-    margin-left: 5px;
+    padding: 6px 12px;
     cursor: pointer;
     border: none;
     border-radius: 4px;
-    background-color: #007700;
+    background-color: var(--mc-green);
     color: white;
+    font-weight: bold;
+    transition: background 0.2s;
 }
-button.copy-btn:hover {
-    background-color: #00aa00;
-}
-#serverStatus {
-    margin-bottom: 20px;
-    font-size: 1.1em;
-}
+button.copy-btn:hover { background-color: var(--mc-green-hover); }
+
+/* Fortschrittsbalken */
 .progressContainer {
     width: 80%;
-    height: 24px;
-    background-color: #444;
-    border-radius: 12px;
-    margin: 10px auto;
+    height: 26px;
+    background-color: #111;
+    border-radius: 20px;
+    margin: 12px auto;
     position: relative;
     overflow: hidden;
+    border: 1px solid var(--border-color);
 }
 .progressBar {
     height: 100%;
     width: 0%;
-    background-color: #00aa00;
-    border-radius: 12px 0 0 12px;
-    transition: width 0.5s;
+    background: linear-gradient(90deg, #38873c, #4caf50);
+    border-radius: 20px;
+    transition: width 0.6s ease;
 }
 .progressText {
     position: absolute;
@@ -129,90 +179,134 @@ button.copy-btn:hover {
     text-align: center;
     top: 0;
     left: 0;
-    line-height: 24px;
+    line-height: 26px;
     color: #fff;
     font-weight: bold;
+    font-size: 0.9em;
     pointer-events: none;
 }
 
-/* --- NEUE STYLES FÜR DASHBOARD & BLACKBOARD --- */
+/* Aufpoliertes Dashboard (Ohne Symbole) */
 .dashboard-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 20px;
-    max-width: 800px;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 25px;
+    max-width: 900px;
     margin: 40px auto;
 }
 .dash-card {
-    background: #222;
-    border: 2px solid #444;
-    padding: 30px;
-    border-radius: 8px;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    padding: 35px 20px;
+    border-radius: 10px;
     cursor: pointer;
-    font-size: 1.2em;
+    font-size: 1.15em;
     font-weight: bold;
-    transition: all 0.2s;
+    letter-spacing: 0.5px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    transition: all 0.25s ease;
 }
 .dash-card:hover {
-    background: #00aa00;
-    border-color: #fff;
-    transform: scale(1.05);
+    background: var(--mc-green);
+    border-color: var(--mc-green-hover);
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(76, 175, 80, 0.2);
 }
+
+/* Aufpoliertes Blackboard */
 .blackboard-container {
-    max-width: 600px;
-    margin: 20px auto;
-    background: #2b2b2b;
-    border: 5px solid #4a3b2c; /* Holz-Optik Rahmen */
-    padding: 20px;
-    border-radius: 4px;
+    max-width: 650px;
+    margin: 10px auto;
+    background: #182218; /* Dunkelgrüner Kreide-Look */
+    border: 8px solid #3e2723; /* Schöner Holzrahmen */
+    padding: 25px;
+    border-radius: 6px;
     text-align: left;
-    box-shadow: inset 0 0 20px #000;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.6), inset 0 0 30px rgba(0,0,0,0.8);
+    box-sizing: border-box;
 }
 .blackboard-title {
-    color: #f39c12;
+    color: #bcaaa4;
     text-align: center;
     margin-top: 0;
     font-family: 'Courier New', Courier, monospace;
+    border-bottom: 2px dashed #3e2723;
+    padding-bottom: 10px;
 }
 .task-input-section {
     display: flex;
-    gap: 10px;
-    margin-bottom: 20px;
+    gap: 12px;
+    margin-bottom: 25px;
 }
 .task-input-section input {
     flex: 1;
-    padding: 10px;
-    background: #1a1a1a;
-    border: 1px solid #444;
-    color: white;
+    padding: 12px;
+    background: rgba(0,0,0,0.4);
+    border: 1px solid #3e2723;
+    color: #fff;
     border-radius: 4px;
+    font-size: 1em;
 }
 .task-input-section button {
-    padding: 10px 20px;
-    background: #007700;
+    padding: 12px 24px;
+    background: var(--mc-green);
     color: white;
     border: none;
     border-radius: 4px;
     cursor: pointer;
+    font-weight: bold;
 }
-.task-list {
-    list-style: none;
-    padding: 0;
-}
+.task-input-section button:hover { background: var(--mc-green-hover); }
+.task-list { list-style: none; padding: 0; margin: 0; }
 .task-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px;
-    border-bottom: 1px solid #444;
+    padding: 12px 5px;
+    border-bottom: 1px dashed rgba(255,255,255,0.1);
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 1.1em;
+    color: #e0e0e0;
 }
 .task-item button {
-    background: #aa0000;
+    background: #d32f2f;
     color: white;
     border: none;
-    padding: 5px 10px;
+    padding: 6px 12px;
     border-radius: 4px;
     cursor: pointer;
+    font-family: sans-serif;
+    font-size: 0.85em;
+}
+
+/* NEU: Bilder-Galerie Grid */
+.image-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 20px;
+    max-width: 900px;
+    margin: 20px auto;
+}
+.image-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    overflow: hidden;
+    padding: 10px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+}
+.image-card img {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 6px;
+    background: #111;
+}
+.image-number {
+    margin-top: 8px;
+    font-weight: bold;
+    color: var(--mc-green-hover);
+    font-size: 1.1em;
 }
 </style>
 </head>
@@ -229,9 +323,10 @@ button.copy-btn:hover {
 <div id="dashboardSection" style="display:block;">
     <h2>Willkommen! Wähle eine Funktion aus:</h2>
     <div class="dashboard-grid">
-        <div class="dash-card" onclick="openFirstProject()">📋 Materiallisten</div>
-        <div class="dash-card" onclick="showSection('waypoints')">📍 Waypoints</div>
-        <div class="dash-card" onclick="showSection('blackboard')">📝 Blackboard (Aufgaben)</div>
+        <div class="dash-card" onclick="openFirstProject()">Materiallisten</div>
+        <div class="dash-card" onclick="showSection('waypoints')">Waypoints</div>
+        <div class="dash-card" onclick="showSection('blackboard')">Blackboard (Aufgaben)</div>
+        <div class="dash-card" onclick="showSection('gallery')">Bilder-Galerie</div>
     </div>
 </div>
 
@@ -247,49 +342,61 @@ button.copy-btn:hover {
 </div>
 
 <div id="material" style="display:none;">
-<table>
-<thead>
-<tr>
-<th>Item</th>
-<th>Total</th>
-<th>Stacks</th>
-<th></th>
-</tr>
-</thead>
-<tbody id="output"></tbody>
-</table>
+    <button class="back-btn" onclick="showSection('dashboard')">← Zurück zur Hauptseite</button>
+    <table>
+    <thead>
+    <tr>
+    <th>Item</th>
+    <th>Total</th>
+    <th>Stacks</th>
+    <th></th>
+    </tr>
+    </thead>
+    <tbody id="output"></tbody>
+    </table>
 </div>
 
 <div id="waypointsSection" style="display:none;">
-<table>
-<thead>
-<tr>
-<th>Name</th>
-<th>X</th>
-<th>Y</th>
-<th>Z</th>
-<th>Aktion</th>
-</tr>
-</thead>
-<tbody id="waypointsTable"></tbody>
-</table>
+    <button class="back-btn" onclick="showSection('dashboard')">← Zurück zur Hauptseite</button>
+    <table>
+    <thead>
+    <tr>
+    <th>Name</th>
+    <th>X</th>
+    <th>Y</th>
+    <th>Z</th>
+    <th>Aktion</th>
+    </tr>
+    </thead>
+    <tbody id="waypointsTable"></tbody>
+    </table>
 </div>
 
 <div id="blackboardSection" style="display:none;">
+    <button class="back-btn" onclick="showSection('dashboard')">← Zurück zur Hauptseite</button>
     <div class="blackboard-container">
         <h2 class="blackboard-title">=== BLACKBOARD ===</h2>
         <div class="task-input-section">
             <input type="text" id="taskInput" placeholder="Neue Aufgabe eingeben...">
             <button onclick="addTask()">Hinzufügen</button>
         </div>
-        <ul id="taskList" class="task-list">
-            </ul>
+        <ul id="taskList" class="task-list"></ul>
     </div>
 </div>
 
+<div id="gallerySection" style="display:none;">
+    <button class="back-btn" onclick="showSection('dashboard')">← Zurück zur Hauptseite</button>
+    <h2>Eingefügte Baublöcke / Bilder</h2>
+    <div id="galleryGrid" class="image-grid">
+        </div>
+</div>
+
 <script>
-// Globale Variable, um das erste aktive Projekt zu merken
 let firstProjectFile = null;
+
+// HIER EINFACH DIE ANZAHL DER BILDER EINTRAGEN, DIE DU HAST!
+// Wenn du 5 Bilder im Ordner hast, einfach auf 5 ändern.
+const ANZAHL_BILDER = 6; 
 
 // ==========================
 // MENU & SEKTIONS-STEUERUNG
@@ -300,20 +407,22 @@ function toggleMenu(){
 }
 
 function showSection(section, projectFile=null){
-    // Alle Sektionen ausblenden
     document.getElementById("dashboardSection").style.display = section==='dashboard'?'block':'none';
     document.getElementById("material").style.display = section==='material'?'block':'none';
     document.getElementById("progressSection").style.display = section==='material'?'block':'none';
     document.getElementById("waypointsSection").style.display = section==='waypoints'?'block':'none';
     document.getElementById("blackboardSection").style.display = section==='blackboard'?'block':'none';
+    document.getElementById("gallerySection").style.display = section==='gallery'?'block':'none';
     
-    // Daten laden je nach Sektion
     if(section==='dashboard') document.getElementById('projectTitle').textContent = "Minecraft Zentrale";
     if(section==='material' && projectFile) loadProject(projectFile);
     if(section==='waypoints') loadWaypoints();
     if(section==='blackboard') document.getElementById('projectTitle').textContent = "Blackboard";
+    if(section==='gallery') {
+        document.getElementById('projectTitle').textContent = "Bilder-Galerie";
+        loadGallery();
+    }
     
-    // Menü nach Klick schließen
     document.getElementById("menu").style.display = "none";
 }
 
@@ -323,7 +432,28 @@ function openFirstProject() {
 }
 
 // ==========================
-// BLACKBOARD LOGIK (Aufgaben hinzufügen/löschen)
+// BILDER-GALERIE LOGIK
+// ==========================
+function loadGallery() {
+    const grid = document.getElementById("galleryGrid");
+    grid.innerHTML = ""; // Leeren
+    
+    // Generiert automatisch die Karten von 1 bis ANZAHL_BILDER
+    for(let i = 1; i <= ANZAHL_BILDER; i++) {
+        const card = document.createElement("div");
+        card.className = "image-card";
+        
+        // Ordnerstruktur: bilder/blackboard/1.png usw.
+        card.innerHTML = `
+            <img src="bilder/blackboard/${i}.png" alt="Block ${i}" onerror="this.src='bilder/resized_1024_clock_00.png';">
+            <div class="image-number">Bild #${i}</div>
+        `;
+        grid.appendChild(card);
+    }
+}
+
+// ==========================
+// BLACKBOARD LOGIK
 // ==========================
 function addTask() {
     const input = document.getElementById("taskInput");
@@ -334,7 +464,7 @@ function addTask() {
     const li = document.createElement("li");
     li.className = "task-item";
     
-    li.innerHTML = `<span>📌 ${text}</span> <button onclick="this.parentElement.remove()">Löschen</button>`;
+    li.innerHTML = `<span>➢ ${text}</span> <button onclick="this.parentElement.remove()">Löschen</button>`;
     ul.appendChild(li);
     input.value = "";
 }
@@ -381,7 +511,6 @@ fetch('projects_status.txt').then(res=>res.text()).then(statusText=>{
     const lines=statusText.split('\n');
     const menu=document.getElementById('menu');
 
-    // Hauptpunkte im Hamburger-Menü
     const dashLi=document.createElement('a'); dashLi.href="#"; dashLi.textContent="🏠 Hauptseite"; dashLi.onclick=()=>showSection('dashboard');
     menu.appendChild(dashLi);
 
@@ -394,6 +523,9 @@ fetch('projects_status.txt').then(res=>res.text()).then(statusText=>{
 
     const bbLi=document.createElement('a'); bbLi.href="#"; bbLi.textContent="📝 Blackboard"; bbLi.onclick=()=>showSection('blackboard');
     menu.appendChild(bbLi);
+
+    const galLi=document.createElement('a'); galLi.href="#"; galLi.textContent="🖼 Bilder-Galerie"; galLi.onclick=()=>showSection('gallery');
+    menu.appendChild(galLi);
 
     const activeProjects=[];
     lines.forEach((line,index)=>{
@@ -417,7 +549,6 @@ fetch('projects_status.txt').then(res=>res.text()).then(statusText=>{
         });
     });
 
-    // START-EINSTELLUNG: Zeige zuerst die Hauptseite (Dashboard)
     showSection('dashboard');
 });
 
