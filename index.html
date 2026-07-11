@@ -30,7 +30,7 @@ body {
     justify-content: center;
     align-items: center;
     gap: 15px;
-    margin-bottom: 30px;
+    margin-bottom: 20px;
 }
 
 #logo {
@@ -94,16 +94,17 @@ body {
     background: var(--card-hover);
 }
 
-/* Einheitlicher Tabellen-Look für Materialien, Waypoints UND Blackboard */
+/* Absolut einheitlicher Tabellen-Look für alle Sektionen */
 table {
     width: 100%;
     border-collapse: collapse;
     margin-bottom: 30px;
 }
 th, td {
-    padding: 10px;
+    padding: 12px 10px;
     border: 1px solid var(--border-color);
     text-align: center;
+    vertical-align: middle;
 }
 th {
     background-color: #222;
@@ -119,6 +120,7 @@ tr.selected:nth-child(even) { background-color: #00aa00; }
 
 button.copy-btn {
     padding: 4px 8px;
+    margin-left: 5px;
     cursor: pointer;
     border: none;
     border-radius: 4px;
@@ -156,10 +158,10 @@ button.copy-btn:hover { background-color: var(--mc-green-hover); }
     pointer-events: none;
 }
 
-/* Kacheln auf der Hauptseite - Ohne Symbole */
+/* Hauptseite Dashboard-Anordnung (Kacheln ohne Symbole) */
 .dashboard-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
     gap: 20px;
     max-width: 800px;
     margin: 40px auto;
@@ -167,7 +169,7 @@ button.copy-btn:hover { background-color: var(--mc-green-hover); }
 .dash-card {
     background: var(--card-bg);
     border: 2px solid var(--border-color);
-    padding: 30px;
+    padding: 35px 20px;
     border-radius: 8px;
     cursor: pointer;
     font-size: 1.2em;
@@ -180,31 +182,26 @@ button.copy-btn:hover { background-color: var(--mc-green-hover); }
     transform: scale(1.03);
 }
 
-/* Bilder-Galerie Anordnung */
-.image-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 20px;
-    max-width: 800px;
-    margin: 20px auto;
+/* Bilder-Vorschau Container innerhalb der Blackboard-Tabelle */
+.bb-image-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: flex-start;
+    margin-top: 10px;
 }
-.image-card {
-    background: var(--card-bg);
-    border: 1px solid var(--border-color);
-    border-radius: 6px;
-    padding: 10px;
-}
-.image-card img {
-    width: 100%;
-    height: 140px;
+.bb-image-container img {
+    height: 80px;
+    width: 120px;
     object-fit: cover;
     border-radius: 4px;
-    background: #111;
+    border: 1px solid var(--border-color);
+    background-color: #111;
+    transition: transform 0.2s;
 }
-.image-number {
-    margin-top: 8px;
-    font-weight: bold;
-    color: var(--mc-green-hover);
+.bb-image-container img:hover {
+    transform: scale(1.1);
+    cursor: zoom-in;
 }
 </style>
 </head>
@@ -224,7 +221,6 @@ button.copy-btn:hover { background-color: var(--mc-green-hover); }
         <div class="dash-card" onclick="openFirstProject()">Materiallisten</div>
         <div class="dash-card" onclick="showSection('waypoints')">Waypoints</div>
         <div class="dash-card" onclick="showSection('blackboard')">Blackboard</div>
-        <div class="dash-card" onclick="showSection('gallery')">Bilder-Galerie</div>
     </div>
 </div>
 
@@ -275,22 +271,16 @@ button.copy-btn:hover { background-color: var(--mc-green-hover); }
     <table>
     <thead>
     <tr>
-    <th>Nummer</th>
-    <th>Aufgabe / Todo</th>
+    <th style="width: 80px;">Einheit</th>
+    <th>Beschreibung & Zugehörige Bilder</th>
     </tr>
     </thead>
     <tbody id="blackboardTable"></tbody>
     </table>
 </div>
 
-<div id="gallerySection" style="display:none;">
-    <button class="back-btn" onclick="showSection('dashboard')">← Zurück zur Hauptseite</button>
-    <div id="galleryGrid" class="image-grid"></div>
-</div>
-
 <script>
 let firstProjectFile = null;
-const ANZAHL_BILDER = 6; // Hier die Anzahl deiner Bilder im Ordner eintragen!
 
 // ==========================
 // SEKTIONS-STEUERUNG
@@ -306,16 +296,16 @@ function showSection(section, projectFile=null){
     document.getElementById("progressSection").style.display = section==='material'?'block':'none';
     document.getElementById("waypointsSection").style.display = section==='waypoints'?'block':'none';
     document.getElementById("blackboardSection").style.display = section==='blackboard'?'block':'none';
-    document.getElementById("gallerySection").style.display = section==='gallery'?'block':'none';
     
-    if(section==='dashboard') document.getElementById('projectTitle').textContent = "Minecraft Zentrale";
-    if(section==='material' && projectFile) loadProject(projectFile);
+    if(section==='dashboard') {
+        document.getElementById('projectTitle').textContent = "Minecraft Zentrale";
+    }
+    if(section==='material') {
+        if(projectFile) loadProject(projectFile);
+        else document.getElementById('projectTitle').textContent = "Materialliste";
+    }
     if(section==='waypoints') loadWaypoints();
     if(section==='blackboard') loadBlackboard();
-    if(section==='gallery') {
-        document.getElementById('projectTitle').textContent = "Bilder-Galerie";
-        loadGallery();
-    }
     
     document.getElementById("menu").style.display = "none";
 }
@@ -326,51 +316,69 @@ function openFirstProject() {
 }
 
 // ==========================
-// BLACKBOARD DATEI LADEN (NEU & EINHEITLICH)
+// BLACKBOARD LOGIK (Einheitliche Tabelle + Bild-Erkennung)
 // ==========================
 function loadBlackboard(){
     const table = document.getElementById("blackboardTable");
     table.innerHTML = '';
+    
     fetch('blackboard.txt').then(res => res.text()).then(text => {
         const lines = text.split('\n');
         let counter = 1;
+        
         lines.forEach(l => {
             if(!l.trim()) return;
+            
             const row = document.createElement('tr');
             
+            // Spalte 1: Nummerierung (#1, #2...)
             const numTd = document.createElement('td');
-            numTd.textContent = "#" + counter;
-            numTd.style.width = "80px";
+            numTd.innerHTML = `<strong>#${counter}</strong>`;
             
-            const textTd = document.createElement('td');
-            textTd.textContent = l.trim();
-            textTd.style.textAlign = "left";
-            textTd.style.paddingLeft = "20px";
+            // Spalte 2: Text + Bilder-Container
+            const contentTd = document.createElement('td');
+            contentTd.style.textAlign = "left";
+            contentTd.style.padding = "15px";
             
+            // Text-Element
+            const textDiv = document.createElement('div');
+            textDiv.textContent = l.trim();
+            textDiv.style.fontWeight = "bold";
+            textDiv.style.fontSize = "1.05em";
+            contentTd.appendChild(textDiv);
+            
+            // Container für Bilder dieser Einheit
+            const imgContainer = document.createElement('div');
+            imgContainer.className = "bb-image-container";
+            
+            // Schleife prüft automatisch Bildnummern von 00 bis 19
+            for(let j = 0; j <= 19; j++) {
+                const imgNum = String(j).padStart(2, '0');
+                const img = document.createElement('img');
+                // Pfad z.B. bilder/blackboard/1.00.png
+                img.src = `bilder/blackboard/${counter}.${imgNum}.png`;
+                img.alt = `Bild ${counter}.${imgNum}`;
+                
+                // CRITICAL: Wenn das Bild lokal nicht existiert, wird es lautlos gelöscht!
+                img.onerror = function() {
+                    this.remove();
+                };
+                
+                imgContainer.appendChild(img);
+            }
+            
+            contentTd.appendChild(imgContainer);
             row.appendChild(numTd);
-            row.appendChild(textTd);
+            row.appendChild(contentTd);
             table.appendChild(row);
+            
             counter++;
         });
         document.getElementById('projectTitle').textContent = "Blackboard";
-    }).catch(err => console.error("Fehler beim Laden des Blackboards:", err));
-}
-
-// ==========================
-// BILDER-GALERIE LOGIK
-// ==========================
-function loadGallery() {
-    const grid = document.getElementById("galleryGrid");
-    grid.innerHTML = "";
-    for(let i = 1; i <= ANZAHL_BILDER; i++) {
-        const card = document.createElement("div");
-        card.className = "image-card";
-        card.innerHTML = `
-            <img src="bilder/blackboard/${i}.png" alt="Bild ${i}" onerror="this.src='bilder/resized_1024_clock_00.png';">
-            <div class="image-number">Bild #${i}</div>
-        `;
-        grid.appendChild(card);
-    }
+    }).catch(err => {
+        console.error("Fehler beim Laden des Blackboards:", err);
+        table.innerHTML = '<tr><td colspan="2">blackboard.txt konnte nicht geladen werden.</td></tr>';
+    });
 }
 
 // ==========================
@@ -409,11 +417,12 @@ function parseLine(line){
 }
 
 // ==========================
-// PROJEKTE & MENÜ INITIALISIEREN
+// LOAD PROJECTS & MENU
 // ==========================
 fetch('projects_status.txt').then(res=>res.text()).then(statusText=>{
     const lines=statusText.split('\n');
     const menu=document.getElementById('menu');
+    menu.innerHTML = '';
 
     const dashLi=document.createElement('a'); dashLi.href="#"; dashLi.textContent="🏠 Hauptseite"; dashLi.onclick=()=>showSection('dashboard');
     menu.appendChild(dashLi);
@@ -422,35 +431,40 @@ fetch('projects_status.txt').then(res=>res.text()).then(statusText=>{
     materialLi.onclick=()=> openFirstProject();
     menu.appendChild(materialLi);
 
+    const projectSubContainer = document.createElement('div');
+    menu.appendChild(projectSubContainer);
+
     const wpLi=document.createElement('a'); wpLi.href="#"; wpLi.textContent="📍 Waypoints"; wpLi.onclick=()=>showSection('waypoints');
     menu.appendChild(wpLi);
 
     const bbLi=document.createElement('a'); bbLi.href="#"; bbLi.textContent="📝 Blackboard"; bbLi.onclick=()=>showSection('blackboard');
     menu.appendChild(bbLi);
 
-    const galLi=document.createElement('a'); galLi.href="#"; galLi.textContent="🖼 Bilder-Galerie"; galLi.onclick=()=>showSection('gallery');
-    menu.appendChild(galLi);
-
     const activeProjects=[];
     lines.forEach((line,index)=>{
         const [proj,val]=line.split(':');
-        if(val && val.trim()==='1') activeProjects.push({file:`projekt_${index+1}.txt`});
+        if(val && val.trim()==='1') activeProjects.push({file:`projekt_${index+1}.txt`, index: index});
     });
 
-    if(activeProjects.length > 0) {
+    if(activeProjects.length>0) {
         firstProjectFile = activeProjects[0].file;
     }
 
-    // Erstellt die Unterpunkte (deine eigentliche Projektliste), die vorhin gefehlt haben!
     activeProjects.forEach(p=>{
         fetch(p.file).then(res=>res.text()).then(txt=>{
             const nameLine=txt.split('\n').find(l=>l.startsWith('Name:'));
-            const projectName=nameLine?nameLine.split(':')[1].trim():"Projekt";
+            const projectName=nameLine?nameLine.split(':')[1].trim():`Projekt ${p.index+1}`;
             const a=document.createElement('a');
             a.href="#"; a.textContent=projectName;
             a.className="menu-sub";
+            a.setAttribute('data-index', p.index);
             a.onclick=()=>showSection('material',p.file);
-            menu.insertBefore(a, wpLi);
+            
+            projectSubContainer.appendChild(a);
+            
+            Array.from(projectSubContainer.children)
+                .sort((x, y) => parseInt(x.getAttribute('data-index')) - parseInt(y.getAttribute('data-index')))
+                .forEach(node => projectSubContainer.appendChild(node));
         });
     });
 
@@ -458,7 +472,7 @@ fetch('projects_status.txt').then(res=>res.text()).then(statusText=>{
 });
 
 // ==========================
-// MATERIAL-PROJEKT DATEI LADEN
+// LOAD PROJECT FILE
 // ==========================
 function loadProject(file){
     fetch(file).then(res=>res.text()).then(text=>{
@@ -509,7 +523,7 @@ function loadProject(file){
 }
 
 // ==========================
-// WAYPOINTS LADEN
+// LOAD WAYPOINTS
 // ==========================
 function loadWaypoints(){
     const table=document.getElementById("waypointsTable");
