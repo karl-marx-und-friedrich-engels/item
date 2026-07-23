@@ -1,158 +1,105 @@
 Name: house by Polar Cat (YT)
 Materialliste:
 
-+----------------------------+-------+---------+-----------------------+
-| Material List for placement 'Aesthetic cozy house by Polar Cat (YT)' |
-+----------------------------+-------+---------+-----------------------+
-| Item                       | Total | Missing |             Available |
-+----------------------------+-------+---------+-----------------------+
-| Weiße Wolle                |   411 |     411 |                     0 |
-| Fichtenholzbretter         |   368 |     368 |                    24 |
-| Fichtenholztreppe          |   294 |     294 |                     0 |
-| Fichtenholzstufe           |   111 |     111 |                    18 |
-| Steinziegeltreppe          |    77 |      77 |                     0 |
-| Glasscheibe                |    75 |      75 |                     0 |
-| Entrindeter Fichtenstamm   |    73 |      73 |                     0 |
-| Leuchtflechte              |    64 |      64 |                     0 |
-| Eichenholzzaun             |    59 |      59 |                     0 |
-| Laterne                    |    49 |      49 |                     0 |
-| Fichtenholzfalltür         |    45 |      45 |                     0 |
-| Eichenlaub                 |    44 |      44 |                     0 |
-| Truhe                      |    30 |      30 |                     0 |
-| Fass                       |    18 |      18 |                     0 |
-| Blumentopf                 |    17 |      17 |                     0 |
-| Blühendes Azaleenlaub      |    17 |      17 |                     0 |
-| Eichenholzfalltür          |    16 |      16 |                     1 |
-| Moosblock                  |    14 |      14 |                     0 |
-| Süßbeeren                  |    14 |      14 |                     0 |
-| Birkenholztreppe           |    13 |      13 |                     0 |
-| Birkenholzschild           |    10 |      10 |                     0 |
-| Bücherregal                |     9 |       9 |                     0 |
-| Eichenstamm                |     8 |       8 |                     0 |
-| Fichtenholzzaun            |     8 |       8 |                     0 |
-| Lagerfeuer                 |     8 |       8 |                     0 |
-| Leuchtbeeren               |     6 |       6 |                     0 |
-| Moosteppich                |     6 |       6 |                     0 |
-| Toter Busch                |     6 |       6 |                     0 |
-| Roter Teppich              |     5 |       5 |                     0 |
-| Eichenholzschild           |     4 |       4 |                     0 |
-| Gelber Teppich             |     4 |       4 |                     0 |
-| Schildkrötenei             |     4 |       4 |                     0 |
-| Steinziegelmauer           |     4 |       4 |                     0 |
-| Kirschsetzling             |     3 |       3 |                     0 |
-| Steinziegel                |     3 |       3 |                     0 |
-| Steinziegelstufe           |     3 |       3 |                     0 |
-| Blitzableiter              |     2 |       2 |                     0 |
-| Braustand                  |     2 |       2 |                     0 |
-| Eichenholzbretter          |     2 |       2 |                    18 |
-| Eichenholztür              |     2 |       2 |                     1 |
-| Fichtensetzling            |     2 |       2 |                     0 |
-| Kessel                     |     2 |       2 |                     0 |
-| Kuchen                     |     2 |       2 |                     0 |
-| Porzellansternchen         |     2 |       2 |                     0 |
-| Räucherofen                |     2 |       2 |                     0 |
-| Schwarze Wolle             |     2 |       2 |                     0 |
-| Violettes Bett             |     2 |       2 |                     0 |
-| Wassereimer                |     2 |       2 |                     1 |
-| Weißer Teppich             |     2 |       2 |                     0 |
-| Werkbank                   |     2 |       2 |                     0 |
-| Abgestorbene Geweihkoralle |     1 |       1 |                     0 |
-| Blaue Orchidee             |     1 |       1 |                     0 |
-| Eisenkette                 |     1 |       1 |                     0 |
-| Endertruhe                 |     1 |       1 |                     0 |
-| Glocke                     |     1 |       1 |                     0 |
-| Große Amethystknospe       |     1 |       1 |                     0 |
-| Kartentisch                |     1 |       1 |                     0 |
-| Kirschlaub                 |     1 |       1 |                     0 |
-| Lesepult                   |     1 |       1 |                     0 |
-| Maiglöckchen               |     1 |       1 |                     0 |
-| Meeresgurke                |     1 |       1 |                     0 |
-| Mohn                       |     1 |       1 |                     0 |
-| Ofen                       |     1 |       1 |                     0 |
-| Plattenspieler             |     1 |       1 |                     0 |
-| Rote Tulpe                 |     1 |       1 |                     0 |
-| Schwarzeichenlaub          |     1 |       1 |                     0 |
-| Webstuhl                   |     1 |       1 |                     0 |
-+----------------------------+-------+---------+-----------------------+
-| Item                       | Total | Missing |             Available |
-+----------------------------+-------+---------+-----------------------+
++-------------------------+-------+---------+-----------+
+| Material List for placement 'Unnamed'                 |
++-------------------------+-------+---------+-----------+
+| Item                    | Total | Missing | Available |
++-------------------------+-------+---------+-----------+
+| Beobachter              |    22 |      15 |        31 |
+| Eisenblock              |     1 |       1 |         0 |
+| Fass                    |     3 |       3 |         0 |
+| Glas                    |     7 |       7 |         0 |
+| Glatte Steinstufe       |     9 |       9 |         0 |
+| Glatter Stein           |     2 |       2 |         0 |
+| Goldblock               |     2 |       2 |         0 |
+| Haken                   |     3 |       3 |         0 |
+| Hebel                   |     1 |       1 |         0 |
+| Klebriger Kolben        |    10 |      10 |         7 |
+| Knochenblock            |     2 |       2 |         0 |
+| Kolben                  |     4 |       4 |         8 |
+| Kürbis                  |     3 |       3 |         0 |
+| Notenblock              |    18 |      18 |         5 |
+| Redstone-Fackel         |    12 |      12 |        27 |
+| Redstone-Komparator     |    27 |      27 |         0 |
+| Redstone-Lampe          |    31 |      31 |         0 |
+| Redstone-Staub          |    96 |      96 |        53 |
+| Redstone-Verstärker     |    27 |      27 |        16 |
+| Sand                    |     3 |       3 |         0 |
+| Schwarzeichenholzknopf  |     2 |       2 |         0 |
+| Schwarzeichenholzschild |     2 |       2 |         0 |
+| Sculk                   |    14 |      14 |         0 |
+| Shulker-Kiste           |     1 |       1 |         0 |
+| Smaragdblock            |     2 |       2 |         0 |
+| Spender                 |     9 |       8 |         0 |
+| Trichter                |    11 |      11 |        64 |
+| Türkise Shulker-Kiste   |     1 |       1 |         0 |
+| Werfer                  |     2 |       2 |        23 |
+| Zielblock               |     6 |       5 |         0 |
++-------------------------+-------+---------+-----------+
+| Item                    | Total | Missing | Available |
++-------------------------+-------+---------+-----------+
 
 
 Originalliste:
 
-+----------------------------+-------+---------+-----------------------+
-| Material List for placement 'Aesthetic cozy house by Polar Cat (YT)' |
-+----------------------------+-------+---------+-----------------------+
-| Item                       | Total | Missing |             Available |
-+----------------------------+-------+---------+-----------------------+
-| Weiße Wolle                |   411 |     411 |                     0 |
-| Fichtenholzbretter         |   368 |     368 |                    24 |
-| Fichtenholztreppe          |   294 |     294 |                     0 |
-| Fichtenholzstufe           |   111 |     111 |                    18 |
-| Steinziegeltreppe          |    77 |      77 |                     0 |
-| Glasscheibe                |    75 |      75 |                     0 |
-| Entrindeter Fichtenstamm   |    73 |      73 |                     0 |
-| Leuchtflechte              |    64 |      64 |                     0 |
-| Eichenholzzaun             |    59 |      59 |                     0 |
-| Laterne                    |    49 |      49 |                     0 |
-| Fichtenholzfalltür         |    45 |      45 |                     0 |
-| Eichenlaub                 |    44 |      44 |                     0 |
-| Truhe                      |    30 |      30 |                     0 |
-| Fass                       |    18 |      18 |                     0 |
-| Blumentopf                 |    17 |      17 |                     0 |
-| Blühendes Azaleenlaub      |    17 |      17 |                     0 |
-| Eichenholzfalltür          |    16 |      16 |                     1 |
-| Moosblock                  |    14 |      14 |                     0 |
-| Süßbeeren                  |    14 |      14 |                     0 |
-| Birkenholztreppe           |    13 |      13 |                     0 |
-| Birkenholzschild           |    10 |      10 |                     0 |
-| Bücherregal                |     9 |       9 |                     0 |
-| Eichenstamm                |     8 |       8 |                     0 |
-| Fichtenholzzaun            |     8 |       8 |                     0 |
-| Lagerfeuer                 |     8 |       8 |                     0 |
-| Leuchtbeeren               |     6 |       6 |                     0 |
-| Moosteppich                |     6 |       6 |                     0 |
-| Toter Busch                |     6 |       6 |                     0 |
-| Roter Teppich              |     5 |       5 |                     0 |
-| Eichenholzschild           |     4 |       4 |                     0 |
-| Gelber Teppich             |     4 |       4 |                     0 |
-| Schildkrötenei             |     4 |       4 |                     0 |
-| Steinziegelmauer           |     4 |       4 |                     0 |
-| Kirschsetzling             |     3 |       3 |                     0 |
-| Steinziegel                |     3 |       3 |                     0 |
-| Steinziegelstufe           |     3 |       3 |                     0 |
-| Blitzableiter              |     2 |       2 |                     0 |
-| Braustand                  |     2 |       2 |                     0 |
-| Eichenholzbretter          |     2 |       2 |                    18 |
-| Eichenholztür              |     2 |       2 |                     1 |
-| Fichtensetzling            |     2 |       2 |                     0 |
-| Kessel                     |     2 |       2 |                     0 |
-| Kuchen                     |     2 |       2 |                     0 |
-| Porzellansternchen         |     2 |       2 |                     0 |
-| Räucherofen                |     2 |       2 |                     0 |
-| Schwarze Wolle             |     2 |       2 |                     0 |
-| Violettes Bett             |     2 |       2 |                     0 |
-| Wassereimer                |     2 |       2 |                     1 |
-| Weißer Teppich             |     2 |       2 |                     0 |
-| Werkbank                   |     2 |       2 |                     0 |
-| Abgestorbene Geweihkoralle |     1 |       1 |                     0 |
-| Blaue Orchidee             |     1 |       1 |                     0 |
-| Eisenkette                 |     1 |       1 |                     0 |
-| Endertruhe                 |     1 |       1 |                     0 |
-| Glocke                     |     1 |       1 |                     0 |
-| Große Amethystknospe       |     1 |       1 |                     0 |
-| Kartentisch                |     1 |       1 |                     0 |
-| Kirschlaub                 |     1 |       1 |                     0 |
-| Lesepult                   |     1 |       1 |                     0 |
-| Maiglöckchen               |     1 |       1 |                     0 |
-| Meeresgurke                |     1 |       1 |                     0 |
-| Mohn                       |     1 |       1 |                     0 |
-| Ofen                       |     1 |       1 |                     0 |
-| Plattenspieler             |     1 |       1 |                     0 |
-| Rote Tulpe                 |     1 |       1 |                     0 |
-| Schwarzeichenlaub          |     1 |       1 |                     0 |
-| Webstuhl                   |     1 |       1 |                     0 |
-+----------------------------+-------+---------+-----------------------+
-| Item                       | Total | Missing |             Available |
-+----------------------------+-------+---------+-----------------------+
++------------------------------------+-------+---------+-----------+
+| Material List for placement 'Unnamed'                            |
++------------------------------------+-------+---------+-----------+
+| Item                               | Total | Missing | Available |
++------------------------------------+-------+---------+-----------+
+| Beobachter                         |    22 |      15 |        31 |
+| Blauer Beton                       |    19 |      19 |         0 |
+| Brauner Beton                      |    11 |      11 |         0 |
+| Eisenblock                         |     1 |       1 |         0 |
+| Entrindeter Fichtenstamm           |     4 |       4 |         0 |
+| Entrindeter Schwarzeichenstamm     |     8 |       8 |         0 |
+| Fass                               |     3 |       3 |         0 |
+| Fichtenholzbretter                 |    20 |      20 |         4 |
+| Gelber Beton                       |     7 |       7 |         0 |
+| Gemeißelter polierter Schwarzstein |     1 |       1 |         0 |
+| Glas                               |     7 |       7 |         0 |
+| Glatte Steinstufe                  |     9 |       9 |         0 |
+| Glatter Stein                      |     2 |       2 |         0 |
+| Goldblock                          |     2 |       2 |         0 |
+| Grauer Beton                       |     6 |       6 |         0 |
+| Grüner Beton                       |    22 |      22 |         0 |
+| Haken                              |     3 |       3 |         0 |
+| Hebel                              |     1 |       1 |         0 |
+| Hellblauer Beton                   |    18 |      18 |         0 |
+| Hellgrauer Beton                   |     4 |       4 |         0 |
+| Hellgrüner Beton                   |    12 |      12 |         0 |
+| Klebriger Kolben                   |    10 |      10 |         7 |
+| Knochenblock                       |     2 |       2 |         0 |
+| Kolben                             |     4 |       4 |         8 |
+| Kürbis                             |     3 |       3 |         0 |
+| Magenta Beton                      |    11 |      11 |         0 |
+| Notenblock                         |    18 |      18 |         5 |
+| Oranger Beton                      |     9 |       9 |         0 |
+| Polierte Schwarzsteintreppe        |     2 |       2 |         0 |
+| Polierter Basalt                   |    42 |      42 |         0 |
+| Redstone-Fackel                    |    12 |      12 |        27 |
+| Redstone-Komparator                |    27 |      27 |         0 |
+| Redstone-Lampe                     |    31 |      31 |         0 |
+| Redstone-Staub                     |    96 |      96 |        53 |
+| Redstone-Verstärker                |    27 |      27 |        16 |
+| Rosa Beton                         |    21 |      21 |         0 |
+| Rote glasierte Keramik             |     1 |       1 |         0 |
+| Roter Beton                        |    17 |      17 |         0 |
+| Sand                               |     3 |       3 |         0 |
+| Schwarzeichenholzknopf             |     2 |       2 |         0 |
+| Schwarzeichenholzschild            |     2 |       2 |         0 |
+| Sculk                              |    14 |      14 |         0 |
+| Shulker-Kiste                      |     1 |       1 |         0 |
+| Smaragdblock                       |     2 |       2 |         0 |
+| Spender                            |     9 |       8 |         0 |
+| Trichter                           |    11 |      11 |        64 |
+| Türkise Shulker-Kiste              |     1 |       1 |         0 |
+| Türkiser Beton                     |     8 |       8 |         0 |
+| Violetter Beton                    |    11 |      11 |         0 |
+| Werfer                             |     2 |       2 |        23 |
+| Zielblock                          |     6 |       5 |         0 |
++------------------------------------+-------+---------+-----------+
+| Item                               | Total | Missing | Available |
++------------------------------------+-------+---------+-----------+
 
