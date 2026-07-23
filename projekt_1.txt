@@ -33,7 +33,6 @@ Materialliste:
 | Smaragdblock            |     2 |       2 |         0 |
 | Spender                 |     9 |       8 |         0 |
 | Türkise Shulker-Kiste   |     1 |       1 |         0 |
-| Zielblock               |     6 |       5 |         0 |
 +-------------------------+-------+---------+-----------+
 | Item                    | Total | Missing | Available |
 +-------------------------+-------+---------+-----------+
