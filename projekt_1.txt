@@ -17,10 +17,8 @@ Materialliste:
 | Hebel                   |     1 |       1 |         0 |
 | Klebriger Kolben        |    10 |      10 |         7 |
 | Knochenblock            |     2 |       2 |         0 |
-| Kolben                  |     4 |       4 |         8 |
 | Kürbis                  |     3 |       3 |         0 |
 | Notenblock              |    18 |      18 |         5 |
-| Redstone-Fackel         |    12 |      12 |        27 |
 | Redstone-Komparator     |    27 |      27 |         0 |
 | Redstone-Lampe          |    31 |      31 |         0 |
 | Redstone-Staub          |    96 |      96 |        53 |
